@@ -23,9 +23,24 @@ def get_db_connection():
     conn = sqlite3.connect(db_path)
     return conn
 
-def init_db():
-    conn = get_db_connection()
-    c = conn.cursor()
+import sqlite3
+
+def create_tables():
+    # 데이터베이스 파일 이름을 내 코드에 맞게 수정하세요 (예: database.db 또는 chemi.db)
+    conn = sqlite3.connect('database.db') 
+    cursor = conn.cursor()
+    
+    # projects 테이블이 없으면 자동으로 만들라는 명령입니다.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS projects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            summary TEXT
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
 
     # 아이디어 게시판 테이블
     c.execute("""
@@ -140,9 +155,10 @@ def logout():
     session.pop("is_admin", None)
     return redirect(url_for("home"))
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+@app.route('/')
+def index():
+    create_tables() # 👈 홈 화면에 들어올 때 방이 없으면 자동으로 만들어주는 치트키!
+    return render_template('index.html')
 
 @app.route("/ideas")
 def ideas():

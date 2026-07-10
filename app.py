@@ -123,7 +123,9 @@ def init_db():
 # ⚠️ 추가로 원래 작성되어 있던 @app.route('/') 부분도 아래처럼 깔끔하게만 놔두시면 됩니다!
 @app.route('/')
 def home():
-    return render_template("index.html")
+    # 홈 화면으로 기본 사진 파일명을 보내줍니다.
+    main_photo = "KakaoTalk_20260709_143736435.jpg"
+    return render_template("index.html", main_photo=main_photo)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

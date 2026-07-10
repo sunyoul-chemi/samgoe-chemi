@@ -23,24 +23,9 @@ def get_db_connection():
     conn = sqlite3.connect(db_path)
     return conn
 
-import sqlite3
-
-def create_tables():
-    # 데이터베이스 파일 이름을 내 코드에 맞게 수정하세요 (예: database.db 또는 chemi.db)
-    conn = sqlite3.connect('database.db') 
-    cursor = conn.cursor()
-    
-    # projects 테이블이 없으면 자동으로 만들라는 명령입니다.
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS projects (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            summary TEXT
-        )
-    ''')
-    
-    conn.commit()
-    conn.close()
+def init_db():
+    conn = get_db_connection()
+    c = conn.cursor()
 
     # 아이디어 게시판 테이블
     c.execute("""
@@ -74,7 +59,7 @@ def create_tables():
     )
     """)
 
-    # 시약 테이블 (★ category 컬럼 추가)
+    # 시약 테이블
     c.execute("""
     CREATE TABLE IF NOT EXISTS reagents(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -107,7 +92,7 @@ def create_tables():
     """)
     conn.commit()
 
-    # ★ 예시 시약 데이터에 분류(Category) 매칭하여 초기화
+    # 예시 시약 데이터 초기화
     reagents = [
         ("염산 (Hydrochloric acid)", "HCl", "산성장 A-01", "위험", "보관중", "산성물질"),
         ("황산 (Sulfuric acid)", "H2SO4", "산성장 A-02", "위험", "보관중", "산성물질"),
@@ -121,7 +106,6 @@ def create_tables():
         ("과산화수소 (Hydrogen peroxide)", "H2O2", "유기장 D-02", "위험", "보관중", "유기화합물")
     ]
     
-    # 혹시 예전 컬럼 구조 때문에 충돌날 수 있으니 비정상 구조면 컬럼 강제 추가 시도
     try:
         c.execute("ALTER TABLE reagents ADD COLUMN category TEXT")
         conn.commit()
@@ -136,7 +120,10 @@ def create_tables():
     conn.commit()
     conn.close()
 
-# ... [중간 생략: login, logout, home, ideas, calendar 라우트는 기존과 동일] ...
+# ⚠️ 추가로 원래 작성되어 있던 @app.route('/') 부분도 아래처럼 깔끔하게만 놔두시면 됩니다!
+@app.route('/')
+def home():
+    return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

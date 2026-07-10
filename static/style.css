@@ -1,0 +1,1439 @@
+/* ========================= */
+/* 기본 설정 */
+/* ========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:"Malgun Gothic",sans-serif;
+
+    background:#eef2f7;
+
+    color:#333;
+
+    line-height:1.7;
+
+}
+
+/* ========================= */
+/* Header */
+/* ========================= */
+
+header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:#f7e897;
+
+    color:white;
+
+    padding:20px 60px;
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    z-index:1000;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
+
+}
+
+main{
+
+    margin-top:90px;
+
+}
+
+.logo{
+
+    font-size:30px;
+
+    font-weight:bold;
+    .logo {
+    text-decoration: none;
+    color: #333; /* 혹은 기존 로고 색상 */
+    cursor: pointer;
+}
+
+}
+
+nav{
+
+    display:flex;
+
+    gap:25px;
+
+}
+
+nav a{
+
+    text-decoration:none;
+
+    color:white;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+
+nav a:hover{
+
+    color:#f7e897;
+
+}
+
+/* ========================= */
+/* Hero */
+/* ========================= */
+
+.hero{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:50px;
+
+    padding:80px;
+
+    background:rgb(255, 255, 255);
+
+}
+
+.hero-image{
+
+    width:500px;
+
+    border-radius:15px;
+
+    box-shadow:0 10px 30px rgba(255, 255, 255, 0.25);
+
+}
+
+.hero-text{
+
+    max-width:500px;
+
+}
+
+.hero-text h1{
+
+    font-size:41px;
+
+    color:#e6d929;
+
+    margin-bottom:20px;
+
+}
+
+.hero-text h2{
+
+    font-size:30px;
+
+    margin-bottom:20px;
+
+}
+
+.hero-text p{
+
+    font-size:20px;
+    
+    margin-right: 50px;
+}
+
+.hero-text /q{
+
+    font-size: 20px;
+
+}
+/* ========================= */
+
+.intro{
+
+    padding:60px;
+
+    text-align:center;
+    background-color: #f7efc2
+;
+
+}
+
+.intro h2{
+
+    font-size:35px;
+
+    color:#111110;
+    background-color: #f7efc2;
+
+    margin-bottom:20px;
+
+}
+
+.intro p{
+
+    font-size:20px;
+
+
+}
+
+/* ========================= */
+/* 카드 */
+/* ========================= */
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:40px;
+
+    padding:60px;
+
+}
+
+.card{
+
+    text-decoration:none;
+
+    color:#000000;
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:35px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.1);
+
+    transition:.3s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.2);
+    background-color: #f7e897
+    ;
+
+}
+
+.card h2{
+
+    color:#020202;
+
+    margin-bottom:15px;
+
+}
+
+.card p{
+
+    font-size:18px;
+    
+
+
+}
+
+/* ========================= */
+
+.about{
+
+    text-align:center;
+
+    padding:70px;
+    background-color: #f7efc2;
+
+}
+
+.about h2{
+
+    color:#141413;
+
+    font-size:35px;
+   
+    margin-bottom:25px;
+    
+
+}
+
+.about p{
+
+    font-size:20px;
+
+}
+
+/* ========================= */
+/* 페이지 제목 */
+/* ========================= */
+
+.page-title{
+
+    text-align:center;
+
+    padding:50px;
+
+}
+
+.page-title h1{
+
+    color:#f7e897;
+
+    margin-bottom:15px;
+
+    font-size:42px;
+
+
+}
+
+.page-title p{
+
+    font-size:18px;
+
+
+}
+
+/* ========================= */
+/* Form */
+/* ========================= */
+
+.write-box,
+
+.calendar-form,
+/* 달력 페이지 전체 배경 */
+body {
+    background-color: #f8f7f2; /* 부드러운 미색 배경 */
+}
+
+.calendar-wrapper {
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 0 20px;
+    font-family: 'Pretendard', sans-serif;
+}
+
+.calendar-title-area {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.calendar-title-area .main-title {
+    font-size: 32px;
+    color: #5c5448;
+    margin: 10px 0;
+}
+
+.calendar-card {
+    background: #ffffff;
+    border-radius: 25px;
+    padding: 40px;
+    box-shadow: 0 15px 40px rgba(139, 115, 85, 0.1);
+    border: 1px solid #efebe0;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.current-month {
+    font-size: 24px;
+    font-weight: 600;
+    color: #4a4238;
+}
+
+.nav-btn {
+    background: #fdfaf4;
+    border: 1px solid #e6dfcf;
+    padding: 8px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #8b7355;
+    transition: all 0.2s;
+}
+
+.nav-btn:hover {
+    background: #f0e9dc;
+}
+
+/* 7열 그리드 설정 */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 15px;
+}
+
+.day-label {
+    text-align: center;
+    font-weight: 600;
+    color: #a09586;
+    padding-bottom: 15px;
+    font-size: 15px;
+}
+
+.day-label.red { color: #d9534f; }
+
+/* 날짜 칸 스타일 (정사각형 느낌) */
+.day {
+    min-height: 110px;
+    background-color: #fdfaf4;
+    border: 1px solid #f0e9dc;
+    border-radius: 18px;
+    padding: 12px;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.active-day {
+    cursor: pointer;
+}
+
+.active-day:hover {
+    background-color: #ffffff;
+    border-color: #dccfb6;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(139, 115, 85, 0.15);
+}
+
+.date-number {
+    font-size: 17px;
+    font-weight: 700;
+    color: #6d5f50;
+}
+
+/* 빈 칸 처리 */
+.empty {
+    background: transparent;
+    border: none;
+}
+
+/* 일정 박스 스타일 */
+.schedule-container {
+    margin-top: 10px;
+}
+
+.schedule-dot {
+    background-color: #8b7355; /* 베이지 브라운 */
+    color: white;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.nav-btn-link {
+    text-decoration: none;
+}
+}
+
+.upload-container,
+
+.search-box{
+
+    width:90%;
+
+    max-width:900px;
+
+    margin:auto;
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 20px rgba(182, 26, 26, 0.1);
+
+    margin-bottom:40px;
+
+}
+
+input,
+
+textarea{
+
+    width:100%;
+
+    padding:15px;
+
+    margin-top:10px;
+
+    margin-bottom:20px;
+
+    border:1px solid #da2424;
+
+    border-radius:10px;
+
+    font-size:17px;
+
+}
+
+
+button{
+
+    background:#f7e897;
+
+    color:white;
+
+    border:none;
+
+    padding:15px 35px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:17px;
+
+    transition:.3s;
+
+}
+
+button:hover{
+
+    background:#f7e897;
+
+}
+
+/* ==========================================
+   동글동글 커뮤니티 피드 스타일
+   ========================================== */
+
+.ideas-wrapper {
+    max-width: 950px; /* 전체 너비를 아담하게 줄임 */
+    margin: 40px auto;
+    font-family: 'Pretendard', sans-serif;
+}
+
+/* 글 작성 상자 */
+.idea-form-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid #e8e6dc;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.short-input { 
+    width: 150px; 
+}
+.long-input { 
+    flex: 1; 
+}
+
+.idea-form-card input, 
+.idea-form-card textarea {
+    padding: 12px;
+    border: 1px solid #e1ded3;
+    border-radius: 12px;
+    background: #faf9f5;
+    outline: none;
+    font-size: 14px;
+}
+
+.idea-form-card textarea { 
+    width: 100%; 
+    box-sizing: border-box; 
+    resize: none; 
+}
+
+/* 피드 카드 (좌우 반반 구조) */
+.feed-card {
+    display: flex;
+    background: #ffffff;
+    border-radius: 24px; /* 둥글둥글한 모서리 */
+    border: 1px solid #e8e6dc;
+    margin-bottom: 35px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    overflow: hidden;
+}
+
+/* 왼쪽 영역 (본문) */
+.feed-left {
+    flex: 1.1;
+    padding: 30px;
+    background-color: #ffffff;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.avatar { 
+    font-size: 24px; 
+}
+.author-text { 
+    display: flex; 
+    flex-direction: column; 
+}
+.author-text .name { 
+    font-weight: 700; 
+    color: #4a4538; 
+    font-size: 15px; 
+}
+.author-text .time { 
+    font-size: 12px; 
+    color: #b5b0a1; 
+}
+
+.feed-title { 
+    font-size: 20px; 
+    color: #2e2a22; 
+    margin: 0 0 15px 0; 
+    font-weight: 700; 
+}
+.feed-content { 
+    font-size: 15px; 
+    color: #524d41; 
+    line-height: 1.6; 
+    margin-bottom: 25px; 
+}
+
+.feed-tags { 
+    display: flex; 
+    gap: 8px; 
+}
+.tag {
+    background: #f1f0e9;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #6e6859;
+    font-weight: 500;
+}
+
+/* 가운데 세로 경계선 */
+.feed-divider {
+    width: 1px;
+    border-left: 1px solid #f0ede1;
+    background-color: #faf9f5;
+}
+
+/* 오른쪽 영역 (댓글창) */
+.feed-right {
+    flex: 0.9;
+    padding: 30px;
+    background-color: #fcfbfa; /* 은은한 크림톤 배경 */
+    display: flex;
+    flex-direction: column;
+}
+
+.reply-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    margin-bottom: 15px; 
+    font-weight: 700; 
+    color: #615b4c; 
+}
+
+/* 댓글 목록 스크롤 구역 */
+.comments-list {
+    flex: 1;
+    max-height: 180px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding-right: 5px;
+}
+
+.comment-item {
+    background: #ffffff;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid #eeece1;
+    margin-bottom: 10px;
+}
+
+.comment-user-box { 
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 12px; 
+    font-weight: 700; 
+    color: #8c8574; 
+}
+.comment-text { 
+    font-size: 13px; 
+    color: #4a4538; 
+    margin: 5px 0 0 0; 
+}
+.comment-emoji-badge { 
+    font-size: 14px; 
+}
+
+.empty-comment { 
+    text-align: center; 
+    color: #b5b0a1; 
+    padding: 20px 0; 
+    font-size: 13px; 
+}
+
+/* 댓글 작성 폼 */
+.comment-form { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+    margin-top: auto; 
+}
+.comment-input-row { 
+    display: flex; 
+    gap: 8px; 
+}
+.c-writer { 
+    width: 70px; 
+    text-align: center; 
+}
+.c-content { 
+    flex: 1; 
+}
+
+.comment-form input, 
+.emoji-select {
+    padding: 8px 12px;
+    border: 1px solid #e1ded3;
+    border-radius: 10px;
+    font-size: 13px;
+    outline: none;
+}
+
+.comment-action-row { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+.emoji-select { 
+    background: white; 
+    cursor: pointer; 
+}
+
+.comment-submit-btn {
+    background: #ebdcb2;
+    border: 1px solid #dbcca0;
+    color: #4a4331;
+    padding: 6px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.comment-submit-btn:hover { 
+    background: #dfd0a4; 
+}
+/* 과목 분류 선택창 스타일 */
+/* 과목 분류 선택창 스타일 (높이 및 여백 균형 조정) */
+/* 과목 분류 선택창 스타일 (높이 및 여백 균형 조정) */
+/* 글 작성 상자 안의 모든 입력창(input, select) 라인 정렬 */
+.idea-form-card input, 
+/* 1. 입력창들을 한 줄로 묶어주는 상자의 정렬을 세로 가운데로 강제 고정 */
+.form-row {
+    display: flex;
+    align-items: center;    /* ◀ 내부 요소들의 위아래 라인을 칼같이 맞춤 */
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+/* 2. 작성자 및 제목 input창 스타일 */
+.idea-form-card input {
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid #e1ded3;
+    border-radius: 12px;
+    background: #faf9f5;
+    font-size: 14px;
+    color: #4a4538;
+    outline: none;
+    box-sizing: border-box;
+}
+
+/* 3. 분류 선택 select창 스타일 (input과 높이/여백 완전 동기화) */
+.category-select {
+    height: 44px;           /* 높이 통일 */
+    padding: 0 14px;        /* 내부 여백 통일 */
+    border: 1px solid #e1ded3;
+    border-radius: 12px;    /* 둥글기 통일 */
+    background: #ffffff;
+    font-size: 14px;
+    color: #4a4538;
+    outline: none;
+    box-sizing: border-box; /* 테두리 포함 계산 */
+    cursor: pointer;
+    width: 125px;           /* 너비 아담하게 고정 */
+}
+
+/* 과목 태그 디자인 (기존 유지) */
+.tag-category {
+    background: #fff4cc;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #bfa11d;
+    font-weight: 700;
+}
+/* ==========================================
+   둥글둥글 고급스러운 시약 찾기 페이지 스타일
+   ========================================== */
+.reagent-wrapper {
+    max-width: 1000px;
+    margin: 40px auto;
+    font-family: 'Pretendard', sans-serif;
+    padding: 0 20px;
+}
+.reagent-header { text-align: center; margin-bottom: 30px; }
+.reagent-header .header-icon { font-size: 35px; }
+.reagent-header h2 { font-size: 28px; color: #333; margin: 10px 0 5px 0; font-weight: 800; }
+.reagent-header p { color: #888; font-size: 15px; }
+
+.search-container { margin-bottom: 35px; }
+.search-form {
+    display: flex; gap: 12px; background: #fff; padding: 8px;
+    border-radius: 40px; border: 1px solid #e2dfd3;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+}
+.search-input-wrapper { display: flex; align-items: center; flex: 1; padding-left: 20px; }
+.search-icon { color: #a09c8e; font-size: 18px; margin-right: 10px; }
+.search-form input { width: 100%; border: none; outline: none; font-size: 16px; color: #4a4538; }
+.search-btn {
+    background: #ffec99; border: none; padding: 12px 32px;
+    border-radius: 30px; font-weight: 700; color: #5c532e; font-size: 15px; cursor: pointer;
+}
+.search-btn:hover { background: #ffd43b; }
+
+.tab-container { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #f1f0ea; padding-bottom: 10px; }
+.tab-item { text-decoration: none; padding: 10px 20px; border-radius: 12px 12px 0 0; font-size: 14px; color: #6c6658; font-weight: 600; }
+.tab-item:hover { background: #fcfbfa; color: #222; }
+.tab-item.active { background: #fff4cc; color: #bfa11d; font-weight: 700; border: 1px solid #f1e9c8; border-bottom: none; }
+
+.table-container { background: #ffffff; border-radius: 20px; border: 1px solid #e8e6dc; box-shadow: 0 10px 25px rgba(0,0,0,0.02); overflow: hidden; }
+.reagent-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 14px; }
+.reagent-table th { background: #faf9f5; padding: 15px 10px; font-weight: 700; color: #5c574c; border-bottom: 1px solid #eeebe0; }
+.reagent-table td { padding: 16px 10px; border-bottom: 1px solid #f6f5f0; color: #4a4538; }
+.reagent-table tr:hover { background-color: #fffdf7; }
+
+.reagent-name { font-weight: 600; text-align: left; padding-left: 20px !important; color: #222; }
+.reagent-formula code { background: #f1f0ea; padding: 3px 8px; border-radius: 6px; font-family: monospace; font-size: 13px; }
+.location-badge { background: #f4f3ed; padding: 4px 10px; border-radius: 8px; font-size: 13px; color: #615c50; }
+
+.risk-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+.risk-high { background: #ffe3e3; color: #dc3545; }
+.risk-medium { background: #fff3cd; color: #856404; }
+.risk-low { background: #d4edda; color: #155724; }
+
+.status-dot { display: inline-block; width: 8px; height: 8px; background-color: #40c057; border-radius: 50%; margin-right: 4px; }
+.status-text { font-size: 13px; color: #555; font-weight: 500; }
+.no-data { padding: 40px 0; color: #aaa; font-style: italic; }
+/* ==========================================
+   인스타그램 감성 실험 갤러리 카드 레이아웃
+   ========================================== */
+.gallery-wrapper {
+    max-width: 1040px;
+    margin: 40px auto;
+    font-family: 'Pretendard', sans-serif;
+    padding: 0 20px;
+}
+.gallery-header { text-align: center; margin-bottom: 35px; }
+.gallery-header .header-icon { font-size: 35px; }
+.gallery-header h2 { font-size: 28px; color: #222; margin: 10px 0 5px 0; font-weight: 800; }
+.gallery-header p { color: #888; font-size: 15px; }
+
+/* 업로드 바 컴포넌트 */
+.upload-bar-container {
+    background: #fff; border: 1px solid #e8e6dc; border-radius: 16px;
+    padding: 12px 20px; margin-bottom: 40px; box-shadow: 0 6px 15px rgba(0,0,0,0.01);
+}
+.upload-bar-form {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.file-icon-area { font-size: 20px; color: #a09c8e; }
+.title-input {
+    flex: 2; border: none; outline: none; font-size: 15px; color: #4a4538;
+    background: transparent; min-width: 200px;
+}
+.tag-input {
+    flex: 1; border: none; outline: none; font-size: 14px; color: #0095f6;
+    background: transparent; min-width: 130px; font-weight: 500;
+}
+.file-custom-btn label {
+    background: #f4f3ed; color: #5c574c; padding: 10px 16px;
+    border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-block;
+}
+.file-name-preview { font-size: 12px; color: #888; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.upload-submit-btn {
+    background: #ffec99; border: none; padding: 11px 22px;
+    border-radius: 10px; font-weight: 700; color: #5c532e; font-size: 14px; cursor: pointer;
+}
+.upload-submit-btn:hover { background: #ffd43b; }
+
+/* 갤러리 피드 그리드 (4열 배치) */
+.gallery-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 24px;
+}
+
+/* 인스타 피드 전용 카드 */
+.instagram-card {
+    background: #ffffff; border: 1px solid #efefef; border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.015); overflow: hidden;
+    display: flex; flex-direction: column; transition: transform 0.2s;
+}
+.instagram-card:hover { transform: translateY(-3px); }
+
+.card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 14px; background: #fff;
+}
+.profile-group { display: flex; align-items: center; gap: 8px; }
+.profile-avatar { font-size: 15px; background: #faf9f5; border: 1px solid #eae6db; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
+.profile-name { font-size: 13px; font-weight: 700; color: #262626; }
+.more-icon { color: #8e8e8e; font-size: 12px; letter-spacing: 1px; cursor: pointer; }
+.admin-delete-btn { font-size: 12px; color: #dc3545; text-decoration: none; font-weight: 700; background: #ffe3e3; padding: 3px 8px; border-radius: 6px; }
+
+.card-image-wrapper { width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: #fafafa; border-top: 1px solid #f8f8f8; border-bottom: 1px solid #f8f8f8; }
+.card-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+.card-body { padding: 14px; display: flex; flex-direction: column; gap: 5px; background: #fff; flex-grow: 1; }
+.card-title { font-size: 14px; font-weight: 600; color: #262626; margin: 0; line-height: 1.4; }
+.card-tags { font-size: 13px; color: #00376b; margin: 0; font-weight: 500; word-break: break-all; }
+
+.no-data-gallery { grid-column: 1 / -1; text-align: center; color: #aaa; padding: 60px 0; font-style: italic; }
+/* ==========================================
+   아이디어 피드 페이지 중앙 정렬 및 레이아웃 수정
+   ========================================== */
+
+/* 전체를 감싸는 wrapper를 중앙으로 배치 */
+.ideas-wrapper {
+    max-width: 1040px;      /* 갤러리 페이지와 동일한 최적의 폭 */
+    margin: 40px auto;     /* 위아래 여백을 주고 좌우는 자동 중앙 정렬 */
+    padding: 0 20px;
+    font-family: 'Pretendard', sans-serif;
+}
+
+/* 상단 타이틀 영역 중앙 정렬 */
+.ideas-title-area {
+    text-align: center;
+    margin-bottom: 35px;
+}
+.ideas-title-area .emoji {
+    font-size: 35px;
+}
+.ideas-title-area .main-title {
+    font-size: 28px;
+    color: #222;
+    margin: 10px 0 5px 0;
+    font-weight: 800;
+}
+.ideas-title-area .sub-desc {
+    color: #888;
+    font-size: 15px;
+}
+
+/* 새 아이디어 작성 카드 중앙 정렬 및 디자인 다듬기 */
+.idea-form-card {
+    background: #fff;
+    border: 1px solid #e8e6dc;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 40px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.01);
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 15px;
+    flex-wrap: wrap; /* 화면이 좁아지면 자연스럽게 아래로 내려가도록 설정 */
+}
+
+/* 입력 필드들 스타일 가다듬기 */
+.short-input, .category-select {
+    padding: 12px 16px;
+    border: 1px solid #e8e6dc;
+    border-radius: 12px;
+    font-size: 14px;
+    outline: none;
+    background: #faf9f5;
+}
+.short-input { width: 120px; }
+.category-select { width: 140px; color: #4a4538; cursor: pointer; }
+
+.long-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 16px;
+    border: 1px solid #e8e6dc;
+    border-radius: 12px;
+    font-size: 14px;
+    outline: none;
+    background: #faf9f5;
+}
+
+.idea-form-card textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #e8e6dc;
+    border-radius: 12px;
+    font-size: 14px;
+    outline: none;
+    background: #faf9f5;
+    resize: none;
+    box-sizing: border-box;
+}
+
+.form-submit {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 15px;
+}
+
+.submit-btn {
+    background: #ffec99;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-weight: 700;
+    color: #5c532e;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.submit-btn:hover {
+    background: #ffd43b;
+}
+
+/* 하단 피드 컨테이너 중앙 정렬 */
+.feed-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* 피드 카드 스타일 구조 스케일링 */
+.feed-card {
+    background: #ffffff;
+    border: 1px solid #efefef;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+
+.feed-left {
+    flex: 1.3;
+    padding: 25px;
+    min-width: 300px;
+}
+
+.feed-divider {
+    width: 1px;
+    background: #f1f1f1;
+}
+
+.feed-right {
+    flex: 0.7;
+    padding: 25px;
+    background: #fcfbfa;
+    min-width: 250px;
+}
+/* ==========================================
+   [추가] 케미 프로젝트 행성 테마 & 모달 팝업
+   ========================================== */
+.projects-page-container {
+    max-width: 1200px; margin: 40px auto;
+    display: flex; gap: 40px; padding: 0 20px; flex-wrap: wrap;
+}
+.projects-universe-section {
+    flex: 1.2; min-width: 450px; height: 580px;
+    background: radial-gradient(circle, #ffffff 0%, #faf9f4 100%);
+    border: 1px solid #e8e6dc; border-radius: 28px;
+    position: relative; overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(232,230,220,0.2);
+}
+.universe-center-node { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 10; }
+.center-gradient-title {
+    font-size: 32px; font-weight: 900; line-height: 1.3; margin: 0 0 8px 0;
+    background: linear-gradient(135deg, #ff9494, #ffcb7c, #63b3ed);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.center-sub { font-size: 13px; color: #999; margin: 0; font-weight: 500; }
+
+/* 동동 무한 루프 모션 그래픽 */
+.moving-orbit-bubble {
+    position: absolute; width: 140px; height: 140px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04); transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer; z-index: 5; animation: floatingOrbit 5s ease-in-out infinite alternate;
+}
+.moving-orbit-bubble:hover { transform: scale(1.08); box-shadow: 0 12px 30px rgba(0,0,0,0.08); z-index: 12; }
+.bubble-inner-content { text-align: center; padding: 15px; }
+.bubble-num { font-size: 11px; font-weight: 800; opacity: 0.5; display: block; margin-bottom: 2px; }
+.bubble-title { font-size: 13px; font-weight: 700; color: #333; line-height: 1.3; word-break: keep-all; display: block; }
+.click-hint { font-size: 10px; color: #888; background: rgba(255,255,255,0.5); padding: 2px 6px; border-radius: 8px; display: inline-block; margin-top: 5px; font-weight: 600; }
+
+@keyframes floatingOrbit {
+    0% { transform: translateY(0px) translateX(0px); }
+    50% { transform: translateY(-10px) translateX(4px); }
+    100% { transform: translateY(6px) translateX(-4px); }
+}
+
+/* 행성 색상 컬렉션 */
+.bubble-color-1 { background: rgba(255, 236, 153, 0.75); border: 2px solid #ffe3b3; }
+.bubble-color-2 { background: rgba(211, 247, 211, 0.75); border: 2px solid #bdf0bd; }
+.bubble-color-3 { background: rgba(225, 216, 254, 0.75); border: 2px solid #d2c4fd; }
+.bubble-color-4 { background: rgba(255, 211, 211, 0.75); border: 2px solid #ffbcbc; }
+.bubble-color-5 { background: rgba(204, 238, 255, 0.75); border: 2px solid #bce6ff; }
+
+/* 우측 사이드바 폼 */
+.projects-sidebar-section { flex: 0.8; min-width: 320px; display: flex; flex-direction: column; gap: 25px; }
+.sidebar-card { background: #fff; border: 1px solid #e8e6dc; border-radius: 20px; padding: 24px; box-shadow: 0 6px 15px rgba(0,0,0,0.01); }
+.sidebar-card h3 { margin: 0 0 16px 0; font-size: 17px; font-weight: 800; color: #4a4538; }
+.sidebar-text-input { width: 100%; padding: 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; font-size: 13px; outline: none; margin-bottom: 10px; box-sizing: border-box; }
+.sidebar-textarea { width: 100%; padding: 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; font-size: 13px; outline: none; margin-bottom: 12px; resize: none; box-sizing: border-box; }
+.sidebar-submit-btn { width: 100%; background: #ffec99; border: none; padding: 12px; border-radius: 10px; font-weight: 700; color: #5c532e; font-size: 14px; cursor: pointer; }
+.sidebar-submit-btn:hover { background: #ffd43b; }
+
+/* 상세 팝업(모달) 스타일 */
+.projects-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
+    z-index: 2000; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.projects-modal-overlay.active { opacity: 1; pointer-events: auto; }
+.projects-modal-content {
+    background: #ffffff; width: 90%; max-width: 500px; padding: 35px;
+    border-radius: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    position: relative; transform: translateY(20px); transition: transform 0.3s ease;
+}
+.projects-modal-overlay.active .projects-modal-content { transform: translateY(0); }
+.modal-close-btn { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #aaa; cursor: pointer; line-height: 1; }
+.modal-close-btn:hover { color: #555; }
+.modal-header-tag { font-size: 11px; font-weight: 800; color: #0095f6; background: #e6f4fe; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-bottom: 12px; letter-spacing: 0.5px; }
+.modal-main-title { font-size: 22px; font-weight: 800; color: #222; margin: 0 0 15px 0; }
+.modal-divider { border: 0; height: 1px; background: #eee; margin-bottom: 20px; }
+.modal-body-summary { font-size: 15px; color: #555; line-height: 1.7; margin: 0; white-space: pre-wrap; }
+
+/* ========================================================
+   ✨ 팀프로젝트 우주 유니버스 테마 스타일 (style.css 맨 아래 추가)
+   ======================================================== */
+
+.project-page-container {
+    background: radial-gradient(circle at center, #1a1a2e 0%, #0f0c1b 100%);
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+    font-family: 'Pretendard', sans-serif;
+    margin: -20px 0; /* 상하 여백 초기화 */
+}
+
+/* 중앙 은하 노드 */
+.project-universe-section {
+    position: relative;
+    width: 100%;
+    height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.universe-center-node {
+    text-align: center;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 30px 50px;
+    border-radius: 50%;
+    box-shadow: 0 0 60px rgba(191, 161, 29, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+}
+
+.center-gradient-title {
+    font-size: 55px;
+    font-weight: 900;
+    margin: 0;
+    background: linear-gradient(135deg, #ffd700 0%, #bfa11d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 4px;
+}
+
+.center-sub {
+    color: #a0a0c0;
+    font-size: 14px;
+    letter-spacing: 6px;
+    margin: 5px 0 0 0;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+/* 둥둥 떠다니는 궤도 행성 버블 */
+.moving-orbit-bubble {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-sizing: border-box;
+    padding: 15px;
+    text-align: center;
+    animation: floatingOrbit 6s ease-in-out infinite alternate;
+}
+
+/* 버블 색상 조합 (우주 감성 네온) */
+.bubble-color-1 { background: radial-gradient(circle at 30% 30%, #ff7675, #d63031); box-shadow: 0 10px 30px rgba(214, 48, 49, 0.4); }
+.bubble-color-2 { background: radial-gradient(circle at 30% 30%, #74b9ff, #0984e3); box-shadow: 0 10px 30px rgba(9, 132, 227, 0.4); }
+.bubble-color-3 { background: radial-gradient(circle at 30% 30%, #a29bfe, #6c5ce7); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4); }
+.bubble-color-4 { background: radial-gradient(circle at 30% 30%, #ffeaa7, #fdcb6e); box-shadow: 0 10px 30px rgba(253, 203, 110, 0.4); }
+.bubble-color-5 { background: radial-gradient(circle at 30% 30%, #55efc4, #00b894); box-shadow: 0 10px 30px rgba(0, 184, 148, 0.4); }
+
+/* 애니메이션 속도 엇갈리게 하여 불규칙성 부여 */
+.moving-orbit-bubble:nth-child(2n) { animation-duration: 8s; animation-delay: -2s; }
+.moving-orbit-bubble:nth-child(3n) { animation-duration: 5s; animation-delay: -1s; }
+
+.moving-orbit-bubble:hover {
+    transform: scale(1.15) translateY(-10px);
+    filter: brightness(1.2);
+    z-index: 10;
+}
+
+.bubble-inner-content {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.bubble-num {
+    font-size: 10px;
+    font-weight: 700;
+    opacity: 0.8;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.bubble-title {
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.click-hint {
+    font-size: 9px;
+    background: rgba(255,255,255,0.2);
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-top: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* 하단 프로젝트 리스트/등록 구역 */
+.project-management-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.project-form-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 25px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+}
+
+.project-form-card h3 {
+    margin: 0 0 20px 0;
+    color: #ffd700;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.project-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.proj-input, .proj-textarea {
+    width: 100%;
+    padding: 12px 18px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    outline: none;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.proj-input:focus, .proj-textarea:focus {
+    border-color: #bfa11d;
+}
+
+.proj-submit-btn {
+    align-self: flex-end;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #ffd700, #bfa11d);
+    color: #111;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.proj-submit-btn:hover { opacity: 0.9; }
+
+/* 리스트 스타일 */
+.project-list-wrapper h3 {
+    color: white;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.project-legacy-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.project-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-info-block h4 {
+    margin: 0 0 5px 0;
+    color: white;
+    font-size: 16px;
+}
+
+.project-info-block p {
+    margin: 0;
+    color: #8a8a9e;
+    font-size: 14px;
+}
+
+.proj-delete-btn {
+    color: #ff7675;
+    background: rgba(255,118,117,0.1);
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* 🪐 팝업 모달 상세창 디자인 */
+.project-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.project-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.project-modal-content {
+    background: #1e1b29;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 90%;
+    max-width: 500px;
+    padding: 35px;
+    border-radius: 24px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    color: white;
+    transform: translateY(30px);
+    transition: transform 0.3s ease;
+}
+
+.project-modal-overlay.active .project-modal-content {
+    transform: translateY(0);
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 20px; right: 25px;
+    font-size: 28px; color: #aaa; cursor: pointer;
+}
+.modal-close-btn:hover { color: white; }
+
+.modal-header-tag {
+    font-size: 11px; color: #bfa11d; font-weight: 800; letter-spacing: 2px; display: block; margin-bottom: 8px;
+}
+
+.modal-main-title { margin: 0 0 15px 0; font-size: 24px; font-weight: 800; color: #fff; }
+.modal-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px; }
+.modal-body-summary { color: #b2b2c3; font-size: 15px; line-height: 1.6; margin: 0; white-space: pre-wrap; }
+
+/* 둥둥 뜨는 애니메이션 정의 */
+@keyframes floatingOrbit {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-15px) rotate(3deg); }
+}

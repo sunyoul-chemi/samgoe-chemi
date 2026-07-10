@@ -419,5 +419,7 @@ def delete_project(project_id):
 
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True)
+    # 렌더 서버 호환용 포트 설정 적용
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 

@@ -8,7 +8,9 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = "chemi_secret_admin_key_1234"
 
-UPLOAD_FOLDER = "static/uploads"
+# 서버가 절대 경로로 업로드 폴더를 안전하게 만들도록 수정합니다.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 

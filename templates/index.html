@@ -1,67 +1,112 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHEMI - 삼괴고 최고의 실험 동아리</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+{% extends "layout.html" %}
 
-    <header>
-        <a href="index.html" class="logo">🧪 CHEMI</a>
-        <nav>
-            <a href="#">홈</a>
-            <a href="#">아이디어 플랫폼</a>
-            <a href="#">케미 캘린더</a>
-            <a href="#">시약 찾기</a>
-            <a href="#">실험 사진</a>
-            <a href="#" class="nav-btn-link">🚀 팀프로젝트</a>
-            <a href="#">🔒 관리자</a>
-        </nav>
-    </header>
+{% block content %}
 
-    <main>
-        <section class="hero">
-            <img src="KakaoTalk_20260709_143736435.jpg" alt="삼괴고 최고의 실험 동아리 단체사진" class="hero-image">
-            
-            <div class="hero-text">
-                <h1>삼괴고 최고의 실험 동아리</h1>
-                <h2>HighEnd를 향해</h2>
-                <p>최고의 학생들이 있을 곳은 최고의 동아리 케미</p>
-            </div>
-        </section>
+<section class="hero">
 
-        <section class="intro">
-            <h2>Welcome to Chemi</h2>
-            <p>우리 동아리는 다양한 화학 및 과학 실험을 통해 창의적인 아이디어를 실현하는 공간입니다.</p>
-        </section>
+    <img src="{{ url_for('static', filename='KakaoTalk_20260709_143736435.jpg') }}"
+         class="hero-image">
 
-        <section class="cards">
-            <a href="#" class="card">
-                <h2>💡 아이디어 플랫폼</h2>
-                <p>자유롭게 실험 아이디어를 공유하고 토론하는 공간입니다.</p>
-            </a>
-            <a href="#" class="card">
-                <h2>📅 케미 캘린더</h2>
-                <p>동아리 실험 일정 및 주요 행사를 한눈에 확인하세요.</p>
-            </a>
-            <a href="#" class="card">
-                <h2>🔍 시약 찾기</h2>
-                <p>실험실에 구비된 시약의 위치와 안전 정보를 검색합니다.</p>
-            </a>
-            <a href="#" class="card">
-                <h2>📸 실험 사진 갤러리</h2>
-                <p>생생한 실험 현장과 결과를 사진으로 공유합니다.</p>
-            </a>
-        </section>
+    <div class="hero-text">
 
-        <section class="about">
-            <h2>About Our Club</h2>
-            <p>삼괴고등학교 화학 실험 동아리 CHEMI는 학문적 탐구열을 바탕으로 한 단계 더 높은 HighEnd 과학 기술 역량을 키워나갑니다.</p>
-        </section>
-    </main>
+        <h1>삼괴고 최고의 실험 동아리</h1>
 
-</body>
-</html>
+        <h2>HighEnd를 향해</h2>
 
+        <p>
+            최고의 학생들이 있을 곳은 최고의 동아리 케미
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="intro">
+
+    <h2>Welcome to Chemi</h2>
+
+    <p>
+
+        실험 기록을 공유하고,
+        새로운 아이디어를 제안하며,
+        동아리 일정을 관리하는
+        케미 홈페이지입니다.
+        
+
+    </p>
+
+</section>
+
+
+<section class="cards">
+
+    <a href="/ideas" class="card">
+
+        <h2>💡 아이디어 피드</h2>
+
+        <p>
+
+            실험 아이디어와
+            프로젝트를 자유롭게 공유하세요.
+
+        </p>
+
+    </a>
+
+    <a href="/calendar" class="card">
+
+        <h2>📅 케미 캘린더</h2>
+
+        <p>
+
+            동아리 일정과
+            실험 일정을 한눈에 확인하세요.
+
+        </p>
+
+    </a>
+
+    <a href="/reagent" class="card">
+
+        <h2>🧪 시약 찾기</h2>
+
+        <p>
+
+            필요한 시약의 위치를
+            빠르게 검색할 수 있습니다.
+
+        </p>
+
+    </a>
+
+    <a href="/upload" class="card">
+
+        <h2>📷 실험 사진</h2>
+
+        <p>
+
+            실험 사진을 업로드하고
+            모두와 공유해 보세요.
+
+        </p>
+
+    </a>
+
+</section>
+
+
+
+<section class="about">
+
+    <h2>CHEMI 소개</h2>
+
+    <p>
+
+        케미는 최고의 역량을 지닌 학생들이 모인 삼괴고 최고의 실험 동아리입니다.
+
+    </p>
+
+</section>
+
+{% endblock %}

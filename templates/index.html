@@ -2,38 +2,106 @@
 
 {% block content %}
 
-<section style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; width: 100%; max-width: 1200px; margin: 30px auto; padding: 20px; box-sizing: border-box; gap: 40px;">
-  
-  <div style="flex: 1; min-width: 280px; max-width: 550px; width: 100%;">
-    <img src="{{ url_for('static', filename='KakaoTalk_20260709_143736435.jpg') }}" alt="홈화면 사진" style="width: 100%; height: auto; display: block; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); object-fit: contain;">
-  </div>
+<style>
+    .hero {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .hero-image {
+        flex: 1;
+        min-width: 280px;
+        max-width: 550px;
+        width: 100% !important;
+        height: auto !important;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        object-fit: contain;
+    }
+    .hero-text {
+        flex: 1;
+        min-width: 280px;
+        padding: 10px;
+        word-break: keep-all;
+    }
+    
+    /* 화면이 좁은 패드나 폰에서 글자 크기가 본래 비율에 맞춰 자연스럽게 축소되도록 자동 조정 */
+    @media (max-width: 768px) {
+        .hero-text h1 { font-size: 1.8rem !important; }
+        .hero-text h2 { font-size: 1.4rem !important; }
+        .hero-text p { font-size: 1rem !important; }
+    }
+</style>
 
-  <div style="flex: 1; min-width: 280px; padding: 10px; word-break: keep-all;">
-    <h1 style="font-size: calc(1.8rem + 1vw); color: #ecc844; font-weight: bold; margin: 0 0 10px 0; line-height: 1.2;">삼괴고 최고의 실험 동아리</h1>
-    <h2 style="font-size: calc(1.3rem + 0.5vw); font-weight: bold; margin: 0 0 20px 0; color: #333;">HighEnd를 향해</h2>
-    <p style="font-size: calc(1rem + 0.2vw); color: #666; line-height: 1.6; margin: 0;">최고의 학생들이 있을 곳은 최고의 동아리 케미</p>
-  </div>
+<section class="hero">
+
+    <img src="{{ url_for('static', filename='KakaoTalk_20260709_143736435.jpg') }}" class="hero-image" alt="홈화면 사진">
+
+    <div class="hero-text">
+        <h1>삼괴고 최고의 실험 동아리</h1>
+        <h2>HighEnd를 향해</h2>
+        <p>최고의 학생들이 있을 곳은 최고의 동아리 케미</p>
+    </div>
 
 </section>
 
-<section class="intro" style="max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box;">
-  <h2>Welcome to Chemi</h2>
-  <p>실험 기록을 공유하고, 새로운 아이디어를 제안하며, 동아리 일정을 관리하는 케미 홈페이지입니다.</p>
+<section class="intro">
+    <h2>Welcome to Chemi</h2>
+    <p>
+        실험 기록을 공유하고,
+        새로운 아이디어를 제안하며,
+        동아리 일정을 관리하는
+        케미 홈페이지입니다.
+    </p>
+</section>
 
-  <div style="margin-top: 30px;">
-    <h3>💡 <a href="{{ url_for('ideas') }}">아이디어 피드</a></h3>
-    <p>실험 아이디어와 프로젝트를 자유롭게 공유하세요.</p>
-  </div>
+<section class="cards">
 
-  <div style="margin-top: 20px;">
-    <h3>📅 <a href="#">케미 캘린더</a></h3>
-    <p>동아리 일정과 실험 일정을 한눈에 확인하세요.</p>
-  </div>
+    <a href="/ideas" class="card">
+        <h2>💡 아이디어 피드</h2>
+        <p>
+            실험 아이디어와
+            프로젝트를 자유롭게 공유하세요.
+        </p>
+    </a>
 
-  <div style="margin-top: 20px;">
-    <h3>🧪 <a href="#">시약 찾기</a></h3>
-    <p>보유한 시약의 위치를 빠르게 검색할 수 있습니다.</p>
-  </div>
+    <a href="/calendar" class="card">
+        <h2>📅 케미 캘린더</h2>
+        <p>
+            동아리 일정과
+            실험 일정을 한눈에 확인하세요.
+        </p>
+    </a>
+
+    <a href="/reagent" class="card">
+        <h2>🧪 시약 찾기</h2>
+        <p>
+            필요한 시약의 위치를
+            빠르게 검색할 수 있습니다.
+        </p>
+    </a>
+
+    <a href="/upload" class="card">
+        <h2>📷 실험 사진</h2>
+        <p>
+            실험 사진을 업로드하고
+            모두와 공유해 보세요.
+        </p>
+    </a>
+
+</section>
+
+<section class="about">
+    <h2>CHEMI 소개</h2>
+    <p>
+        케미는 최고의 역량을 지닌 학생들이 모인 삼괴고 최고의 실험 동아리입니다.
+    </p>
 </section>
 
 {% endblock %}

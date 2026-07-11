@@ -2,83 +2,19 @@
 
 {% block content %}
 
-<style>
-  .hero-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 20px;
-    box-sizing: border-box;
-    gap: 40px;
-  }
-  .hero-img-box {
-    flex: 1.2;  /* 노트북에서 사진이 조금 더 시원하게 보이도록 비율 조정 */
-    width: 100%;
-  }
-  .hero-text-box {
-    flex: 1;
-    word-break: keep-all;
-  }
-  .hero-title {
-    font-size: 2.8rem;
-    color: #ecc844;
-    font-weight: bold;
-    margin-bottom: 15px;
-    line-height: 1.2;
-  }
-  .hero-subtitle {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  .hero-desc {
-    font-size: 1.2rem;
-    color: #666;
-    line-height: 1.6;
-  }
-
-  /* 🚨 패드나 핸드폰(화면 가로 992px 이하)에서만 작동하는 마법의 구역 */
-  @media (max-width: 992px) {
-    .hero-container {
-      flex-direction: column; /* 사진 밑으로 글자가 자연스럽게 떨어짐 */
-      text-align: center;
-      margin: 20px auto;
-      gap: 25px;
-    }
-    .hero-title {
-      font-size: 1.8rem; /* 모바일 기기 안에서 글자가 알맞게 줄어듬 */
-    }
-    .hero-subtitle {
-      font-size: 1.4rem;
-    }
-    .hero-desc {
-      font-size: 1rem;
-    }
-  }
-</style>
-
-<section class="hero-container">
+<section style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; width: 100%; max-width: 1200px; margin: 30px auto; padding: 20px; box-sizing: border-box; gap: 40px;">
   
-  <div class="hero-img-box">
-    <img src="{{ url_for('static', filename='KakaoTalk_20260709_143736435.jpg') }}" alt="홈화면 사진" style="width: 100%; height: auto; display: block; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+  <div style="flex: 1; min-width: 280px; max-width: 550px; width: 100%;">
+    <img src="{{ url_for('static', filename='KakaoTalk_20260709_143736435.jpg') }}" alt="홈화면 사진" style="width: 100%; height: auto; display: block; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); object-fit: contain;">
   </div>
 
-  <div class="hero-text-box">
-    <h1 class="hero-title">삼괴고 최고의 실험 동아리</h1>
-    <h2 class="hero-subtitle">HighEnd를 향해</h2>
-    <p class="hero-desc">최고의 학생들이 있을 곳은 최고의 동아리 케미</p>
+  <div style="flex: 1; min-width: 280px; padding: 10px; word-break: keep-all;">
+    <h1 style="font-size: calc(1.8rem + 1vw); color: #ecc844; font-weight: bold; margin: 0 0 10px 0; line-height: 1.2;">삼괴고 최고의 실험 동아리</h1>
+    <h2 style="font-size: calc(1.3rem + 0.5vw); font-weight: bold; margin: 0 0 20px 0; color: #333;">HighEnd를 향해</h2>
+    <p style="font-size: calc(1rem + 0.2vw); color: #666; line-height: 1.6; margin: 0;">최고의 학생들이 있을 곳은 최고의 동아리 케미</p>
   </div>
 
 </section>
-</section>
-
-
-<section class="intro">
 
     <h2>Welcome to Chemi</h2>
 

@@ -14,7 +14,7 @@
             color: #333;
         }
         header {
-            background-color: #fce166; /* 쨍하고 이쁜 케미 노란색 배경 */
+            background-color: #fce166 !important; /* 케미 고유의 노란색 바 */
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
@@ -32,7 +32,6 @@
             font-weight: 600;
             margin-left: 20px;
             font-size: 15px;
-            transition: color 0.2s;
         }
         nav a:hover {
             color: #000;
@@ -40,7 +39,6 @@
         main {
             min-height: 70vh;
         }
-        /* 카드 세션 스타일 복구 */
         .cards {
             display: flex;
             flex-wrap: wrap;
@@ -59,29 +57,19 @@
             text-decoration: none;
             color: inherit;
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.08);
-        }
-        .card h2 { margin: 0 0 10px 0; font-size: 18px; color: #333; }
-        .card p { margin: 0; font-size: 14px; color: #666; line-height: 1.5; }
-        
         .intro, .about {
             text-align: center;
             max-width: 800px;
             margin: 50px auto;
             padding: 0 20px;
         }
-        .intro h2, .about h2 { font-size: 24px; color: #333; margin-bottom: 15px; }
-        .intro p, .about p { color: #666; line-height: 1.6; font-size: 15px; }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="/" class="logo" style="text-decoration: none; color: inherit;">🧪 CHEMI</a>
+        <a href="/" class="logo">🧪 CHEMI</a>
         <nav>
             <a href="/">홈</a>
             <a href="/ideas">아이디어 플랫폼</a>
@@ -101,25 +89,21 @@
     <main>
         {% block content %}
         {% endblock %}
-   </main>
+    </main>
 
-    <footer style="background-color: #f8f9fa; border-top: 1px solid #eeece1; padding: 35px 20px; margin-top: 60px; font-family: 'Pretendard', sans-serif;">
+    <footer style="background-color: #f8f9fa; border-top: 1px solid #eeece1; padding: 35px 20px; margin-top: 60px;">
         <div style="max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-            
             <div style="color: #666; font-size: 14px; line-height: 1.6;">
-                <p style="margin: 0 0 8px 0; font-weight: 700; color: #333; letter-spacing: 0.5px;">📧 CONTACT</p>
-                <p style="margin: 0 2px 4px 0; color: #4a5568;">👨‍🏫 담당 선생님: <strong style="color: #2d3748;">신경일T, 김민기T</strong></p>
-                <p style="margin: 0;">이메일 문의: <a href="mailto:sp1ns2rv2r@naver.com" style="color: #4a5568; text-decoration: none; font-weight: 600; border-bottom: 1px dashed #cbd5e1; padding-bottom: 1px;">sp1ns2rv2r@naver.com</a></p>
+                <p style="margin: 0 0 8px 0; font-weight: 700; color: #333;">📧 CONTACT</p>
+                <p style="margin: 0 2px 4px 0;">👨‍🏫 담당 선생님: <strong>신경일T, 김민기T</strong></p>
+                <p style="margin: 0;">이메일 문의: sp1ns2rv2r@naver.com</p>
             </div>
-
             <div>
-                <a href="https://www.instagram.com/samgoe_chemi2026/" target="_blank" style="display: flex; align-items: center; gap: 8px; text-decoration: none; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; padding: 10px 20px; border-radius: 25px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 12px rgba(220, 39, 67, 0.2); transition: all 0.2s ease-in-out;">
-                    <span style="font-size: 16px;">📸</span> CHEMI 인스타그램 바로가기
+                <a href="https://www.instagram.com/samgoe_chemi2026/" target="_blank" style="display: flex; align-items: center; gap: 8px; text-decoration: none; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; padding: 10px 20px; border-radius: 25px; font-size: 14px; font-weight: bold;">
+                    📸 CHEMI 인스타그램 바로가기
                 </a>
             </div>
-
         </div>
-        
         <div style="max-width: 1000px; margin: 25px auto 0 auto; border-top: 1px solid #e2e8f0; padding-top: 15px; text-align: center; color: #aaa; font-size: 12px;">
             © 2026 삼괴고등학교 최고 실험 동아리 CHEMI. All rights reserved.
         </div>

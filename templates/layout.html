@@ -8,14 +8,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     
     <style>
-        body {
+        html, body {
+            background: #ffffff !important; /* 브라우저 기본 바탕을 완전한 흰색으로 강제 */
+            background-color: #ffffff !important;
             margin: 0;
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background-color: #ffffff !important; /* 🚨 칙칙한 회색을 빼고 원래의 완벽한 100% 순수 흰색으로 복구! */
             color: #333;
         }
         header {
-            background-color: #fce166 !important; /* 케미 고유의 이쁜 노란색 상단바 */
+            background-color: #fce166 !important; /* 상단 노란색 바 */
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
@@ -39,8 +40,10 @@
             color: #000;
         }
         main {
+            background: #ffffff !important; /* 🚨 본문 영역 배경도 완전한 흰색으로 강제 */
+            background-color: #ffffff !important;
             min-height: 70vh;
-            padding-top: 40px; /* 🚨 노란색 바 바로 밑에 시원한 여백을 주어 스크롤이 위로 바짝 붙는 현상 해결! */
+            padding-top: 40px; /* 상단바 아래 편안한 여백 확보 */
         }
     </style>
 </head>

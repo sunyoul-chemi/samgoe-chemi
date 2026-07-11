@@ -16,89 +16,24 @@
 
 </section>
 
-    <h2>Welcome to Chemi</h2>
+<section class="intro" style="max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box;">
+  <h2>Welcome to Chemi</h2>
+  <p>실험 기록을 공유하고, 새로운 아이디어를 제안하며, 동아리 일정을 관리하는 케미 홈페이지입니다.</p>
 
-    <p>
+  <div style="margin-top: 30px;">
+    <h3>💡 <a href="{{ url_for('ideas') }}">아이디어 피드</a></h3>
+    <p>실험 아이디어와 프로젝트를 자유롭게 공유하세요.</p>
+  </div>
 
-        실험 기록을 공유하고,
-        새로운 아이디어를 제안하며,
-        동아리 일정을 관리하는
-        케미 홈페이지입니다.
-        
+  <div style="margin-top: 20px;">
+    <h3>📅 <a href="#">케미 캘린더</a></h3>
+    <p>동아리 일정과 실험 일정을 한눈에 확인하세요.</p>
+  </div>
 
-    </p>
-
-</section>
-
-
-<section class="cards">
-
-    <a href="/ideas" class="card">
-
-        <h2>💡 아이디어 피드</h2>
-
-        <p>
-
-            실험 아이디어와
-            프로젝트를 자유롭게 공유하세요.
-
-        </p>
-
-    </a>
-
-    <a href="/calendar" class="card">
-
-        <h2>📅 케미 캘린더</h2>
-
-        <p>
-
-            동아리 일정과
-            실험 일정을 한눈에 확인하세요.
-
-        </p>
-
-    </a>
-
-    <a href="/reagent" class="card">
-
-        <h2>🧪 시약 찾기</h2>
-
-        <p>
-
-            필요한 시약의 위치를
-            빠르게 검색할 수 있습니다.
-
-        </p>
-
-    </a>
-
-    <a href="/upload" class="card">
-
-        <h2>📷 실험 사진</h2>
-
-        <p>
-
-            실험 사진을 업로드하고
-            모두와 공유해 보세요.
-
-        </p>
-
-    </a>
-
-</section>
-
-
-
-<section class="about">
-
-    <h2>CHEMI 소개</h2>
-
-    <p>
-
-        케미는 최고의 역량을 지닌 학생들이 모인 삼괴고 최고의 실험 동아리입니다.
-
-    </p>
-
+  <div style="margin-top: 20px;">
+    <h3>🧪 <a href="#">시약 찾기</a></h3>
+    <p>보유한 시약의 위치를 빠르게 검색할 수 있습니다.</p>
+  </div>
 </section>
 
 {% endblock %}

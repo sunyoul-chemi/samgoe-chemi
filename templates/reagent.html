@@ -92,7 +92,6 @@
             function toggleInput(selectId, inputId) {
                 var selectEl = document.getElementById(selectId);
                 var inputEl = document.getElementById(inputId);
-                
                 if (selectEl.value === "custom") {
                     inputEl.style.display = "block";
                     inputEl.value = "";
@@ -104,13 +103,6 @@
                     inputEl.required = false;
                 }
             }
-            // 폼 전송 전 최종 값 동기화 데이터 검증
-            document.getElementById('locationInput').addEventListener('input', function() {
-                document.getElementById('locationSelect').value = "custom";
-            });
-            document.getElementById('statusInput').addEventListener('input', function() {
-                document.getElementById('statusSelect').value = "custom";
-            });
         </script>
         {% endif %}
 
@@ -118,14 +110,13 @@
             <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
                 <thead>
                     <tr style="background: #faf9f5; border-bottom: 2px solid #eeece1; color: #555; font-weight: 700;">
-                        <th style="padding: 15px 20px;">시약 정보</th>
-                        <th style="padding: 15px 20px;">화학식</th>
-                        <th style="padding: 15px 20px;">시약 분류</th>
-                        <th style="padding: 15px 20px;">보관 위치</th>
-                        <th style="padding: 15px 20px; text-align: center;">위험도</th>
-                        <th style="padding: 15px 20px; text-align: center;">상태</th>
+                        <th style="padding: 15px 20px; width: 20%;">시약 정보</th>
+                        <th style="padding: 15px 20px; width: 15%;">화학식</th>
+                        <th style="padding: 15px 20px; width: 30%;">시약 분류 및 보관 위치</th>
+                        <th style="padding: 15px 20px; text-align: center; width: 15%;">위험도</th>
+                        <th style="padding: 15px 20px; text-align: center; width: 10%;">상태</th>
                         {% if session.get('is_admin') %}
-                        <th style="padding: 15px 20px; text-align: center;">관리</th>
+                        <th style="padding: 15px 20px; text-align: center; width: 10%;">관리</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -136,25 +127,24 @@
                         
                         <td style="padding: 15px 20px; font-weight: 600; color: #bfa11d;">{{ r[2] }}</td>
                         
-                        <td style="padding: 15px 20px;">
-                            <span style="background: #eef3ff; color: #4e54c8; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">{{ r[3] }}</span>
+                        <td style="padding: 15px 20px; color: #333; font-weight: 500;">
+                            <span style="background: #eef3ff; color: #4e54c8; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; margin-right: 6px;">📋</span>
+                            {{ r[3] }}
                         </td>
                         
-                        <td style="padding: 15px 20px; color: #555;"><span style="color: #ff416c; margin-right: 4px;">📍</span>{{ r[4] }}</td>
-                        
                         <td style="padding: 15px 20px; text-align: center;">
-                            {% if r[6] == '위험' %}
-                                <span style="background: #ffeef0; color: #ff416c; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">위험</span>
-                            {% elif r[6] == '경고' %}
-                                <span style="background: #fff4e6; color: #ff922b; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">경고</span>
+                            {% if r[4] == '위험' %}
+                                <span style="background: #ffeef0; color: #ff416c; padding: 5px 12px; border-radius: 6px; font-weight: 700; font-size: 12px;">위험</span>
+                            {% elif r[4] == '경고' %}
+                                <span style="background: #fff4e6; color: #ff922b; padding: 5px 12px; border-radius: 6px; font-weight: 700; font-size: 12px;">경고</span>
                             {% else %}
-                                <span style="background: #eafaf1; color: #11998e; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">낮음</span>
+                                <span style="background: #eafaf1; color: #11998e; padding: 5px 12px; border-radius: 6px; font-weight: 700; font-size: 12px;">{{ r[4] if r[4] else '낮음' }}</span>
                             {% endif %}
                         </td>
                         
                         <td style="padding: 15px 20px; text-align: center;">
                             <span style="font-size: 13px; font-weight: 700; color: {% if r[5] == '보관중' or r[5] == '사용중' %}#11998e{% else %}#999{% endif %};">
-                                {{ r[5] }}
+                                {{ r[5] if r[5] else '보관중' }}
                             </span>
                         </td>
                         
@@ -166,7 +156,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="{{ '7' if session.get('is_admin') else '6' }}" style="padding: 60px; text-align: center; color: #a09c92; font-style: italic;">
+                        <td colspan="{{ '6' if session.get('is_admin') else '5' }}" style="padding: 60px; text-align: center; color: #a09c92; font-style: italic;">
                             검색 조건에 해당하거나 등록된 시약 데이터가 현재 존재하지 않습니다.
                         </td>
                     </tr>

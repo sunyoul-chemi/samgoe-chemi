@@ -441,6 +441,73 @@ body:has(.reagent-wrapper) {
 }
 
 /* ==========================================
+   9-2. 팀 프로젝트 상세 모달 글자 가독성 보정 (백금 & 화이트)
+   ========================================== */
+/* 상단 캡션 (RESEARCH INFORMATION) - 화사한 네온 옐로우 */
+.project-modal-content .modal-header-tag {
+    color: #ffe600 !important;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(255, 230, 0, 0.3);
+}
+
+/* 메인 타이틀 (행성 제목) - 눈부신 백금색 (#f8f9fa) */
+.project-modal-content .modal-main-title {
+    color: #f8f9fa !important;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 12px;
+}
+
+/* 본문 요약 (상세 설명) - 깨끗한 화이트 (#ffffff) */
+.project-modal-content .modal-body-summary {
+    color: #ffffff !important;
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: 0.95;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* 우측 상단 닫기 X 버튼 - 백금색 */
+.project-modal-content .modal-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    color: #f8f9fa !important;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.project-modal-content .modal-close-btn:hover {
+    opacity: 1;
+}
+
+/* 관리자 삭제 버튼 - 네온 핑크 톤으로 변경하여 대비 상승 */
+.proj-delete-btn {
+    color: #ff6b6b !important;
+    background: rgba(255, 107, 107, 0.15) !important;
+    border: 1px solid rgba(255, 107, 107, 0.4) !important;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.proj-delete-btn:hover {
+    background: rgba(255, 107, 107, 0.3) !important;
+}
+
+/* ==========================================
    7. 아이디어 플랫폼 전역 배경 전용 룰 (화면 꽉 차게 변경)
    ========================================== */
 body:has(.ideas-page-container) {

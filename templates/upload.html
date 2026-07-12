@@ -10,14 +10,14 @@
 
     <div class="upload-box-container">
         <form action="/upload" method="POST" enctype="multipart/form-data" class="upload-flex-form">
-            <div class="upload-row">
-                <input type="text" name="title" placeholder="업로드할 사진의 실험 이야기를 한 줄로 적어주세요!" required class="upload-input-text">
-                <input type="text" name="tags" placeholder="#화학실험 #태그입력" class="upload-input-text">
-            </div>
+            <input type="text" name="title" placeholder="업로드할 사진의 실험 이야기를 한 줄로 적어주세요!" required class="upload-input-text">
+            <input type="text" name="tags" placeholder="#화학실험 #태그입력" class="upload-input-text tag-input">
+            
             <div class="upload-file-row">
-                <span style="font-size: 13px; color: #666; font-weight: 600;">업로드 파일 선택 📁</span>
+                <span style="font-size: 13px; color: #666; font-weight: 600;">파일 선택 📁</span>
                 <input type="file" name="file" required class="upload-file-hidden">
             </div>
+            
             <button type="submit" class="upload-submit-btn">🚀 실험 사진 업로드</button>
         </form>
     </div>
@@ -28,10 +28,10 @@
             <div class="card-header">
                 <div class="profile-group">
                     <span class="profile-avatar">🧪</span>
-                    <span class="profile-name">CHEMI 업로드</span>
+                    <span class="profile-name">CHEMI 부원</span>
                 </div>
                 {% if session.get('is_admin') %}
-                <a href="/deleteUpload/{{ post.id }}" onclick="return confirm('이 업로드 사진을 삭제하시겠습니까?');" 
+                <a href="/deleteUpload/{{ post.id }}" onclick="return confirm('이 사진을 삭제하시겠습니까?');" 
                    style="color: #dc3545; font-size: 11px; text-decoration: none; font-weight: 700; background: #ffe3e3; padding: 4px 10px; border-radius: 6px;">삭제</a>
                 {% endif %}
             </div>
@@ -47,7 +47,7 @@
         </div>
         {% else %}
         <div style="grid-column: 1 / -1; text-align: center; color: #a09c92; font-size: 15px; font-style: italic; padding: 70px 0; border: 1px dashed #eeece1; border-radius: 22px; background: #fff;">
-            아직 업로드된 실험 사진이 없습니다. 첫 번째 사진을 업로드해 보세요! 🌱
+            아직 업로드된 사진이 없습니다. 첫 번째 주인공이 되어보세요! 🌱
         </div>
         {% endfor %}
     </div>

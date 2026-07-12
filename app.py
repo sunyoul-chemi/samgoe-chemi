@@ -281,64 +281,44 @@ def delete_schedule(sid):
         conn.close()
     return redirect(url_for("calendar"))
 
-# --- 🧪 시약 정보 라우트 수정 구역 ---
-@app.route("/reagent")
-def reagent():
-    keyword = request.args.get("keyword", "")
-    category_filter = request.args.get("category", "") # 카테고리 필터 추가
+@app.route('/reagent')
+def reagent_list():
+    # 1. HTML 폼으로부터 검색어(keyword)와 분류 필터값(category_filter)을 가져옵니다.
+    keyword = request.args.get('keyword', '')
+    category_filter = request.args.get('category_filter', '')  # 새롭게 추가된 분류 필터값
     
-    conn = get_db_connection()
-    c = conn.cursor()
+    # 2. 데이터베이스 연결 (기존에 사용하시던 DB 연결 코드가 있다면 그것을 사용하세요)
+    conn = get_db_connection()  # 예시: 기존 코드의 DB 연결 함수명으로 맞춰주세요
+    cursor = conn.cursor()
     
-    query = "SELECT id, name, formula, location, risk, status, category FROM reagents WHERE 1=1"
+    # 3. 기본 SQL 쿼리문 작성 (기존의 필터 구조 유지)
+    # reagents 테이블에서 데이터를 조회하되, 검색 조건에 따라 WHERE 절을 동적으로 붙입니다.
+    query = "SELECT * FROM reagents WHERE 1=1"
     params = []
     
+    # 키워드 검색어가 입력되었을 때 (시약명 또는 화학식)
     if keyword:
         query += " AND (name LIKE ? OR formula LIKE ?)"
-        params.extend([f"%{keyword}%", f"%{keyword}%"])
+        params.extend([f'%{keyword}%', f'%{keyword}%'])
+        
+    # 시약 분류 필터 선택상자에서 특정 분류를 선택했을 때
     if category_filter:
         query += " AND category = ?"
         params.append(category_filter)
         
-    query += " ORDER BY id DESC"
-    c.execute(query, params)
-    rows = c.fetchall()
+    # 4. 쿼리 실행 및 결과 받아오기
+    cursor.execute(query, params)
+    reagents = cursor.fetchall()
     
-    # 카테고리 선택 상자용 목록 추출
-    c.execute("SELECT DISTINCT category FROM reagents WHERE category IS NOT NULL AND category != ''")
-    categories = [row[0] for row in c.fetchall()]
-    
+    cursor.close()
     conn.close()
-    return render_template("reagent.html", reagents=rows, keyword=keyword, categories=categories, selected_category=category_filter)
-
-@app.route("/addReagent", methods=["POST"])
-def add_reagent():
-    if session.get("is_admin"):
-        name = request.form.get("name")
-        formula = request.form.get("formula")
-        location = request.form.get("location")
-        risk = request.form.get("risk")
-        status = request.form.get("status")
-        category = request.form.get("category") # 신규 등록 시 카테고리 받기
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("INSERT INTO reagents(name, formula, location, risk, status, category) VALUES(?,?,?,?,?,?)", (name, formula, location, risk, status, category))
-        conn.commit()
-        conn.close()
-    return redirect(url_for("reagent"))
-
-@app.route("/deleteReagent/<int:rid>")
-def delete_reagent(rid):
-    if session.get("is_admin"):
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("DELETE FROM reagents WHERE id=?", (rid,))
-        conn.commit()
-        conn.close()
-    return redirect(url_for("reagent"))
-
-# ... [하단 생략: upload, projects 등은 기존과 동일] ...
-
+    
+    # 5. HTML 파일(reagent.html)로 데이터를 넘겨줍니다.
+    # 기존 HTML에서 사용하던 selected_category 변수명으로 매핑하여 호환성을 유지합니다.
+    return render_template('reagent.html', 
+                           reagents=reagents, 
+                           keyword=keyword, 
+                           selected_category=category_filter)
 @app.route("/upload")
 def upload():
     conn = get_db_connection()

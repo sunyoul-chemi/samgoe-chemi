@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="ideas-page-container" style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
+<div class="ideas-page-container" style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
     
     <div style="text-align: center; margin-bottom: 35px;">
         <span style="font-size: 38px;">💡</span>
@@ -8,31 +8,31 @@
         <p style="color: #666; font-size: 15px;">삼괴고 케미 부원들의 반짝이는 실험 구상과 브레인스토밍 공간입니다.</p>
     </div>
 
-    <div class="idea-write-box" style="background: #fff; border-radius: 22px; border: 1px solid #eeece1; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.01); margin-bottom: 40px;">
+    <div class="idea-write-box" style="background: #fff; border-radius: 22px; border: 1px solid #eeece1; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.01); margin-bottom: 40px;">
         <form action="/addIdea" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
             <div style="display: flex; gap: 12px; align-items: center;">
-                <span style="font-size: 18px;">✍️</span>
+                <span style="font-size: 16px;">✍️</span>
                 <input type="text" name="title" placeholder="연구하고 싶은 실험 제목이나 주제를 적어보세요..." required 
                        style="flex: 1; border: none; font-size: 16px; font-weight: 700; color: #333; outline: none; background: transparent;">
             </div>
-            <hr style="border: 0; height: 1px; background: #eeece1; margin: 0;">
+            <hr style="border: 0; height: 1px; background: #f4f3ed; margin: 5px 0;">
             <textarea name="content" rows="4" placeholder="실험 목적, 예상 과정, 혹은 준비물 등을 자유롭게 나누어주세요! ✨" required 
-                      style="width: 100%; border: none; font-size: 14px; line-height: 1.6; color: #4a4a4a; outline: none; resize: none; background: transparent;"></textarea>
+                      style="width: 100%; border: none; font-size: 14px; line-height: 1.7; color: #4a4a4a; outline: none; resize: none; background: transparent;"></textarea>
             <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 5px;">
-                <button type="submit" class="idea-submit-btn" style="padding: 10px 24px; background: #bfa11d; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s;">아이디어 피드 발사 🚀</button>
+                <button type="submit" style="padding: 12px 28px; background: #bfa11d; color: white; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(191,161,29,0.15);">아이디어 피드 발사 🚀</button>
             </div>
         </form>
     </div>
 
-    <div class="ideas-feed-list" style="display: flex; flex-direction: column; gap: 25px;">
-        <h3 style="font-size: 18px; font-weight: 800; color: #4a4538; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">📋 브레인스토밍 실시간 타임라인</h3>
+    <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 40px;">
+        <h3 style="font-size: 17px; font-weight: 800; color: #4a4538; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">📋 브레인스토밍 실시간 타임라인</h3>
         
         {% for idea in ideas %}
-        <div class="idea-feed-card" style="background: #fff; border-radius: 22px; border: 1px solid #eeece1; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.01); position: relative;">
+        <div style="background: #fff; border-radius: 22px; border: 1px solid #eeece1; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.01); position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                 <div>
-                    <span style="font-size: 11px; font-weight: 800; color: #bfa11d; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px;">IDEA ID: #{{ idea.id }}</span>
-                    <h4 style="font-size: 18px; font-weight: 800; color: #333; margin: 0;">{{ idea.title }}</h4>
+                    <span style="font-size: 10px; font-weight: 800; color: #bfa11d; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px;">IDEA ID: #{{ idea.id }}</span>
+                    <h4 style="font-size: 17px; font-weight: 800; color: #333; margin: 0;">{{ idea.title }}</h4>
                 </div>
                 {% if session.get('is_admin') %}
                 <a href="/deleteIdea/{{ idea.id }}" onclick="return confirm('이 귀중한 아이디어를 정말 삭제하시겠습니까?');" 
@@ -42,7 +42,7 @@
             <p style="font-size: 14px; line-height: 1.6; color: #555; margin: 0; white-space: pre-wrap; word-break: break-all;">{{ idea.content }}</p>
         </div>
         {% else %}
-        <div style="text-align: center; color: #a09c92; font-size: 14px; font-style: italic; padding: 50px 0; border: 1px dashed #eeece1; border-radius: 22px; background: rgba(255,255,255,0.4);">
+        <div style="text-align: center; color: #a09c92; font-size: 14px; font-style: italic; padding: 60px 0; border: 1px dashed #eeece1; border-radius: 22px; background: #fff;">
             아직 올라온 연구 구상이 없습니다. 첫 영감의 주인공이 되어보세요! 🌱
         </div>
         {% endfor %}

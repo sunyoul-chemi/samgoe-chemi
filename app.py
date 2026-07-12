@@ -1,17 +1,25 @@
+import os
+import sqlite3
 from datetime import datetime
 import calendar as pycalendar
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-import sqlite3
-import os
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
-# 💡 실제 배포 시에는 무작위 문자열로 바꾸는 것이 좋습니다.
-app.secret_key = "chemi_secret_admin_key_1234"
+# ☁️ Cloudinary 필수 라이브러리 임포트
+import cloudinary
+import cloudinary.uploader
 
-UPLOAD_FOLDER = os.path.join("static", "uploads")
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# ==============================================================
+# ☁️ 1. Cloudinary 공식 영구 저장소 보안 세팅
+# ==============================================================
+cloudinary.config(
+    cloud_name = "keflcpmi",
+    api_key = "833587119529933",
+    api_secret = "FSsEX_w_Mnf_Ri__wsZ6Wdi_sRw"
+)
+
+app = Flask(__name__)
+app.secret_key = "chemi_secret_admin_key_1234"
 
 ADMIN_PASSWORD = "chemistry123!"
 
@@ -90,7 +98,6 @@ def init_db():
     """)
     conn.commit()
 
-    # 예시 시약 데이터 초기화 로직 수정
     reagents = [
         ("염산 (Hydrochloric acid)", "HCl", "산성장 A-01", "위험", "보관중", "산성물질"),
         ("황산 (Sulfuric acid)", "H2SO4", "산성장 A-02", "위험", "보관중", "산성물질"),
@@ -112,7 +119,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-# 💡 중복되었던 루트 주소 하나로 통합!
 @app.route('/')
 def home():
     main_photo = "KakaoTalk_20260709_143736435.jpg"
@@ -297,6 +303,7 @@ def reagent_list():
                            keyword=keyword, 
                            selected_category=category_filter)
 
+# 🖼️ 2. 사진 갤러리 메인 보기 페이지 라우터
 @app.route("/upload")
 def upload():
     conn = get_db_connection()
@@ -306,36 +313,45 @@ def upload():
     conn.close()
     return render_template("upload.html", photos=photos)
 
+# 🌟 3. 신형 사진 업로드 처리 기능 (Cloudinary 무제한 연동 탑재!)
 @app.route("/uploadPhoto", methods=["POST"])
 def upload_photo():
     title = request.form.get("title", "제목 없음")
     tag = request.form.get("tag", "")
     file = request.files.get("photo")
-    if file and file.filename != "":
-        # 파일명 중복을 방지하기 위해 타임스탬프를 붙여줍니다.
-        filename = secure_filename(file.filename)
-        unique_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+    
+    if not file or file.filename == "":
+        flash("업로드할 파일을 선택해 주세요.")
+        return redirect(url_for("upload"))
         
-        file.save(os.path.join(app.config["UPLOAD_FOLDER"], unique_filename))
+    try:
+        # 🔥 서버 하드 대신 Cloudinary 영구 보관소로 바로 발송!
+        upload_result = cloudinary.uploader.upload(file)
         
+        # 업로드 완료 후 발급받은 이미지 고유 URL 주소 획득
+        image_url = upload_result.get("secure_url")
+        
+        # database.db 내의 filename 컬럼 칸에 이미지 풀 주소를 쏙 저장합니다.
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("INSERT INTO photos(filename, title, tag) VALUES(?,?,?)", (unique_filename, title, tag))
+        c.execute("INSERT INTO photos(filename, title, tag) VALUES(?,?,?)", (image_url, title, tag))
         conn.commit()
         conn.close()
+        flash("성공적으로 클라우드에 사진이 저장되었습니다! 🚀")
+        
+    except Exception as e:
+        print("Cloudinary 전송 치명적 에러:", e)
+        flash("사진 업로드 중 오류가 발생했습니다.")
+        
     return redirect(url_for("upload"))
 
+# 🗑️ 4. 사진 데이터 파괴 단추 기능
 @app.route("/deletePhoto/<int:photo_id>")
 def delete_photo(photo_id):
     if session.get("is_admin"):
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("SELECT filename FROM photos WHERE id = ?", (photo_id,))
-        row = c.fetchone()
-        if row and not row[0].startswith("dummy"):
-            filepath = os.path.join(app.config["UPLOAD_FOLDER"], row[0])
-            if os.path.exists(filepath):
-                os.remove(filepath)
+        # 데이터베이스 레코드 깔끔하게 청소
         c.execute("DELETE FROM photos WHERE id = ?", (photo_id,))
         conn.commit()
         conn.close()
@@ -383,7 +399,6 @@ def delete_project(project_id):
         conn.close()
     return redirect(url_for("projects_page"))
 
-# DB 초기화는 앱 실행 전에 한 번만 수행합니다.
 init_db()
 
 if __name__ == "__main__":

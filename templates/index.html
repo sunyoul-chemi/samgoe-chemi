@@ -1,18 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<section class="hero">
-    <img src="{{ url_for('static', filename='KakaoTalk_20260709_143736435.jpg') }}" class="hero-image">
-    <div class="hero-text">
-        <h1>삼괴고 최고의 실험 동아리</h1>
-        <h2>HighEnd를 향해</h2>
-        <p>최고의 학생들이 있을 곳은 최고의 동아리 케미</p>
+<section class="hero-clean-section" style="max-width: 1100px; margin: 50px auto; padding: 0 40px; display: flex; align-items: center; justify-content: center; gap: 60px; flex-wrap: wrap;">
+    
+    <div style="flex: 1; min-width: 300px; max-width: 480px;">
+        <img src="{{ url_for('static', filename='KakaoTalk_20260709_143736435.jpg') }}" 
+             style="width: 100%; height: auto; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); object-fit: cover;">
+    </div>
+    
+    <div style="flex: 1; min-width: 300px;">
+        <h1 style="font-size: 38px; font-weight: 800; color: #bfa11d; margin-bottom: 12px; letter-spacing: -1px;">삼괴고 최고의 실험 동아리</h1>
+        <h2 style="font-size: 24px; color: #2d3748; font-weight: 700; margin-bottom: 20px;">HighEnd를 향해</h2>
+        <p style="font-size: 16px; color: #718096; line-height: 1.7; margin: 0;">최고의 학생들이 있을 곳은 최고의 동아리 케미입니다. 우리만의 깊이 있는 연구와 창의적인 실험 레이스를 펼쳐보세요.</p>
     </div>
 </section>
 
-<section class="intro">
-    <h2>Welcome to Chemi</h2>
-    <p>
+<section class="intro" style="max-width: 800px; margin: 80px auto 40px auto; text-align: center; padding: 0 20px;">
+    <h2 style="font-size: 28px; font-weight: 800; color: #1a202c; margin-bottom: 15px;">Welcome to Chemi</h2>
+    <p style="color: #4a5568; font-size: 15px; line-height: 1.6;">
         실험 기록을 공유하고, 새로운 아이디어를 제안하며, 동아리 일정을 관리하는 케미 홈페이지입니다.
     </p>
 </section>
@@ -39,9 +44,9 @@
     </a>
 </section>
 
-<section class="about">
-    <h2>CHEMI 소개</h2>
-    <p>케미는 최고의 역량을 지닌 학생들이 모인 삼괴고 최고의 실험 동아리입니다.</p>
+<section class="about" style="max-width: 800px; margin: 60px auto 80px auto; text-align: center; padding: 0 20px;">
+    <h2 style="font-size: 22px; font-weight: 800; color: #2d3748; margin-bottom: 12px;">CHEMI 소개</h2>
+    <p style="color: #718096; font-size: 14px;">케미는 최고의 역량을 지닌 학생들이 모인 삼괴고등학교 최고의 실험 동아리입니다.</p>
 </section>
 
 {% endblock %}

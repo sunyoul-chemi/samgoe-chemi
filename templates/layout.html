@@ -1,112 +1,58 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>삼괴고 케미</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
-{% block content %}
+    <header>
+        <a href="/" class="logo" style="text-decoration: none; color: inherit;">🧪 CHEMI</a>
+        <nav>
+            <a href="/">홈</a>
+            <a href="/ideas">아이디어 플랫폼</a>
+            <a href="/calendar">케미 캘린더</a>
+            <a href="/reagent">시약 찾기</a>
+            <a href="/upload">실험 사진</a>
+            <a href="/projects" style="color: #bfa11d; font-weight: 800; margin-left: 5px;">✨ 팀프로젝트</a>
+    
+            {% if session.get('is_admin') %}
+                <a href="/logout" style="color: #dc3545; font-weight: 700; margin-left: 15px;">🔓 로그아웃</a>
+            {% else %}
+                <a href="/login" style="color: #888; margin-left: 15px;">🔐 관리자</a>
+            {% endif %}
+        </nav>
+    </header>
 
-<section class="hero">
+    <main>
+        {% block content %}
+        {% endblock %}
+   </main>
 
-    <img src="{{ url_for('static', filename='KakaoTalk_20260709_143736435.jpg') }}"
-         class="hero-image">
+    <footer style="background-color: #f8f9fa; border-top: 1px solid #eeece1; padding: 35px 20px; margin-top: 60px;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            
+            <div style="color: #666; font-size: 14px; line-height: 1.6;">
+                <p style="margin: 0 0 8px 0; font-weight: 700; color: #333; letter-spacing: 0.5px;">📧 CONTACT</p>
+                <p style="margin: 0 2px 4px 0; color: #4a5568;">👨‍🏫 담당 선생님: <strong style="color: #2d3748;">신경일T, 김민기T</strong></p>
+                <p style="margin: 0;">이메일 문의: <a href="mailto:sp1ns2rv2r@naver.com" style="color: #4a5568; text-decoration: none; font-weight: 600; border-bottom: 1px dashed #cbd5e1; padding-bottom: 1px;">sp1ns2rv2r@naver.com</a></p>
+            </div>
 
-    <div class="hero-text">
+            <div>
+                <a href="https://www.instagram.com/samgoe_chemi2026/" target="_blank" style="display: flex; align-items: center; gap: 8px; text-decoration: none; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; padding: 10px 20px; border-radius: 25px; font-size: 14px; font-weight: bold; box-shadow: 0 4px 12px rgba(220, 39, 67, 0.2);">
+                    <span style="font-size: 16px;">📸</span> CHEMI 인스타그램 바로가기
+                </a>
+            </div>
 
-        <h1>삼괴고 최고의 실험 동아리</h1>
-
-        <h2>HighEnd를 향해</h2>
-
-        <p>
-            최고의 학생들이 있을 곳은 최고의 동아리 케미
-        </p>
-
-    </div>
-
-</section>
-
-
-<section class="intro">
-
-    <h2>Welcome to Chemi</h2>
-
-    <p>
-
-        실험 기록을 공유하고,
-        새로운 아이디어를 제안하며,
-        동아리 일정을 관리하는
-        케미 홈페이지입니다.
+        </div>
         
+        <div style="max-width: 1200px; margin: 25px auto 0 auto; border-top: 1px solid #e2e8f0; padding-top: 15px; text-align: center; color: #aaa; font-size: 12px;">
+            © 2026 삼괴고등학교 최고 실험 동아리 CHEMI. All rights reserved.
+        </div>
+    </footer>
 
-    </p>
-
-</section>
-
-
-<section class="cards">
-
-    <a href="/ideas" class="card">
-
-        <h2>💡 아이디어 피드</h2>
-
-        <p>
-
-            실험 아이디어와
-            프로젝트를 자유롭게 공유하세요.
-
-        </p>
-
-    </a>
-
-    <a href="/calendar" class="card">
-
-        <h2>📅 케미 캘린더</h2>
-
-        <p>
-
-            동아리 일정과
-            실험 일정을 한눈에 확인하세요.
-
-        </p>
-
-    </a>
-
-    <a href="/reagent" class="card">
-
-        <h2>🧪 시약 찾기</h2>
-
-        <p>
-
-            필요한 시약의 위치를
-            빠르게 검색할 수 있습니다.
-
-        </p>
-
-    </a>
-
-    <a href="/upload" class="card">
-
-        <h2>📷 실험 사진</h2>
-
-        <p>
-
-            실험 사진을 업로드하고
-            모두와 공유해 보세요.
-
-        </p>
-
-    </a>
-
-</section>
-
-
-
-<section class="about">
-
-    <h2>CHEMI 소개</h2>
-
-    <p>
-
-        케미는 최고의 역량을 지닌 학생들이 모인 삼괴고 최고의 실험 동아리입니다.
-
-    </p>
-
-</section>
-
-{% endblock %}
+</body>
+</html>

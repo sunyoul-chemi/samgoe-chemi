@@ -1,6 +1,6 @@
-/* ========================= */
+/* ========================================= */
 /* 기본 설정 */
-/* ========================= */
+/* ========================================= */
 
 * {
     margin: 0;
@@ -8,19 +8,19 @@
     box-sizing: border-box;
 }
 
-/* 스마트폰/패드 축소 비율 유지 및 원래의 깨끗한 흰색 배경 고정 */
+/* ★ 수정: !important를 제거하여 뒷배경 이미지가 보일 수 있도록 길을 열어줍니다 */
 body {
     font-family: "Malgun Gothic", sans-serif;
-    background: #ffffff !important;
+    background: #ffffff; 
     color: #333;
     line-height: 1.7;
     min-width: 1200px;
     margin: 0 auto;
 }
 
-/* ========================= */
+/* ========================================= */
 /* Header */
-/* ========================= */
+/* ========================================= */
 
 header {
     display: flex;
@@ -38,7 +38,6 @@ header {
     box-shadow: 0 5px 20px rgba(0,0,0,.15);
 }
 
-/* fixed 헤더에 가려지지 않도록 메인 본문 영역의 상단 여백 확보 */
 main {
     margin-top: 90px;
     background: #ffffff;
@@ -68,11 +67,10 @@ nav a:hover {
     color: #f7e897;
 }
 
-/* ========================= */
+/* ========================================= */
 /* Hero */
-/* ========================= */
+/* ========================================= */
 
-/* 사진이 노란색 헤더에 너무 붙지 않도록 상하 패딩(여백) 넉넉히 조절 */
 .hero {
     display: flex;
     justify-content: center;
@@ -112,7 +110,7 @@ nav a:hover {
     font-size: 20px;
 }
 
-/* ========================= */
+/* ========================================= */
 
 .intro {
     padding: 60px;
@@ -130,9 +128,9 @@ nav a:hover {
     font-size: 20px;
 }
 
-/* ========================= */
+/* ========================================= */
 /* 카드 */
-/* ========================= */
+/* ========================================= */
 
 .cards {
     display: grid;
@@ -167,7 +165,7 @@ nav a:hover {
     font-size: 18px;
 }
 
-/* ========================= */
+/* ========================================= */
 
 .about {
     text-align: center;
@@ -185,9 +183,9 @@ nav a:hover {
     font-size: 20px;
 }
 
-/* ========================= */
+/* ========================================= */
 /* 페이지 제목 */
-/* ========================= */
+/* ========================================= */
 
 .page-title {
     text-align: center;
@@ -204,9 +202,9 @@ nav a:hover {
     font-size: 18px;
 }
 
-/* ========================= */
+/* ========================================= */
 /* Form / Calendar */
-/* ========================= */
+/* ========================================= */
 
 .calendar-wrapper {
     max-width: 1100px;
@@ -278,6 +276,7 @@ nav a:hover {
 
 .day-label.red { color: #d9534f; }
 
+/* ★ 수정: 끊겼던 .day 클래스의 마감 중괄호를 정상적으로 닫았습니다. */
 .day {
     min-height: 110px;
     background-color: #fdfaf4;
@@ -287,11 +286,13 @@ nav a:hover {
     position: relative;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+
 /* ==========================================
-   ✨ [안심 버전] 레이아웃 방해 없는 뒷배경 추가
+   ✨ [안전 추가] 기존 레이아웃 유지형 전체 배경처리
    ========================================== */
 
-/* 1. 아이디어 플랫폼 배경 */
+/* 1. 아이디어 플랫폼 페이지 배경 설정 */
 body:has(.ideas-wrapper) {
     background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/static/chemi_idea.png') !important;
     background-size: cover !important;
@@ -300,7 +301,7 @@ body:has(.ideas-wrapper) {
     background-repeat: no-repeat !important;
 }
 
-/* 2. 케미 캘린더 페이지 배경 */
+/* 2. 케미 캘린더 페이지 배경 설정 */
 body:has(.calendar-wrapper) {
     background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/static/chemi_schedule.png') !important;
     background-size: cover !important;

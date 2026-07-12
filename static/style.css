@@ -543,3 +543,27 @@ body:has(.ideas-page-container) {
     background-attachment: fixed !important; /* 스크롤해도 배경은 가만히 고정되도록 설정 */
     background-color: #fdfcf7 !important;
 }
+
+/* ==========================================
+   8. 케미 캘린더 전역 배경 전용 룰 (화면 꽉 차게)
+   ========================================== */
+body:has(.calendar-wrapper) {
+    background-image: url('/static/chemi_schedule.png') !important;
+    background-size: cover !important;        /* 화면 크기에 맞춰 꽉 채우기 */
+    background-repeat: no-repeat !important;
+    background-position: center !important;    /* 가운데 정렬 */
+    background-attachment: fixed !important;    /* 스크롤 시 배경 고정 */
+    background-color: #fdfcf7 !important;
+}
+
+/* ==========================================
+   9. 시약 정보 검색 전역 배경 전용 룰 (화면 꽉 차게)
+   ========================================== */
+body:has(.reagent-wrapper) {
+    background-image: url('/static/chemi_list.png') !important;
+    background-size: cover !important;        /* 화면 크기에 맞춰 꽉 채우기 */
+    background-repeat: no-repeat !important;
+    background-position: center !important;    /* 가운데 정렬 */
+    background-attachment: fixed !important;    /* 스크롤 시 배경 고정 */
+    background-color: #fdfcf7 !important;
+}

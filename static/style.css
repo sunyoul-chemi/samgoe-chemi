@@ -288,53 +288,26 @@ nav a:hover {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
 /* ==========================================
-   ✨ [완성판] 아이디어, 캘린더, 시약찾기 레이아웃 & 배경 최적화
+   ✨ [완벽 해결] 기존 레이아웃 보존 + 화면 전체 배경 설정
    ========================================== */
 
-/* 1. 아이디어 플랫폼 전체 바탕 */
+/* 1. 아이디어 플랫폼 배경 설정 */
 .ideas-wrapper {
+    /* 기존 스타일(중앙 정렬, 너비 등)은 그대로 두고 배경만 뒤에 고정 */
     background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/static/chemi_idea.png') !important;
     background-size: cover !important;
     background-position: center !important;
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
     
-    /* 화면을 빈틈없이 채우기 */
-    width: 100% !important;
-    max-width: 100% !important;
+    /* 기존 카드 레이아웃이 깨지지 않도록 여백 및 높이만 최소한으로 방어 */
     min-height: 100vh !important;
-    margin: 0 !important;
-    padding: 60px 20px !important;
-    border-radius: 0 !important;
-
-    /* 내부 알맹이 카드들을 무조건 가로 정중앙으로 정렬 */
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important; 
-}
-
-/* ★ 중요: 정렬할 때 제목, 글귀, 카드 상자들이 쫙 퍼지지 않고 이쁘게 모이도록 가로폭 제한 */
-.ideas-wrapper > h1,
-.ideas-wrapper > p,
-.idea-form-card, 
-.feed-card {
-    width: 100% !important;
-    max-width: 800px !important; /* 원래 예쁜 사이즈인 800px로 폭을 고정합니다 */
     box-sizing: border-box !important;
+    padding-top: 50px !important;
+    padding-bottom: 80px !important;
 }
 
-/* 흰색 카드 상자들을 다시 예쁘고 둥글둥글하게 복구 */
-.idea-form-card, .feed-card {
-    background-color: #ffffff !important;
-    border-radius: 24px !important;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06) !important;
-    padding: 35px !important;
-    margin-bottom: 25px !important;
-    text-align: left !important; /* 내부 글자들은 왼쪽 정렬 */
-}
-
-
-/* 2. 케미 캘린더 전체 바탕 */
+/* 2. 케미 캘린더 페이지 배경 설정 */
 .calendar-wrapper {
     background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/static/chemi_schedule.png') !important;
     background-size: cover !important;
@@ -342,30 +315,13 @@ nav a:hover {
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
     
-    width: 100% !important;
-    max-width: 100% !important;
     min-height: 100vh !important;
-    margin: 0 !important;
-    padding: 60px 20px !important;
-    border-radius: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-}
-.calendar-wrapper > h1,
-.calendar-card {
-    width: 100% !important;
-    max-width: 1000px !important; /* 달력은 살짝 더 넓게 세팅 */
-}
-.calendar-card {
-    background-color: #ffffff !important;
-    border-radius: 24px !important;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08) !important;
-    padding: 35px !important;
+    box-sizing: border-box !important;
+    padding-top: 50px !important;
+    padding-bottom: 80px !important;
 }
 
-
-/* 3. 시약 찾기 전체 바탕 */
+/* 3. 시약 찾기 페이지 배경 설정 */
 .reagent-wrapper {
     background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/static/chemi_list.png') !important;
     background-size: cover !important;
@@ -373,26 +329,20 @@ nav a:hover {
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
     
-    width: 100% !important;
-    max-width: 100% !important;
     min-height: 100vh !important;
-    margin: 0 !important;
-    padding: 60px 20px !important;
-    border-radius: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
+    box-sizing: border-box !important;
+    padding-top: 50px !important;
+    padding-bottom: 80px !important;
 }
-.reagent-wrapper > h1,
-.search-form, 
-.table-container {
-    width: 100% !important;
-    max-width: 1000px !important;
-}
-.search-form, .table-container {
+
+/* 💡 혹시 배경 이미지 때문에 내부 흰색 박스들이 흐려졌다면, 
+   원래의 쨍하고 예쁜 흰색 바탕과 둥근 테두리를 한 번 더 꽉 잡아줍니다. */
+.idea-form-card, 
+.feed-card, 
+.calendar-card, 
+.table-container, 
+.search-form {
     background-color: #ffffff !important;
     border-radius: 24px !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06) !important;
-    padding: 30px !important;
-    margin-bottom: 25px !important;
 }

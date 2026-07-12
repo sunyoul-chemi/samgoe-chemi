@@ -302,6 +302,26 @@ def reagent_list():
                            reagents=reagents, 
                            keyword=keyword, 
                            selected_category=category_filter)
+    @app.route("/addReagent", methods=["POST"])
+def add_reagent():
+    name = request.form.get("name")
+    formula = request.form.get("formula")
+    risk = request.form.get("risk")
+    location = request.form.get("location")
+    status = request.form.get("status", "보관중")  # 값이 없으면 기본값 '보관중'
+
+    if name:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        # id를 제외한 5개 컬럼(name, formula, risk, location, status)에 정확히 5개의 ? 매칭
+        cursor.execute(
+            "INSERT INTO reagents (name, formula, risk, location, status) VALUES (?, ?, ?, ?, ?)",
+            (name, formula, risk, location, status)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+    return redirect(url_for("reagent_page"))
 
 # 🖼️ 2. 사진 갤러리 메인 보기 페이지 라우터
 @app.route("/upload")

@@ -167,12 +167,13 @@ body:has(.reagent-wrapper) {
     background-color: #fdfcf7 !important;
 }
 
+
 /* ==========================================
-   4. 실험 사진 업로드 및 갤러리 감성 (upload.html 전용)
+   4. 실험 사진 업로드 및 갤러리 감성 (최종 확인용)
    ========================================== */
 .gallery-wrapper {
-    max-width: 1000px;
-    margin: 40px auto;
+    max-width: 1100px;
+    margin: 50px auto;
     padding: 0 20px;
 }
 
@@ -185,20 +186,28 @@ body:has(.reagent-wrapper) {
     background: #fff;
     border-radius: 22px;
     border: 1px solid #eeece1;
-    padding: 25px;
+    padding: 30px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.01);
     margin-bottom: 45px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .upload-flex-form {
     display: flex;
+    flex-direction: column;
     gap: 15px;
-    align-items: center;
+}
+
+.upload-row {
+    display: flex;
+    gap: 12px;
     flex-wrap: wrap;
 }
 
 .upload-input-text {
-    flex: 2;
+    flex: 1;
     min-width: 200px;
     padding: 12px 16px;
     border: 1px solid #e1ded3;
@@ -208,27 +217,38 @@ body:has(.reagent-wrapper) {
     background: #faf9f5;
 }
 
+.upload-file-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #faf9f5;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid #e1ded3;
+}
+
 .upload-file-hidden {
-    padding: 10px;
     font-size: 14px;
+    color: #555;
 }
 
 .upload-submit-btn {
-    padding: 12px 28px;
+    padding: 14px;
     background: #bfa11d;
     color: white;
     border: none;
     border-radius: 12px;
     font-weight: 700;
     cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(191,161,29,0.15);
 }
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 30px;
+    margin-top: 20px;
 }
 
 .instagram-card {
@@ -239,72 +259,6 @@ body:has(.reagent-wrapper) {
     box-shadow: 0 10px 25px rgba(0,0,0,0.01);
     display: flex;
     flex-direction: column;
-}
-
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 18px;
-    border-bottom: 1px solid #f4f3ed;
-}
-
-.profile-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.profile-avatar {
-    font-size: 16px;
-    background: #faf9f5;
-    padding: 6px;
-    border-radius: 50%;
-    border: 1px solid #eeece1;
-}
-
-.profile-name {
-    font-size: 14px;
-    font-weight: 700;
-    color: #262626;
-}
-
-.card-image-wrapper {
-    position: relative;
-    width: 100%;
-    padding-top: 100%; /* 1:1 인스타 크롭 비율 고정 */
-    background-color: #fafafa;
-}
-
-.card-image-wrapper img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.card-body {
-    padding: 18px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.card-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: #262626;
-    margin-bottom: 8px;
-    line-height: 1.5;
-}
-
-.card-tags {
-    font-size: 13px;
-    color: #00376b;
-    font-weight: 600;
 }
 
 /* ==========================================

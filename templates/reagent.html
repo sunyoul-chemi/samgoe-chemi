@@ -21,9 +21,19 @@
 
         <div style="margin-bottom: 30px;">
             <form action="/reagent" method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-                <input type="text" name="keyword" value="{{ keyword }}" placeholder="시약명 또는 화학식 검색 (예: HCl)" 
-                       style="flex: 1; min-width: 250px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none;">
-                <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                <input type="text" name="keyword" value="{{ keyword if keyword else '' }}" placeholder="시약명 또는 화학식 검색 (예: HCl)" 
+                       style="flex: 2; min-width: 250px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none;">
+                
+                <select name="category_filter" style="flex: 1; min-width: 150px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none; background: #fff; cursor: pointer; color: #555;">
+                    <option value="">-- 모든 분류 보기 --</option>
+                    <option value="유기화합물" {% if request.args.get('category_filter') == '유기화합물' %}selected{% endif %}>유기화합물</option>
+                    <option value="무기화합물" {% if request.args.get('category_filter') == '무기화합물' %}selected{% endif %}>무기화합물</option>
+                    <option value="위험성물질" {% if request.args.get('category_filter') == '위험성물질' %}selected{% endif %}>위험성물질</option>
+                    <option value="염기성물질" {% if request.args.get('category_filter') == '염기성물질' %}selected{% endif %}>염기성물질</option>
+                    <option value="생물시약" {% if request.args.get('category_filter') == '생물시약' %}selected{% endif %}>생물시약</option>
+                </select>
+
+                <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 14px; white-space: nowrap;">
                     조회하기
                 </button>
             </form>
@@ -132,7 +142,9 @@
                             <span style="background: #eef3ff; color: #4e54c8; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">{{ r[3] }}</span>
                         </td>
                         
-                        <td style="padding: 15px 20px; color: #555;"><span style="color: #ff416c; margin-right: 4px;">📍</span>{{ r[4] }}</td>
+                        <td style="padding: 15px 20px; color: #555; font-weight: 500;">
+                            <span style="color: #ff416c; margin-right: 4px;">📍</span>{{ r[4] }}
+                        </td>
                         
                         <td style="padding: 15px 20px; text-align: center;">
                             {% if r[6] == '위험' %}

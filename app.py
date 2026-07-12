@@ -137,33 +137,10 @@ def logout():
 
 @app.route("/ideas")
 def ideas():
-    # 프론트엔드 검색창 및 카테고리 버튼에서 넘겨준 값 받기
-    keyword = request.args.get('keyword', '')
-    category_filter = request.args.get('category', 'ALL') # 기본값 ALL
-    
     conn = get_db_connection()
     c = conn.cursor()
-    
-    # 동적 SQL 쿼리 작성
-    query = "SELECT * FROM ideas WHERE 1=1"
-    params = []
-    
-    # 카테고리 필터링 (ALL이 아닐 때만 조건 추가)
-    if category_filter and category_filter != 'ALL':
-        query += " AND category = ?"
-        params.append(category_filter)
-        
-    # 키워드 검색 (제목 또는 내용 기준)
-    if keyword:
-        query += " AND (title LIKE ? OR content LIKE ?)"
-        params.extend([f'%{keyword}%', f'%{keyword}%'])
-        
-    # 최신글 순 정렬
-    query += " ORDER BY id DESC"
-    
-    c.execute(query, params)
+    c.execute("SELECT * FROM ideas ORDER BY id DESC")
     posts = c.fetchall()
-    
     ideas_with_comments = []
     for post in posts:
         post_id = post[0]
@@ -174,18 +151,59 @@ def ideas():
             'title': post[1],
             'writer': post[2],
             'content': post[3],
-            'category': post[4] if len(post) > 4 else "IDEA",
+            'category': post[4] if len(post) > 4 else "just",
             'comments': comments,
             'comment_count': len(comments)
         })
-        
     conn.close()
-    
-    # HTML 화면으로 필터링된 데이터와 상태 정보 전달
-    return render_template("ideas.html", 
-                           posts=ideas_with_comments, 
-                           current_category=category_filter, 
-                           keyword=keyword)
+    return render_template("ideas.html", posts=ideas_with_comments)
+
+@app.route("/addIdea", methods=["POST"])
+def addIdea():
+    title = request.form.get("title", "")
+    writer = request.form.get("writer", "익명")
+    content = request.form.get("content", "")
+    category = request.form.get("category", "just")
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("INSERT INTO ideas(title,writer,content,category) VALUES(?,?,?,?)", (title, writer, content, category))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("ideas"))
+
+@app.route("/addComment", methods=["POST"])
+def addComment():
+    idea_id = request.form.get("idea_id")
+    writer = request.form.get("writer", "익명")
+    content = request.form.get("content", "")
+    emoticon = request.form.get("emoticon", "")
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("INSERT INTO comments(idea_id, writer, content, emoticon) VALUES(?,?,?,?)", (idea_id, writer, content, emoticon))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("ideas"))
+
+@app.route("/deleteIdea/<int:idea_id>")
+def delete_idea(idea_id):
+    if session.get("is_admin"):
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("DELETE FROM ideas WHERE id = ?", (idea_id,))
+        c.execute("DELETE FROM comments WHERE idea_id = ?", (idea_id,))
+        conn.commit()
+        conn.close()
+    return redirect(url_for("ideas"))
+
+@app.route("/deleteComment/<int:comment_id>")
+def delete_comment(comment_id):
+    if session.get("is_admin"):
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("DELETE FROM comments WHERE id = ?", (comment_id,))
+        conn.commit()
+        conn.close()
+    return redirect(url_for("ideas"))
 
 @app.route("/calendar")
 def calendar():

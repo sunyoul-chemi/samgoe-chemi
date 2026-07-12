@@ -531,3 +531,15 @@ body:has(.reagent-wrapper) {
 .proj-delete-btn:hover {
     background: rgba(255,77,77,0.3);
 }
+
+/* ==========================================
+   7. 아이디어 플랫폼 전역 배경 전용 룰 (ideas.html)
+   ========================================== */
+body:has(.ideas-page-container) {
+    background-image: url('/static/chemi_idea.png') !important;
+    background-size: 400px !important;
+    background-repeat: no-repeat !important;
+    background-position: bottom 30px right 30px !important;
+    background-attachment: fixed !important;
+    background-color: #fdfcf7 !important;
+}

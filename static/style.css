@@ -470,7 +470,7 @@ body:has(.calendar-wrapper) {
    9. 시약 정보 검색 전역 배경 전용 룰 (화면 꽉 차게)
    ========================================== */
 body:has(.reagent-page-container) {
-    /* chemi_list 사진을 배경으로 지정 (확장자가 jpg라면 .jpg로 변경해 주세요!) */
+    /* ⚠️ 만약 static 폴더 안에 실제 파일명이 chemi_list.jpg 라면 확장자를 .jpg로 꼭 바꿔주셔야 합니다! */
     background-image: url('/static/chemi_list.png') !important; 
     background-size: cover !important;        /* 화면 크기에 맞춰 꽉 채우기 */
     background-repeat: no-repeat !important;

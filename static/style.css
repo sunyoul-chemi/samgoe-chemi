@@ -1,5 +1,5 @@
 /* ==========================================
-   0. 글로벌 초기화 및 전역 고품질 폰트 주입
+   0. 글로벌 초기화 및 전역 Pretendard 서체 주입
    ========================================== */
 * {
     margin: 0;
@@ -15,7 +15,7 @@ body {
 }
 
 /* ==========================================
-   1. 헤더 네비게이션 바 디자인
+   1. 내비게이션 헤더 (상단 바 디자인 고정)
    ========================================== */
 header {
     background-color: #fff;
@@ -51,7 +51,7 @@ header nav a:hover {
 }
 
 /* ==========================================
-   2. 메인 홈 화면 (index.html) 스타일
+   2. 메인 홈 화면 (index.html) 스타일 패키지
    ========================================== */
 .hero {
     position: relative;
@@ -154,7 +154,7 @@ header nav a:hover {
 }
 
 /* ==========================================
-   3. 케미 캘린더 & 시약 찾기 페이지 배경 매핑 로직
+   3. 캘린더 & 시약 페이지 전용 실험실 배경 매핑
    ========================================== */
 body:has(.calendar-wrapper),
 body:has(.reagent-wrapper) {
@@ -167,24 +167,73 @@ body:has(.reagent-wrapper) {
 }
 
 /* ==========================================
-   4. 실험 사진 갤러리 (upload.html) 인스타 감성 고정
+   4. 실험 사진 업로드 및 갤러리 감성 (upload.html 전용)
    ========================================== */
 .gallery-wrapper {
-    max-width: 935px;
+    max-width: 1000px;
     margin: 40px auto;
     padding: 0 20px;
 }
 
+.gallery-title-area {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.upload-box-container {
+    background: #fff;
+    border-radius: 22px;
+    border: 1px solid #eeece1;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.01);
+    margin-bottom: 45px;
+}
+
+.upload-flex-form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.upload-input-text {
+    flex: 2;
+    min-width: 200px;
+    padding: 12px 16px;
+    border: 1px solid #e1ded3;
+    border-radius: 12px;
+    outline: none;
+    font-size: 14px;
+    background: #faf9f5;
+}
+
+.upload-file-hidden {
+    padding: 10px;
+    font-size: 14px;
+}
+
+.upload-submit-btn {
+    padding: 12px 28px;
+    background: #bfa11d;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 30px;
 }
 
 .instagram-card {
     background: #fff;
     border: 1px solid #eeece1;
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 25px rgba(0,0,0,0.01);
     display: flex;
@@ -195,25 +244,26 @@ body:has(.reagent-wrapper) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 16px;
+    padding: 15px 18px;
     border-bottom: 1px solid #f4f3ed;
 }
 
 .profile-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .profile-avatar {
     font-size: 16px;
-    background: #f4f3ed;
-    padding: 4px;
+    background: #faf9f5;
+    padding: 6px;
     border-radius: 50%;
+    border: 1px solid #eeece1;
 }
 
 .profile-name {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: #262626;
 }
@@ -221,7 +271,7 @@ body:has(.reagent-wrapper) {
 .card-image-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 100%; /* 정사각형 고정 비율 */
+    padding-top: 100%; /* 1:1 인스타 크롭 비율 고정 */
     background-color: #fafafa;
 }
 
@@ -235,7 +285,7 @@ body:has(.reagent-wrapper) {
 }
 
 .card-body {
-    padding: 16px;
+    padding: 18px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -246,20 +296,21 @@ body:has(.reagent-wrapper) {
     font-size: 14px;
     font-weight: 700;
     color: #262626;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
 
 .card-tags {
-    font-size: 12px;
+    font-size: 13px;
     color: #00376b;
     font-weight: 600;
 }
 
 /* ==========================================
-   5. 팀 프로젝트 (projects.html) 우주 행성 오르빗 및 실시간 별똥별 이펙트
+   5. 팀 프로젝트 우주 오르빗 & 실시간 별똥별 (projects.html 전용)
    ========================================== */
 .center-gradient-title {
-    font-size: 72px;
+    font-size: 64px;
     font-weight: 900;
     background: linear-gradient(135deg, #fff 0%, #ffd700 100%);
     -webkit-background-clip: text;
@@ -274,17 +325,18 @@ body:has(.reagent-wrapper) {
     font-weight: 700;
     letter-spacing: 6px;
     margin-top: 5px;
+    display: block;
 }
 
 .moving-orbit-bubble {
-    width: 110px;
-    height: 110px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 0 25px rgba(255,255,255,0.1);
+    box-shadow: 0 0 25px rgba(255,255,255,0.15);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     animation: floatingOrbit 4s ease-in-out infinite alternate;
 }
@@ -311,12 +363,12 @@ body:has(.reagent-wrapper) {
 
 .bubble-title {
     display: block;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 90px;
+    max-width: 100px;
 }
 
 .click-hint {
@@ -332,7 +384,7 @@ body:has(.reagent-wrapper) {
     opacity: 1;
 }
 
-/* 네온 광원 컬러칩 발포 */
+/* 은하계 그라데이션 컬러링 엔진 */
 .bubble-color-1 { background: radial-gradient(circle at 30% 30%, #4e54c8, #1f1c2c); --glow-color: rgba(78,84,200,0.6); animation-delay: 0s; }
 .bubble-color-2 { background: radial-gradient(circle at 30% 30%, #ff416c, #ff4b2b); --glow-color: rgba(255,65,108,0.6); animation-delay: -0.7s; }
 .bubble-color-3 { background: radial-gradient(circle at 30% 30%, #11998e, #38ef7d); --glow-color: rgba(56,239,125,0.6); animation-delay: -1.5s; }
@@ -344,13 +396,13 @@ body:has(.reagent-wrapper) {
     100% { transform: translateY(-12px) rotate(3deg); }
 }
 
-/* 🌠 실시간 쏟아지는 밤하늘의 별똥별(Shooting Stars) 코어 연산 엔진 */
+/* 🌠 우주 공간 전용 실시간 별똥별 매트릭스 */
 .shooting-stars-background {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 75vh;
+    height: 100%;
     overflow: hidden;
     z-index: 1;
     pointer-events: none;
@@ -358,7 +410,7 @@ body:has(.reagent-wrapper) {
 
 .shooting-stars-background span {
     position: absolute;
-    top: 50%;
+    top: 30%;
     left: 50%;
     width: 4px;
     height: 4px;
@@ -379,14 +431,12 @@ body:has(.reagent-wrapper) {
     background: linear-gradient(90deg, #fff, transparent);
 }
 
-.shooting-stars-background span:nth-child(1) { top: 0px; left: 20%; animation-delay: 0s; animation-duration: 2s; }
-.shooting-stars-background span:nth-child(2) { top: 0px; left: 40%; animation-delay: 0.4s; animation-duration: 3s; }
-.shooting-stars-background span:nth-child(3) { top: 10%; left: 70%; animation-delay: 1.2s; animation-duration: 2.5s; }
-.shooting-stars-background span:nth-child(4) { top: 0px; left: 90%; animation-delay: 0.8s; animation-duration: 1.8s; }
-.shooting-stars-background span:nth-child(5) { top: 20%; left: 10%; animation-delay: 2.1s; animation-duration: 3.5s; }
-.shooting-stars-background span:nth-child(6) { top: 0px; left: 60%; animation-delay: 1.7s; animation-duration: 2.2s; }
-.shooting-stars-background span:nth-child(7) { top: 5%; left: 80%; animation-delay: 2.7s; animation-duration: 2.8s; }
-.shooting-stars-background span:nth-child(8) { top: 15%; left: 35%; animation-delay: 3.2s; animation-duration: 4s; }
+.shooting-stars-background span:nth-child(1) { top: 5%; left: 20%; animation-delay: 0s; animation-duration: 2s; }
+.shooting-stars-background span:nth-child(2) { top: 12%; left: 40%; animation-delay: 0.4s; animation-duration: 3s; }
+.shooting-stars-background span:nth-child(3) { top: 25%; left: 70%; animation-delay: 1.2s; animation-duration: 2.5s; }
+.shooting-stars-background span:nth-child(4) { top: 8%; left: 90%; animation-delay: 0.8s; animation-duration: 1.8s; }
+.shooting-stars-background span:nth-child(5) { top: 35%; left: 10%; animation-delay: 2.1s; animation-duration: 3.5s; }
+.shooting-stars-background span:nth-child(6) { top: 18%; left: 60%; animation-delay: 1.7s; animation-duration: 2.2s; }
 
 @keyframes animateStar {
     0% { transform: rotate(-35deg) translateX(0); opacity: 1; }
@@ -395,7 +445,7 @@ body:has(.reagent-wrapper) {
 }
 
 /* ==========================================
-   6. 팀 프로젝트 우주 행성 모달 팝업
+   6. 프로젝트 상세 보기 모달 팝업
    ========================================== */
 .project-modal-overlay {
     position: fixed;
@@ -464,4 +514,19 @@ body:has(.reagent-wrapper) {
     font-size: 14px;
     line-height: 1.6;
     word-break: break-all;
+}
+
+.proj-delete-btn {
+    color: #ff4d4d;
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    background: rgba(255,77,77,0.15);
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,77,77,0.2);
+    transition: background 0.2s;
+}
+.proj-delete-btn:hover {
+    background: rgba(255,77,77,0.3);
 }

@@ -286,4 +286,25 @@ nav a:hover {
     padding: 12px;
     position: relative;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* ==========================================
+   ✨ [안심 버전] 레이아웃 방해 없는 뒷배경 추가
+   ========================================== */
 
+/* 1. 아이디어 플랫폼 배경 */
+body:has(.ideas-wrapper) {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/static/chemi_idea.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+}
+
+/* 2. 케미 캘린더 페이지 배경 */
+body:has(.calendar-wrapper) {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)), url('/static/chemi_schedule.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+}

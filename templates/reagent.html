@@ -22,15 +22,15 @@
         <div style="margin-bottom: 30px;">
             <form action="/reagent" method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                 <input type="text" name="keyword" value="{{ keyword if keyword else '' }}" placeholder="시약명 또는 화학식 검색 (예: HCl)" 
-                       style="flex: 2; min-width: 250px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none;" value="{{ keyword }}">
+                       style="flex: 2; min-width: 250px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none;">
                 
                 <select name="category_filter" style="flex: 1; min-width: 160px; padding: 12px 15px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none; background: #fff; cursor: pointer; color: #4a4538;">
                     <option value="">-- 모든 분류 보기 --</option>
+                    <option value="산성물질" {% if selected_category == '산성물질' %}selected{% endif %}>산성물질</option>
+                    <option value="염기성물질" {% if selected_category == '염기성물질' %}selected{% endif %}>염기성물질</option>
                     <option value="유기화합물" {% if selected_category == '유기화합물' %}selected{% endif %}>유기화합물</option>
                     <option value="무기화합물" {% if selected_category == '무기화합물' %}selected{% endif %}>무기화합물</option>
-                    <option value="위험성물질" {% if selected_category == '위험성물질' %}selected{% endif %}>위험성물질</option>
-                    <option value="염기성물질" {% if selected_category == '염기성물질' %}selected{% endif %}>염기성물질</option>
-                    <option value="생물시약" {% if selected_category == '생물시약' %}selected{% endif %}>생물시약</option>
+                    <option value="일반시약" {% if selected_category == '일반시약' %}selected{% endif %}>일반시약</option>
                 </select>
                 
                 <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px; white-space: nowrap;">
@@ -57,11 +57,11 @@
                            style="flex: 1; min-width: 120px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none;">
                     
                     <select name="category" required style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #555;">
+                        <option value="일반시약">일반시약</option>
+                        <option value="산성물질">산성물질</option>
+                        <option value="염기성물질">염기성물질</option>
                         <option value="유기화합물">유기화합물</option>
                         <option value="무기화합물">무기화합물</option>
-                        <option value="위험성물질">위험성물질</option>
-                        <option value="염기성물질">염기성물질</option>
-                        <option value="생물시약">생물시약</option>
                     </select>
                     
                     <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 5px;">

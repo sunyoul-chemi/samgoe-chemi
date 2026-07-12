@@ -9,13 +9,14 @@
     </div>
 
     <div class="upload-box-container">
-        <form action="/upload" method="POST" enctype="multipart/form-data" class="upload-flex-form">
+        <form action="/uploadPhoto" method="POST" enctype="multipart/form-data" class="upload-flex-form">
             <input type="text" name="title" placeholder="업로드할 사진의 실험 이야기" required class="upload-input-text">
-            <input type="text" name="tags" placeholder="#화학실험 #태그입력" class="upload-input-text tag-input">
+            
+            <input type="text" name="tag" placeholder="#화학실험 #태그입력" class="upload-input-text tag-input">
             
             <div class="upload-file-row">
                 <span style="font-size: 13px; color: #666; font-weight: 600;">파일 선택 📁</span>
-                <input type="file" name="file" required class="upload-file-hidden">
+                <input type="file" name="photo" required class="upload-file-hidden">
             </div>
             
             <button type="submit" class="upload-submit-btn">🚀 실험 사진 업로드</button>
@@ -23,7 +24,7 @@
     </div>
 
     <div class="gallery-grid">
-        {% for post in posts %}
+        {% for post in photos %}
         <div class="instagram-card">
             <div class="card-header">
                 <div class="profile-group">
@@ -31,18 +32,18 @@
                     <span class="profile-name">CHEMI</span>
                 </div>
                 {% if session.get('is_admin') %}
-                <a href="/deleteUpload/{{ post.id }}" onclick="return confirm('이 사진을 삭제하시겠습니까?');" 
+                <a href="/deletePhoto/{{ post[0] }}" onclick="return confirm('이 사진을 삭제하시겠습니까?');" 
                    style="color: #dc3545; font-size: 11px; text-decoration: none; font-weight: 700; background: #ffe3e3; padding: 4px 10px; border-radius: 6px;">삭제</a>
                 {% endif %}
             </div>
             
             <div class="card-image-wrapper">
-                <img src="{{ url_for('static', filename='uploads/' + post.filename) }}" alt="업로드 이미지">
+                <img src="{{ post[1] }}" alt="업로드 이미지" onerror="this.src='https://placehold.co/600x400?text=No+Image';">
             </div>
             
             <div class="card-body">
-                <p class="card-title">{{ post.title }}</p>
-                <span class="card-tags">{{ post.tags if post.tags else '#CHEMI #삼괴고' }}</span>
+                <p class="card-title">{{ post[2] }}</p>
+                <span class="card-tags">{{ post[3] if post[3] else '#CHEMI #삼괴고' }}</span>
             </div>
         </div>
         {% else %}

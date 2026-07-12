@@ -6,20 +6,18 @@ import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+# 💡 실제 배포 시에는 무작위 문자열로 바꾸는 것이 좋습니다.
 app.secret_key = "chemi_secret_admin_key_1234"
 
-UPLOAD_FOLDER = "static/uploads"
+UPLOAD_FOLDER = os.path.join("static", "uploads")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 ADMIN_PASSWORD = "chemistry123!"
 
 def get_db_connection():
-    # 렌더 서버가 database.db 파일의 위치를 정확하게 찾을 수 있도록 절대 경로로 연결합니다.
-    import os
     base_dir = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(base_dir, "database.db")
-    
     conn = sqlite3.connect(db_path)
     return conn
 
@@ -59,7 +57,7 @@ def init_db():
     )
     """)
 
-    # 시약 테이블
+    # 시약 테이블 (초기 생성 시 category 포함)
     c.execute("""
     CREATE TABLE IF NOT EXISTS reagents(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -92,7 +90,7 @@ def init_db():
     """)
     conn.commit()
 
-    # 예시 시약 데이터 초기화
+    # 예시 시약 데이터 초기화 로직 수정
     reagents = [
         ("염산 (Hydrochloric acid)", "HCl", "산성장 A-01", "위험", "보관중", "산성물질"),
         ("황산 (Sulfuric acid)", "H2SO4", "산성장 A-02", "위험", "보관중", "산성물질"),
@@ -106,12 +104,6 @@ def init_db():
         ("과산화수소 (Hydrogen peroxide)", "H2O2", "유기장 D-02", "위험", "보관중", "유기화합물")
     ]
     
-    try:
-        c.execute("ALTER TABLE reagents ADD COLUMN category TEXT")
-        conn.commit()
-    except:
-        pass
-
     for r in reagents:
         c.execute("SELECT * FROM reagents WHERE name=?", (r[0],))
         if c.fetchone() is None:
@@ -120,10 +112,9 @@ def init_db():
     conn.commit()
     conn.close()
 
-# ⚠️ 추가로 원래 작성되어 있던 @app.route('/') 부분도 아래처럼 깔끔하게만 놔두시면 됩니다!
+# 💡 중복되었던 루트 주소 하나로 통합!
 @app.route('/')
 def home():
-    # 홈 화면으로 기본 사진 파일명을 보내줍니다.
     main_photo = "KakaoTalk_20260709_143736435.jpg"
     return render_template("index.html", main_photo=main_photo)
 
@@ -143,11 +134,6 @@ def login():
 def logout():
     session.pop("is_admin", None)
     return redirect(url_for("home"))
-
-@app.route('/')
-def index():
-    create_tables() # 👈 홈 화면에 들어올 때 방이 없으면 자동으로 만들어주는 치트키!
-    return render_template('index.html')
 
 @app.route("/ideas")
 def ideas():
@@ -174,9 +160,9 @@ def ideas():
 
 @app.route("/addIdea", methods=["POST"])
 def addIdea():
-    title = request.form["title"]
-    writer = request.form["writer"]
-    content = request.form["content"]
+    title = request.form.get("title", "")
+    writer = request.form.get("writer", "익명")
+    content = request.form.get("content", "")
     category = request.form.get("category", "just")
     conn = get_db_connection()
     c = conn.cursor()
@@ -187,9 +173,9 @@ def addIdea():
 
 @app.route("/addComment", methods=["POST"])
 def addComment():
-    idea_id = request.form["idea_id"]
-    writer = request.form["writer"]
-    content = request.form["content"]
+    idea_id = request.form.get("idea_id")
+    writer = request.form.get("writer", "익명")
+    content = request.form.get("content", "")
     emoticon = request.form.get("emoticon", "")
     conn = get_db_connection()
     c = conn.cursor()
@@ -283,42 +269,34 @@ def delete_schedule(sid):
 
 @app.route('/reagent')
 def reagent_list():
-    # 1. HTML 폼으로부터 검색어(keyword)와 분류 필터값(category_filter)을 가져옵니다.
     keyword = request.args.get('keyword', '')
-    category_filter = request.args.get('category_filter', '')  # 새롭게 추가된 분류 필터값
+    category_filter = request.args.get('category_filter', '')
     
-    # 2. 데이터베이스 연결 (기존에 사용하시던 DB 연결 코드가 있다면 그것을 사용하세요)
-    conn = get_db_connection()  # 예시: 기존 코드의 DB 연결 함수명으로 맞춰주세요
+    conn = get_db_connection()
     cursor = conn.cursor()
     
-    # 3. 기본 SQL 쿼리문 작성 (기존의 필터 구조 유지)
-    # reagents 테이블에서 데이터를 조회하되, 검색 조건에 따라 WHERE 절을 동적으로 붙입니다.
     query = "SELECT * FROM reagents WHERE 1=1"
     params = []
     
-    # 키워드 검색어가 입력되었을 때 (시약명 또는 화학식)
     if keyword:
         query += " AND (name LIKE ? OR formula LIKE ?)"
         params.extend([f'%{keyword}%', f'%{keyword}%'])
         
-    # 시약 분류 필터 선택상자에서 특정 분류를 선택했을 때
     if category_filter:
         query += " AND category = ?"
         params.append(category_filter)
         
-    # 4. 쿼리 실행 및 결과 받아오기
     cursor.execute(query, params)
     reagents = cursor.fetchall()
     
     cursor.close()
     conn.close()
     
-    # 5. HTML 파일(reagent.html)로 데이터를 넘겨줍니다.
-    # 기존 HTML에서 사용하던 selected_category 변수명으로 매핑하여 호환성을 유지합니다.
     return render_template('reagent.html', 
                            reagents=reagents, 
                            keyword=keyword, 
                            selected_category=category_filter)
+
 @app.route("/upload")
 def upload():
     conn = get_db_connection()
@@ -330,15 +308,19 @@ def upload():
 
 @app.route("/uploadPhoto", methods=["POST"])
 def upload_photo():
-    title = request.form.get("title")
-    tag = request.form.get("tag")
+    title = request.form.get("title", "제목 없음")
+    tag = request.form.get("tag", "")
     file = request.files.get("photo")
     if file and file.filename != "":
+        # 파일명 중복을 방지하기 위해 타임스탬프를 붙여줍니다.
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+        unique_filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+        
+        file.save(os.path.join(app.config["UPLOAD_FOLDER"], unique_filename))
+        
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("INSERT INTO photos(filename, title, tag) VALUES(?,?,?)", (filename, title, tag))
+        c.execute("INSERT INTO photos(filename, title, tag) VALUES(?,?,?)", (unique_filename, title, tag))
         conn.commit()
         conn.close()
     return redirect(url_for("upload"))
@@ -401,8 +383,8 @@ def delete_project(project_id):
         conn.close()
     return redirect(url_for("projects_page"))
 
+# DB 초기화는 앱 실행 전에 한 번만 수행합니다.
 init_db()
 
 if __name__ == "__main__":
     app.run(debug=True)
-

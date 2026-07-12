@@ -1,42 +1,114 @@
 {% extends "layout.html" %}
 {% block content %}
-<section class="hero">
-    <img src="{{ url_for('static', filename='KakaoTalk_20260709_143736435.jpg') }}" class="hero-image">
-    <div class="hero-text">
-        <h1>삼괴고 최고의 실험 동아리</h1>
-        <h2>HighEnd를 향해</h2>
-        <p>최고의 학생들이 있을 곳은 최고의 동아리 케미</p>
+<div class="reagent-wrapper" style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <span style="font-size: 35px;">🧪</span>
+        <h2 style="font-size: 28px; color: #333; margin: 10px 0 5px 0; font-weight: 800;">시약 정보 검색 시스템</h2>
+        <p style="color: #666; font-size: 15px;">안전한 실험을 위해 시약의 위치와 분류, 위험도를 상시 확인하세요.</p>
     </div>
-</section>
 
-<section class="intro">
-    <h2>Welcome to Chemi</h2>
-    <p>
-        실험 기록을 공유하고, 새로운 아이디어를 제안하며, 동아리 일정을 관리하는 케미 홈페이지입니다.
-    </p>
-</section>
+    <div style="background: #fff; border-radius: 20px; padding: 20px; border: 1px solid #e8e6dc; margin-bottom: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.01);">
+        <form action="/reagent" method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+            <input type="text" name="keyword" value="{{ keyword }}" placeholder="시약명 또는 화학식 검색 (예: HCl)" style="flex: 1; min-width: 250px; padding: 12px 18px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
+            
+            <select name="category" style="padding: 12px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px; color: #4a4538;">
+                <option value="">-- 전체 분류 보기 --</option>
+                <option value="무기화합물" {% if selected_category == '무기화합물' %}selected{% endif %}>무기화합물</option>
+                <option value="유기화합물" {% if selected_category == '유기화합물' %}selected{% endif %}>유기화합물</option>
+                <option value="산성물질" {% if selected_category == '산성물질' %}selected{% endif %}>산성물질</option>
+                <option value="염기성물질" {% if selected_category == '염기성물질' %}selected{% endif %}>염기성물질</option>
+            </select>
+            
+            <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px;">조회하기</button>
+            {% if keyword or selected_category %}
+                <a href="/reagent" style="text-decoration: none; padding: 12px 20px; background: #eee; color: #555; border-radius: 12px; font-size: 14px; font-weight: 600;">초기화</a>
+            {% endif %}
+        </form>
+    </div>
 
-<section class="cards">
-    <a href="/ideas" class="card">
-        <h2>💡 아이디어 피드</h2>
-        <p>실험 아이디어와 프로젝트를 자유롭게 공유하세요.</p>
-    </a>
-    <a href="/calendar" class="card">
-        <h2>📅 케미 캘린더</h2>
-        <p>동아리 일정과 실험 일정을 한눈에 확인하세요.</p>
-    </a>
-    <a href="/reagent" class="card">
-        <h2>🧪 시약 찾기</h2>
-        <p>필요한 시약의 위치를 빠르게 검색할 수 있습니다.</p>
-    </a>
-    <a href="/upload" class="card">
-        <h2>📷 실험 사진</h2>
-        <p>실험 사진을 업로드하고 모두와 공유해 보세요.</p>
-    </a>
-</section>
+    {% if session.get('is_admin') %}
+    <div style="background: #fff; border-radius: 20px; padding: 25px; border: 1px solid #e8e6dc; margin-bottom: 40px; box-shadow: 0 8px 20px rgba(0,0,0,0.02);">
+        <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #bfa11d; font-weight: 800;">➕ 신규 재고 시약 등록 (관리자전용)</h3>
+        <form action="/addReagent" method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+            <input type="text" name="name" placeholder="시약명" required style="padding: 10px; border: 1px solid #eeece1; border-radius: 8px; font-size: 13px;">
+            <input type="text" name="formula" placeholder="화학식" required style="padding: 10px; border: 1px solid #eeece1; border-radius: 8px; font-size: 13px;">
+            <select name="category" required style="padding: 10px; border: 1px solid #eeece1; border-radius: 8px; font-size: 13px; color: #555;">
+                <option value="무기화합물">무기화합물</option>
+                <option value="유기화합물">유기화합물</option>
+                <option value="산성물질">산성물질</option>
+                <option value="염기성물질">염기성물질</option>
+            </select>
+            <input type="text" name="location" placeholder="보관 위치" required style="padding: 10px; border: 1px solid #eeece1; border-radius: 8px; font-size: 13px;">
+            <select name="risk" style="padding: 10px; border: 1px solid #eeece1; border-radius: 8px; font-size: 13px; color: #555;">
+                <option value="낮음">위험도: 낮음</option>
+                <option value="경고">위험도: 경고</option>
+                <option value="위험">위험도: 위험</option>
+            </select>
+            <select name="status" style="padding: 10px; border: 1px solid #eeece1; border-radius: 8px; font-size: 13px; color: #555;">
+                <option value="보관중">보관중</option>
+                <option value="소모됨">소모됨</option>
+            </select>
+            <button type="submit" style="padding: 10px; background: #333; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; grid-column: span 1;">등록</button>
+        </form>
+    </div>
+    {% endif %}
 
-<section class="about">
-    <h2>CHEMI 소개</h2>
-    <p>케미는 최고의 역량을 지닌 학생들이 모인 삼괴고 최고의 실험 동아리입니다.</p>
-</section>
+    <div style="background: white; border-radius: 24px; border: 1px solid #eeece1; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.01);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+            <thead>
+                <tr style="background: #faf9f5; border-bottom: 1px solid #eeece1; color: #666; font-weight: 700;">
+                    <th style="padding: 18px 20px;">시약 정보</th>
+                    <th style="padding: 18px 20px;">화학식</th>
+                    <th style="padding: 18px 20px;">시약 분류</th>
+                    <th style="padding: 18px 20px;">보관 위치</th>
+                    <th style="padding: 18px 20px; text-align: center;">위험도</th>
+                    <th style="padding: 18px 20px; text-align: center;">상태</th>
+                    {% if session.get('is_admin') %}
+                    <th style="padding: 18px 20px; text-align: center;">관리</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reagents %}
+                <tr style="border-bottom: 1px solid #f4f3ed; transition: background 0.2s;">
+                    <td style="padding: 18px 20px; font-weight: 700; color: #333;">{{ r[1] }}</td>
+                    <td style="padding: 18px 20px; font-family: 'Courier New', monospace; font-weight: bold; color: #bfa11d;">{{ r[2] }}</td>
+                    <td style="padding: 18px 20px;">
+                        <span style="background: #f0edf5; color: #6c5ce7; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">
+                            {{ r[6] if r[6] else '미분류' }}
+                        </span>
+                    </td>
+                    <td style="padding: 18px 20px; color: #666; font-weight: 500;">📍 {{ r[3] }}</td>
+                    <td style="padding: 18px 20px; text-align: center;">
+                        {% if r[4] == '위험' %}
+                            <span style="background: #ffe3e3; color: #dc3545; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: bold;">위험</span>
+                        {% elif r[4] == '경고' %}
+                            <span style="background: #fff3cd; color: #856404; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: bold;">경고</span>
+                        {% else %}
+                            <span style="background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: bold;">낮음</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 18px 20px; text-align: center;">
+                        <span style="font-size: 13px; font-weight: 600; color: {% if r[5] == '보관중' %}#28a745{% else %}#999{% endif %};">
+                            {{ r[5] }}
+                        </span>
+                    </td>
+                    {% if session.get('is_admin') %}
+                    <td style="padding: 18px 20px; text-align: center;">
+                        <a href="/deleteReagent/{{ r[0] }}" onclick="return confirm('정말 이 시약을 대장에서 삭제하시겠습니까?');" style="color: #dc3545; text-decoration: none; font-size: 12px; font-weight: bold; background: #ffe3e3; padding: 4px 8px; border-radius: 6px;">삭제</a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="{% if session.get('is_admin') %}7{% else %}6{% endif %}" style="padding: 40px; text-align: center; color: #999; font-style: italic;">
+                        조건에 일치하는 등록된 동아리 시약 정보가 없습니다. 🔍
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

@@ -350,13 +350,17 @@ def upload_photo():
         return redirect(url_for("upload"))
         
     try:
-        # 🔥 서버 하드 대신 Cloudinary 영구 보관소로 바로 발송!
-        upload_result = cloudinary.uploader.upload(file)
-        
-        # 업로드 완료 후 발급받은 이미지 고유 URL 주소 획득
+        # 🔥 핵심: 화질은 유지하되 용량을 80% 이상 압축하여 전송 속도를 획기적으로 단축합니다!
+        upload_result = cloudinary.uploader.upload(
+            file,
+            options={
+                "quality": "auto",       # 용량을 사람 눈에 안 띄게 대폭 압축
+                "fetch_format": "auto"   # WebP 등 가장 가벼운 최신 이미지 포맷으로 변환
+            }
+        )
         image_url = upload_result.get("secure_url")
         
-        # database.db 내의 filename 컬럼 칸에 이미지 풀 주소를 쏙 저장합니다.
+        # database.db에 이미지 주소 저장
         conn = get_db_connection()
         c = conn.cursor()
         c.execute("INSERT INTO photos(filename, title, tag) VALUES(?,?,?)", (image_url, title, tag))

@@ -467,18 +467,6 @@ body:has(.calendar-wrapper) {
 }
 
 /* ==========================================
-   9. 시약 정보 검색 전역 배경 전용 룰 (화면 꽉 차게)
-   ========================================== */
-body:has(.reagent-wrapper) {
-    background-image: url('/static/chemi_list.png') !important;
-    background-size: cover !important;        /* 화면 크기에 맞춰 꽉 채우기 */
-    background-repeat: no-repeat !important;
-    background-position: center !important;    /* 가운데 정렬 */
-    background-attachment: fixed !important;    /* 스크롤 시 배경 고정 */
-    background-color: #fdfcf7 !important;
-}
-
-/* ==========================================
    9-2. 팀 프로젝트 상세 모달 글자 가독성 보정 (백금 & 화이트)
    ========================================== */
 /* 상단 캡션 (RESEARCH INFORMATION) - 화사한 네온 옐로우 */

@@ -288,47 +288,51 @@ nav a:hover {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
 /* ==========================================
-   ✨ 각 페이지별 전체 화면 배경 이미지 설정 (원본 복구)
+   ✨ 각 페이지별 전체 화면 배경 이미지 설정 (안전한 버전)
    ========================================== */
 
-/* 1. 아이디어 플랫폼 페이지 바탕 배경 */
-body:has(.ideas-wrapper) {
+/* 1. 아이디어 플랫폼 페이지 전체 배경 */
+.ideas-page-bg {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 40px;
+    padding-bottom: 40px;
     background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('chemi_idea.png') !important;
     background-size: cover !important;
     background-position: center !important;
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
 }
-/* 아이디어 플랫폼 내부 카드 상자들은 원래의 깨끗한 흰색 유지 */
-.ideas-wrapper, .idea-form-card, .feed-card {
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
-}
 
-/* 2. 케미 캘린더 페이지 바탕 배경 */
-body:has(.calendar-wrapper) {
+/* 2. 케미 캘린더 페이지 전체 배경 */
+.calendar-page-bg {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 40px;
+    padding-bottom: 40px;
     background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('chemi_schedule.png') !important;
     background-size: cover !important;
     background-position: center !important;
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
 }
-/* 캘린더 카드 상자 흰색 유지 */
-.calendar-card {
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1) !important;
-}
 
-/* 3. 시약 찾기 페이지 바탕 배경 */
-body:has(.reagent-wrapper) {
+/* 3. 시약 찾기 페이지 전체 배경 */
+.reagent-page-bg {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 40px;
+    padding-bottom: 40px;
     background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('chemi_list.png') !important;
     background-size: cover !important;
     background-position: center !important;
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
 }
-/* 시약 찾기 테이블 상자 흰색 유지 */
-.table-container, .search-form {
-    background-color: rgba(255, 255, 255, 0.95) !important;
+
+/* 둥글둥글한 본문 카드 상자들이 투명해지지 않고 하얗게 뜨도록 고정 */
+.ideas-wrapper, .idea-form-card, .feed-card, .calendar-card, .table-container, .search-form {
+    background-color: #ffffff !important;
+    border-radius: 20px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
 }

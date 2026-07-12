@@ -23,7 +23,7 @@ ADMIN_PASSWORD = "chemistry123!"
 # 🗄️ 2. Supabase(PostgreSQL) 클라우드 연결 세팅 (삭제 버그 완벽 해결!)
 # ==============================================================
 # 🚨 조장님! 아래 주소 중간의 [YOUR-PASSWORD] 영역을 Supabase 생성 시 만드신 진짜 비밀번호로 꼭 변경해 주세요!
-SUPABASE_DATABASE_URL = "postgresql://postgres.etdfporsnhyhqguuqkqd:[ehqhr0843!!]@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
+SUPABASE_DATABASE_URL = "postgresql://postgres.etdfporsnhyhqguuqkqd:ehqhr0843!!@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = SUPABASE_DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

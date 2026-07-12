@@ -368,6 +368,17 @@ def add_reagent():
         conn.close()
     
     return redirect(url_for("reagent_list"))
+    # 🗑️ [신규] 관리자 전용 시약 정보 삭제 라우터
+@app.route("/deleteReagent/<int:reagent_id>")
+def delete_reagent(reagent_id):
+    if session.get("is_admin"):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM reagents WHERE id = ?", (reagent_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+    return redirect(url_for("reagent_list"))
 
 @app.route("/upload")
 def upload():

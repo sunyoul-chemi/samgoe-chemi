@@ -467,6 +467,18 @@ body:has(.calendar-wrapper) {
 }
 
 /* ==========================================
+   9. 시약 정보 검색 전역 배경 전용 룰 (화면 꽉 차게)
+   ========================================== */
+body:has(.reagent-wrapper) {
+    background-image: url('/static/chemi_list.png') !important;
+    background-size: cover !important;        /* 화면 크기에 맞춰 꽉 채우기 */
+    background-repeat: no-repeat !important;
+    background-position: center !important;    /* 가운데 정렬 */
+    background-attachment: fixed !important;    /* 스크롤 시 배경 고정 */
+    background-color: #fdfcf7 !important;
+}
+
+/* ==========================================
    9-2. 팀 프로젝트 상세 모달 글자 가독성 보정 (백금 & 화이트)
    ========================================== */
 /* 상단 캡션 (RESEARCH INFORMATION) - 화사한 네온 옐로우 */
@@ -533,29 +545,3 @@ body:has(.calendar-wrapper) {
     background: rgba(255, 107, 107, 0.3) !important;
 }
 
-/* ==========================================
-   10. 시약 찾기 페이지 (chemi_list.html) 감성 배경 적용
-   ========================================== */
-.reagent-page-wrapper {
-    /* 다른 페이지들과 동일하게 chemi_list 일러스트 배경을 전체에 적용 */
-    background-image: url('/static/chemi_list.png') !important; 
-    background-size: cover !important; /* 혹은 다른 페이지처럼 400px repeat 원하시면 아래 주석 해제 */
-    /* background-size: 400px !important; background-repeat: repeat !important; */
-    background-position: center !important;
-    background-attachment: fixed !important;
-    min-height: 100vh;
-    padding-top: 40px;
-    padding-bottom: 60px;
-    box-sizing: border-box;
-}
-
-/* 시약 검색창과 테이블이 배경에 묻히지 않도록 반투명 화이트 박스로 감싸기 */
-.reagent-content-box {
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(8px);
-    border-radius: 24px;
-    padding: 40px 30px;
-    box-shadow: 0 10px 30px rgba(163, 150, 119, 0.15);
-    max-width: 1200px;
-    margin: 0 auto;
-}

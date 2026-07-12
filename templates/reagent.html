@@ -38,42 +38,80 @@
             <form action="/addReagent" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                     <input type="text" name="name" placeholder="시약명" required
-                           style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
-                    
-                    <input type="text" name="formula" placeholder="화학식" required
                            style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
                     
-                    <select name="category" style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
-                        <option value="무기화합물">무기화합물</option>
+                    <input type="text" name="formula" placeholder="화학식" required
+                           style="flex: 1; min-width: 120px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
+                    
+                    <select name="category" style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
                         <option value="유기화합물">유기화합물</option>
-                        <option value="염기성물질">염기성물질</option>
+                        <option value="무기화합물">무기화합물</option>
                         <option value="위험성물질">위험성물질</option>
+                        <option value="염기성물질">염기성물질</option>
                         <option value="생물시약">생물시약</option>
                     </select>
                     
-                    <input type="text" name="location" placeholder="보관 위치" required
-                           style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
+                    <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 5px;">
+                        <select id="locationSelect" onchange="toggleInput('locationSelect', 'locationInput')" style="width: 100%; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                            <option value="1층">1층</option>
+                            <option value="2층">2층</option>
+                            <option value="냉장고">냉장고</option>
+                            <option value="생명화학실">생명화학실</option>
+                            <option value="물리지구실">물리지구실</option>
+                            <option value="custom">기타 (직접 입력)</option>
+                        </select>
+                        <input type="text" id="locationInput" name="location" value="1층" placeholder="보관 위치 직접 입력" style="display: none; width: 100%; padding: 10px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
+                    </div>
                 </div>
                 
-                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-                    <select name="risk" style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff;">
-                        <option value="낮음">위험도: 낮음</option>
-                        <option value="경고">위험도: 경고</option>
-                        <option value="위험">위험도: 위험</option>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start;">
+                    <select name="risk" style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                        <option value="낮음">낮음</option>
+                        <option value="경고">경고</option>
+                        <option value="위험">위험</option>
                     </select>
                     
-                    <select name="status" style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff;">
-                        <option value="보관중">보관중</option>
-                        <option value="사용중">사용중</option>
-                        <option value="재고없음">재고없음</option>
-                    </select>
+                    <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 5px;">
+                        <select id="statusSelect" onchange="toggleInput('statusSelect', 'statusInput')" style="width: 100%; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                            <option value="보관중">보관중</option>
+                            <option value="사용중">사용중</option>
+                            <option value="재고없음">재고없음</option>
+                            <option value="custom">기타 (직접 입력)</option>
+                        </select>
+                        <input type="text" id="statusInput" name="status" value="보관중" placeholder="상태 직접 입력" style="display: none; width: 100%; padding: 10px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
+                    </div>
                     
-                    <button type="submit" style="flex: 1; min-width: 180px; padding: 12px; background: #2d2d2d; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px;">
+                    <button type="submit" style="flex: 1; min-width: 150px; padding: 12px; background: #2d2d2d; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; height: 45px;">
                         등록
                     </button>
                 </div>
             </form>
         </div>
+
+        <script>
+            function toggleInput(selectId, inputId) {
+                var selectEl = document.getElementById(selectId);
+                var inputEl = document.getElementById(inputId);
+                
+                if (selectEl.value === "custom") {
+                    inputEl.style.display = "block";
+                    inputEl.value = "";
+                    inputEl.focus();
+                    inputEl.required = true;
+                } else {
+                    inputEl.style.display = "none";
+                    inputEl.value = selectEl.value;
+                    inputEl.required = false;
+                }
+            }
+            // 폼 전송 전 최종 값 동기화 데이터 검증
+            document.getElementById('locationInput').addEventListener('input', function() {
+                document.getElementById('locationSelect').value = "custom";
+            });
+            document.getElementById('statusInput').addEventListener('input', function() {
+                document.getElementById('statusSelect').value = "custom";
+            });
+        </script>
         {% endif %}
 
         <div style="overflow-x: auto; border-radius: 16px; border: 1px solid #eeece1; background: #fff;">
@@ -115,7 +153,7 @@
                         </td>
                         
                         <td style="padding: 15px 20px; text-align: center;">
-                            <span style="font-size: 13px; font-weight: 700; color: {% if r[5] == '보관중' %}#11998e{% else %}#999{% endif %};">
+                            <span style="font-size: 13px; font-weight: 700; color: {% if r[5] == '보관중' or r[5] == '사용중' %}#11998e{% else %}#999{% endif %};">
                                 {{ r[5] }}
                             </span>
                         </td>

@@ -286,3 +286,37 @@ nav a:hover {
     padding: 12px;
     position: relative;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ==========================================
+   각 페이지별 개별 배경 이미지 설정 (.png 매칭)
+   ========================================== */
+
+/* 1. 아이디어 플랫폼 페이지 배경 */
+.ideas-wrapper {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('chemi_idea.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    border-radius: 30px; /* 사각형 모서리를 부드럽게 둥글림 */
+    padding: 30px !important;
+}
+
+/* 2. 케미 캘린더 페이지 배경 */
+.calendar-wrapper {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('chemi_schedule.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    border-radius: 30px;
+    padding: 30px !important;
+}
+
+/* 3. 시약 찾기 페이지 배경 */
+.reagent-wrapper {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('chemi_list.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    border-radius: 30px;
+    padding: 30px !important;
+}

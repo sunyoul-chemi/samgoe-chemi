@@ -1,31 +1,72 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="reagent-page-container" style="padding: 40px 20px; min-height: 90vh;">
+<div class="reagent-wrapper" style="padding: 40px 20px; min-height: 90vh;">
     
-    <div style="background: rgba(253, 252, 247, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 24px; padding: 40px 30px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08); max-width: 1250px; margin: 0 auto; border: 1px solid rgba(238, 236, 225, 0.5);">
+    <div style="background: rgba(253, 252, 247, 0.95); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 24px; padding: 40px 30px; max-width: 1250px; margin: 0 auto; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05); border: 1px solid #eeece1;">
         
         <div style="text-align: center; margin-bottom: 35px;">
-            <span style="font-size: 38px;">🧪</span>
-            <h2 style="font-size: 28px; color: #333; margin: 10px 0 5px 0; font-weight: 800;">시약 정보 검색 시스템</h2>
-            <p style="color: #666; font-size: 15px;">안전한 실험을 위해 시약의 위치와 분류, 위험도를 상시 확인하세요.</p>
+            <span style="font-size: 36px;">🔬</span>
+            <h2 style="font-size: 26px; color: #333; margin: 10px 0 5px 0; font-weight: 800;">시약 정보 검색 시스템</h2>
+            <p style="color: #666; font-size: 14px;">안전한 실험을 위해 시약의 위치와 분류, 위험도를 상시 확인하세요.</p>
         </div>
 
-        <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-            <form action="/reagents" method="GET" style="display: flex; gap: 10px; flex: 1; min-width: 300px;">
-                <input type="text" name="search" placeholder="시약명 또는 화학식 검색 (예: H2O2, Ethanol)" 
+        {% if session.get('is_admin') or is_admin %}
+        <div style="background: #fff; border: 1px solid #eeece1; border-radius: 20px; padding: 25px; margin-bottom: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+            <h3 style="margin-top: 0; margin-bottom: 20px; color: #7b2cbf; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">➕</span> 신규 재고 시약 등록 (관리자 전용)
+            </h3>
+            
+            <form action="/admin/reagent/add" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <input type="text" name="name" placeholder="시약명" required
+                           style="flex: 1; min-width: 180px; padding: 12px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #faf9f5;">
+                    
+                    <input type="text" name="formula" placeholder="화학식 (예: H2O2)" required
+                           style="flex: 1; min-width: 150px; padding: 12px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #faf9f5;">
+                    
+                    <select name="category" style="flex: 1; min-width: 160px; padding: 12px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                        <option value="무기화합물">무기화합물</option>
+                        <option value="유기화합물">유기화합물</option>
+                        <option value="염기성물질">염기성물질</option>
+                        <option value="위험성물질">위험성물질</option>
+                        <option value="생물시약">생물시약</option>
+                    </select>
+                    
+                    <input type="text" name="location" placeholder="보관 위치" required
+                           style="flex: 1; min-width: 150px; padding: 12px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #faf9f5;">
+                </div>
+                
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                    <select name="risk" style="flex: 1; min-width: 150px; padding: 12px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                        <option value="낮음">위험도: 낮음</option>
+                        <option value="경고">위험도: 경고</option>
+                        <option value="위험">위험도: 위험</option>
+                    </select>
+                    
+                    <select name="status" style="flex: 1; min-width: 150px; padding: 12px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                        <option value="보관중">보관중</option>
+                        <option value="사용중">사용중</option>
+                        <option value="재고없음">재고없음</option>
+                    </select>
+                    
+                    <button type="submit" style="flex: 1; min-width: 150px; padding: 12px; background: #222; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s;">
+                        등록
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+
+        <div style="margin-bottom: 25px;">
+            <form action="/reagents" method="GET" style="display: flex; gap: 10px;">
+                <input type="text" name="search" placeholder="시약명 또는 화학식 검색 (예: HCl)" 
                        value="{{ search_query if search_query else '' }}"
                        style="flex: 1; padding: 12px 16px; border: 1px solid #e1ded3; border-radius: 12px; font-size: 14px; outline: none; background: #fff;">
-                <button type="submit" style="padding: 12px 28px; background: #bfa11d; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px; white-space: nowrap; transition: background 0.2s;">
+                <button type="submit" style="padding: 12px 28px; background: #bfa11d; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s;">
                     조회하기
                 </button>
             </form>
-
-            {% if session.get('is_admin') or is_admin %}
-            <a href="/admin/reagent/add" style="padding: 12px 24px; background: #4e54c8; color: white; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; box-shadow: 0 4px 12px rgba(78,84,200,0.2); display: inline-flex; align-items: center; gap: 6px;">
-                <span>➕</span> 새 시약 등록 (관리자)
-            </a>
-            {% endif %}
         </div>
 
         <div style="overflow-x: auto; border-radius: 16px; border: 1px solid #eeece1; background: #fff;">
@@ -39,41 +80,41 @@
                         <th style="padding: 15px 20px;">위험도</th>
                         <th style="padding: 15px 20px;">상태</th>
                         {% if session.get('is_admin') or is_admin %}
-                        <th style="padding: 15px 20px; text-align: center;">관리 권한</th>
+                        <th style="padding: 15px 20px; text-align: center;">관리</th>
                         {% endif %}
                     </tr>
                 </thead>
                 <tbody>
                     {% for reagent in reagents %}
                     <tr style="border-bottom: 1px solid #f4f3ed; transition: background 0.15s;" onmouseover="this.style.background='#faf9f5'" onmouseout="this.style.background='transparent'">
-                        <td style="padding: 15px 20px; font-weight: 700; color: #222;">{{ reagent.name if reagent.name else '이름 없음' }}</td>
-                        <td style="padding: 15px 20px; font-weight: 600; color: #bfa11d;">{{ reagent.formula if reagent.formula else '-' }}</td>
+                        <td style="padding: 15px 20px; font-weight: 700; color: #222;">{{ reagent.name }}</td>
+                        <td style="padding: 15px 20px; font-weight: 600; color: #bfa11d;">{{ reagent.formula }}</td>
                         <td style="padding: 15px 20px;">
-                            <span style="background: #eef3ff; color: #4e54c8; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">{{ reagent.category if reagent.category else '미분류' }}</span>
+                            <span style="background: #eef3ff; color: #4e54c8; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">{{ reagent.category }}</span>
                         </td>
-                        <td style="padding: 15px 20px; color: #666;"><span style="color: #ff416c; margin-right: 3px;">📍</span>{{ reagent.location if reagent.location else '미지정' }}</td>
+                        <td style="padding: 15px 20px; color: #666;"><span style="color: #ff416c; margin-right: 3px;">📍</span>{{ reagent.location }}</td>
                         <td style="padding: 15px 20px;">
                             {% if reagent.risk == '위험' %}
                                 <span style="background: #ffeef0; color: #ff416c; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">위험</span>
                             {% elif reagent.risk == '경고' %}
                                 <span style="background: #fff4e6; color: #ff922b; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">경고</span>
                             {% else %}
-                                <span style="background: #eafaf1; color: #11998e; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">{{ reagent.risk if reagent.risk else '낮음' }}</span>
+                                <span style="background: #eafaf1; color: #11998e; padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 12px;">{{ reagent.risk }}</span>
                             {% endif %}
                         </td>
-                        <td style="padding: 15px 20px; color: #11998e; font-weight: 700;">{{ reagent.status if reagent.status else '보관중' }}</td>
+                        <td style="padding: 15px 20px; color: #11998e; font-weight: 700;">{{ reagent.status }}</td>
                         
                         {% if session.get('is_admin') or is_admin %}
                         <td style="padding: 12px 20px; text-align: center; white-space: nowrap;">
                             <a href="/admin/reagent/edit/{{ reagent.id }}" style="color: #4e54c8; background: rgba(78,84,200,0.1); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; text-decoration: none; margin-right: 5px;">수정</a>
-                            <a href="/admin/reagent/delete/{{ reagent.id }}" class="proj-delete-btn" onclick="return confirm('정말 이 시약을 삭제하시겠습니까?');" style="padding: 5px 10px; font-size: 12px;">삭제</a>
+                            <a href="/admin/reagent/delete/{{ reagent.id }}" onclick="return confirm('정말 이 시약을 목록에서 제거하시겠습니까?');" style="color: #ff416c; background: rgba(255,65,108,0.1); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; text-decoration: none;">삭제</a>
                         </td>
                         {% endif %}
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="{{ '7' if (session.get('is_admin') or is_admin) else '6' }}" style="text-align: center; color: #a09c92; padding: 60px 0; font-style: italic;">
-                            등록된 시약 데이터가 없거나 불러오지 못했습니다. 🔬
+                        <td colspan="{{ '7' if (session.get('is_admin') or is_admin) else '6' }}" style="text-align: center; color: #a09c92; padding: 50px 0; font-style: italic;">
+                            현재 검색 조건에 부합하는 시약이 데이터베이스에 존재하지 않습니다.
                         </td>
                     </tr>
                     {% endfor %}

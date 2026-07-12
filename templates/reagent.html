@@ -22,38 +22,41 @@
         <div style="margin-bottom: 30px;">
             <form action="/reagent" method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                 <input type="text" name="keyword" value="{{ keyword if keyword else '' }}" placeholder="시약명 또는 화학식 검색 (예: HCl)" 
-                       style="flex: 2; min-width: 250px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none;">
+                       style="flex: 2; min-width: 250px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none;" value="{{ keyword }}">
                 
-                <select name="category_filter" style="flex: 1; min-width: 150px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none; background: #fff; cursor: pointer; color: #555;">
+                <select name="category_filter" style="flex: 1; min-width: 160px; padding: 12px 15px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none; background: #fff; cursor: pointer; color: #4a4538;">
                     <option value="">-- 모든 분류 보기 --</option>
-                    <option value="유기화합물" {% if request.args.get('category_filter') == '유기화합물' %}selected{% endif %}>유기화합물</option>
-                    <option value="무기화합물" {% if request.args.get('category_filter') == '무기화합물' %}selected{% endif %}>무기화합물</option>
-                    <option value="위험성물질" {% if request.args.get('category_filter') == '위험성물질' %}selected{% endif %}>위험성물질</option>
-                    <option value="염기성물질" {% if request.args.get('category_filter') == '염기성물질' %}selected{% endif %}>염기성물질</option>
-                    <option value="생물시약" {% if request.args.get('category_filter') == '생물시약' %}selected{% endif %}>생물시약</option>
+                    <option value="유기화합물" {% if selected_category == '유기화합물' %}selected{% endif %}>유기화합물</option>
+                    <option value="무기화합물" {% if selected_category == '무기화합물' %}selected{% endif %}>무기화합물</option>
+                    <option value="위험성물질" {% if selected_category == '위험성물질' %}selected{% endif %}>위험성물질</option>
+                    <option value="염기성물질" {% if selected_category == '염기성물질' %}selected{% endif %}>염기성물질</option>
+                    <option value="생물시약" {% if selected_category == '생물시약' %}selected{% endif %}>생물시약</option>
                 </select>
-
-                <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 14px; white-space: nowrap;">
+                
+                <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px; white-space: nowrap;">
                     조회하기
                 </button>
+                {% if keyword or selected_category %}
+                    <a href="/reagent" style="text-decoration: none; padding: 12px 20px; background: #eee; color: #555; border-radius: 12px; font-size: 14px; font-weight: 600;">초기화</a>
+                {% endif %}
             </form>
         </div>
 
         {% if session.get('is_admin') %}
         <div style="background: #fff; border: 1px solid #eeece1; border-radius: 20px; padding: 25px; margin-bottom: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.01);">
-            <h3 style="margin-top: 0; margin-bottom: 20px; color: #7b2cbf; font-size: 15px; font-weight: 700;">
-                + 신규 재고 시약 등록 (관리자전용)
+            <h3 style="margin-top: 0; margin-bottom: 20px; color: #bfa11d; font-size: 16px; font-weight: 800;">
+                ➕ 신규 재고 시약 등록 (관리자전용)
             </h3>
             
             <form action="/addReagent" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                     <input type="text" name="name" placeholder="시약명" required
-                           style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
+                           style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none;">
                     
                     <input type="text" name="formula" placeholder="화학식" required
-                           style="flex: 1; min-width: 120px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
+                           style="flex: 1; min-width: 120px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none;">
                     
-                    <select name="category" style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                    <select name="category" required style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #555;">
                         <option value="유기화합물">유기화합물</option>
                         <option value="무기화합물">무기화합물</option>
                         <option value="위험성물질">위험성물질</option>
@@ -62,7 +65,7 @@
                     </select>
                     
                     <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 5px;">
-                        <select id="locationSelect" onchange="toggleInput('locationSelect', 'locationInput')" style="width: 100%; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                        <select id="locationSelect" onchange="toggleInput('locationSelect', 'locationInput')" style="width: 100%; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #555; cursor: pointer;">
                             <option value="1층">1층</option>
                             <option value="2층">2층</option>
                             <option value="냉장고">냉장고</option>
@@ -70,28 +73,28 @@
                             <option value="물리지구실">물리지구실</option>
                             <option value="custom">기타 (직접 입력)</option>
                         </select>
-                        <input type="text" id="locationInput" name="location" value="1층" placeholder="보관 위치 직접 입력" style="display: none; width: 100%; padding: 10px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
+                        <input type="text" id="locationInput" name="location" value="1층" placeholder="보관 위치 직접 입력" style="display: none; width: 100%; padding: 10px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none;">
                     </div>
                 </div>
                 
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start;">
-                    <select name="risk" style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
-                        <option value="낮음">낮음</option>
-                        <option value="경고">경고</option>
-                        <option value="위험">위험</option>
+                    <select name="risk" style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #555;">
+                        <option value="낮음">위험도: 낮음</option>
+                        <option value="경고">위험도: 경고</option>
+                        <option value="위험">위험도: 위험</option>
                     </select>
                     
                     <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 5px;">
-                        <select id="statusSelect" onchange="toggleInput('statusSelect', 'statusInput')" style="width: 100%; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                        <select id="statusSelect" onchange="toggleInput('statusSelect', 'statusInput')" style="width: 100%; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #555; cursor: pointer;">
                             <option value="보관중">보관중</option>
                             <option value="사용중">사용중</option>
                             <option value="재고없음">재고없음</option>
                             <option value="custom">기타 (직접 입력)</option>
                         </select>
-                        <input type="text" id="statusInput" name="status" value="보관중" placeholder="상태 직접 입력" style="display: none; width: 100%; padding: 10px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
+                        <input type="text" id="statusInput" name="status" value="보관중" placeholder="상태 직접 입력" style="display: none; width: 100%; padding: 10px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none;">
                     </div>
                     
-                    <button type="submit" style="flex: 1; min-width: 150px; padding: 12px; background: #2d2d2d; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; height: 45px;">
+                    <button type="submit" style="flex: 1; min-width: 150px; padding: 12px; background: #333; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px; height: 45px;">
                         등록
                     </button>
                 </div>
@@ -119,59 +122,59 @@
         <div style="overflow-x: auto; border-radius: 16px; border: 1px solid #eeece1; background: #fff;">
             <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
                 <thead>
-                    <tr style="background: #faf9f5; border-bottom: 2px solid #eeece1; color: #555; font-weight: 700;">
-                        <th style="padding: 15px 20px;">시약 정보</th>
-                        <th style="padding: 15px 20px;">화학식</th>
-                        <th style="padding: 15px 20px;">시약 분류</th>
-                        <th style="padding: 15px 20px;">보관 위치</th>
-                        <th style="padding: 15px 20px; text-align: center;">위험도</th>
-                        <th style="padding: 15px 20px; text-align: center;">상태</th>
+                    <tr style="background: #faf9f5; border-bottom: 1px solid #eeece1; color: #666; font-weight: 700;">
+                        <th style="padding: 18px 20px;">시약 정보</th>
+                        <th style="padding: 18px 20px;">화학식</th>
+                        <th style="padding: 18px 20px;">시약 분류</th>
+                        <th style="padding: 18px 20px;">보관 위치</th>
+                        <th style="padding: 18px 20px; text-align: center;">위험도</th>
+                        <th style="padding: 18px 20px; text-align: center;">상태</th>
                         {% if session.get('is_admin') %}
-                        <th style="padding: 15px 20px; text-align: center;">관리</th>
+                        <th style="padding: 18px 20px; text-align: center;">관리</th>
                         {% endif %}
                     </tr>
                 </thead>
                 <tbody>
                     {% for r in reagents %}
-                    <tr style="border-bottom: 1px solid #f4f3ed; transition: background 0.15s;" onmouseover="this.style.background='#faf9f5'" onmouseout="this.style.background='transparent'">
-                        <td style="padding: 15px 20px; font-weight: 700; color: #222;">{{ r[1] }}</td>
+                    <tr style="border-bottom: 1px solid #f4f3ed; transition: background 0.2s;" onmouseover="this.style.background='#faf9f5'" onmouseout="this.style.background='transparent'">
+                        <td style="padding: 18px 20px; font-weight: 700; color: #333;">{{ r[1] }}</td>
                         
-                        <td style="padding: 15px 20px; font-weight: 600; color: #bfa11d;">{{ r[2] }}</td>
+                        <td style="padding: 18px 20px; font-family: 'Courier New', monospace; font-weight: bold; color: #bfa11d;">{{ r[2] }}</td>
                         
-                        <td style="padding: 15px 20px;">
-                            <span style="background: #eef3ff; color: #4e54c8; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">{{ r[3] }}</span>
+                        <td style="padding: 18px 20px;">
+                            <span style="background: #f0edf5; color: #6c5ce7; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">
+                                {{ r[6] if r[6] else '미분류' }}
+                            </span>
                         </td>
                         
-                        <td style="padding: 15px 20px; color: #555; font-weight: 500;">
-                            <span style="color: #ff416c; margin-right: 4px;">📍</span>{{ r[4] }}
-                        </td>
+                        <td style="padding: 18px 20px; color: #666; font-weight: 500;">📍 {{ r[3] }}</td>
                         
-                        <td style="padding: 15px 20px; text-align: center;">
-                            {% if r[6] == '위험' %}
-                                <span style="background: #ffeef0; color: #ff416c; padding: 5px 12px; border-radius: 6px; font-weight: 700; font-size: 12px;">위험</span>
-                            {% elif r[6] == '경고' %}
-                                <span style="background: #fff4e6; color: #ff922b; padding: 5px 12px; border-radius: 6px; font-weight: 700; font-size: 12px;">경고</span>
+                        <td style="padding: 18px 20px; text-align: center;">
+                            {% if r[4] == '위험' %}
+                                <span style="background: #ffe3e3; color: #dc3545; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">위험</span>
+                            {% elif r[4] == '경고' %}
+                                <span style="background: #fff3cd; color: #856404; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">경고</span>
                             {% else %}
-                                <span style="background: #eafaf1; color: #11998e; padding: 5px 12px; border-radius: 6px; font-weight: 700; font-size: 12px;">낮음</span>
+                                <span style="background: #d4edda; color: #155724; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">낮음</span>
                             {% endif %}
                         </td>
                         
-                        <td style="padding: 15px 20px; text-align: center;">
-                            <span style="font-size: 13px; font-weight: 700; color: {% if r[5] == '보관중' or r[5] == '사용중' %}#11998e{% else %}#999{% endif %};">
+                        <td style="padding: 18px 20px; text-align: center;">
+                            <span style="font-size: 13px; font-weight: 600; color: {% if r[5] == '보관중' or r[5] == '사용중' %}#28a745{% else %}#999{% endif %};">
                                 {{ r[5] if r[5] else '보관중' }}
                             </span>
                         </td>
                         
                         {% if session.get('is_admin') %}
-                        <td style="padding: 12px 20px; text-align: center; white-space: nowrap;">
-                            <a href="/deleteReagent/{{ r[0] }}" onclick="return confirm('정말 이 시약을 대장에서 삭제하시겠습니까?');" style="color: #ff416c; background: rgba(255,65,108,0.08); padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; text-decoration: none; border: 1px solid rgba(255,65,108,0.2);">삭제</a>
+                        <td style="padding: 18px 20px; text-align: center;">
+                            <a href="/deleteReagent/{{ r[0] }}" onclick="return confirm('정말 이 시약을 대장에서 삭제하시겠습니까?');" style="color: #dc3545; text-decoration: none; font-size: 12px; font-weight: bold; background: #ffe3e3; padding: 5px 10px; border-radius: 6px;">삭제</a>
                         </td>
                         {% endif %}
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="{{ '7' if session.get('is_admin') else '6' }}" style="padding: 60px; text-align: center; color: #a09c92; font-style: italic;">
-                            검색 조건에 해당하거나 등록된 시약 데이터가 현재 존재하지 않습니다.
+                        <td colspan="{{ '7' if session.get('is_admin') else '6' }}" style="padding: 40px; text-align: center; color: #999; font-style: italic;">
+                            조건에 일치하는 등록된 동아리 시약 정보가 없습니다. 🔍
                         </td>
                     </tr>
                     {% endfor %}

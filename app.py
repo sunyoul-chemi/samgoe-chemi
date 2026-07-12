@@ -302,26 +302,31 @@ def reagent_list():
                            reagents=reagents, 
                            keyword=keyword, 
                            selected_category=category_filter)
-    @app.route("/addReagent", methods=["POST"])
+
+# 🛠️ 들여쓰기 에러 해결 및 독립된 라우터로 완전히 벽에 붙여서 분리
+@app.route("/addReagent", methods=["POST"])
 def add_reagent():
     name = request.form.get("name")
     formula = request.form.get("formula")
-    risk = request.form.get("risk")
     location = request.form.get("location")
-    status = request.form.get("status", "보관중")  # 값이 없으면 기본값 '보관중'
+    risk = request.form.get("risk")
+    status = request.form.get("status", "보관중")
+    category = request.form.get("category", "일반시약") # category 기본값 매칭
 
     if name:
         conn = get_db_connection()
         cursor = conn.cursor()
-        # id를 제외한 5개 컬럼(name, formula, risk, location, status)에 정확히 5개의 ? 매칭
+        # 구조가 업데이트된 reagents 테이블의 6개 컬럼(id 제외)에 정확하게 6개의 값 주입
         cursor.execute(
-            "INSERT INTO reagents (name, formula, risk, location, status) VALUES (?, ?, ?, ?, ?)",
-            (name, formula, risk, location, status)
+            "INSERT INTO reagents (name, formula, location, risk, status, category) VALUES (?, ?, ?, ?, ?, ?)",
+            (name, formula, location, risk, status, category)
         )
         conn.commit()
         cursor.close()
         conn.close()
-    return redirect(url_for("reagent_page"))
+    
+    # 📌 목적지 함수명을 reagent_page에서 실제 존재하는 reagent_list로 수정
+    return redirect(url_for("reagent_list"))
 
 # 🖼️ 2. 사진 갤러리 메인 보기 페이지 라우터
 @app.route("/upload")

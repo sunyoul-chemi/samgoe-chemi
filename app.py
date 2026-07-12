@@ -23,9 +23,13 @@ app.secret_key = "chemi_secret_admin_key_1234"
 
 ADMIN_PASSWORD = "chemistry123!"
 
+# 🛠️ [수정] Render 영구 디스크(/data) 경로 적용 (5분 삭제 버그 완벽 해결)
 def get_db_connection():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(base_dir, "database.db")
+    if os.path.exists("/data"):
+        db_path = "/data/database.db"
+    else:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(base_dir, "database.db")
     conn = sqlite3.connect(db_path)
     return conn
 
@@ -97,7 +101,7 @@ def init_db():
     )
     """)
 
-    # 🚨 [신규] 한 줄 공지사항 테이블 생성
+    # 한 줄 공지사항 테이블 생성
     c.execute("""
     CREATE TABLE IF NOT EXISTS notices(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -133,7 +137,6 @@ def init_db():
 def home():
     main_photo = "KakaoTalk_20260709_143736435.jpg"
     
-    # DB에서 가장 최근에 등록된 공지사항 딱 1개만 가져오기
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT id, content FROM notices ORDER BY id DESC LIMIT 1")
@@ -142,7 +145,7 @@ def home():
     
     return render_template("index.html", main_photo=main_photo, notice=notice)
 
-# 📢 1-2. [신규] 관리자 전용 한 줄 공지사항 등록 라우터
+# 📢 1-2. 관리자 전용 한 줄 공지사항 등록 라우터
 @app.route("/addNotice", methods=["POST"])
 def add_notice():
     if session.get("is_admin"):
@@ -150,14 +153,12 @@ def add_notice():
         if content:
             conn = get_db_connection()
             c = conn.cursor()
-            # 💡 기존 공지를 모두 비우고 새로운 1개만 상시 유지하려면 아래 코드의 주석(#)을 푸셔도 됩니다.
-            # c.execute("DELETE FROM notices") 
             c.execute("INSERT INTO notices(content, reg_date) VALUES(?, ?)", (content, datetime.now().strftime("%Y-%m-%d %H:%M")))
             conn.commit()
             conn.close()
     return redirect(url_for("home"))
 
-# 🗑️ 1-3. [신규] 관리자 전용 한 줄 공지사항 파괴 라우터
+# 🗑️ 1-3. 관리자 전용 한 줄 공지사항 파괴 라우터
 @app.route("/deleteNotice/<int:nid>")
 def delete_notice(nid):
     if session.get("is_admin"):
@@ -368,7 +369,7 @@ def add_reagent():
         conn.close()
     
     return redirect(url_for("reagent_list"))
-    # 🗑️ [신규] 관리자 전용 시약 정보 삭제 라우터
+
 @app.route("/deleteReagent/<int:reagent_id>")
 def delete_reagent(reagent_id):
     if session.get("is_admin"):
@@ -380,7 +381,8 @@ def delete_reagent(reagent_id):
         conn.close()
     return redirect(url_for("reagent_list"))
 
-@app.route("/upload")
+# 🖼️ [수정] 사진 갤러리 메인 페이지 (GET, POST 완벽 허용으로 주소 충돌 방어)
+@app.route("/upload", methods=["GET", "POST"])
 def upload():
     conn = get_db_connection()
     c = conn.cursor()
@@ -474,7 +476,7 @@ def delete_project(project_id):
         conn.close()
     return redirect(url_for("projects_page"))
 
-init_db()
-
+# 🛠️ [수정] 무조건 실행되던 init_db()를 if문 안쪽으로 격리 조치
 if __name__ == "__main__":
+    init_db()  # 오직 최초 앱 구동 시에만 안전하게 실행되도록 설정
     app.run(debug=True)

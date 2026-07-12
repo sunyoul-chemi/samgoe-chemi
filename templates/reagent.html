@@ -22,8 +22,8 @@
         <div style="margin-bottom: 30px;">
             <form action="/reagent" method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                 <input type="text" name="keyword" value="{{ keyword }}" placeholder="시약명 또는 화학식 검색 (예: HCl)" 
-                       style="flex: 1; min-width: 250px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
-                <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 14px; transition: background 0.2s;">
+                       style="flex: 1; min-width: 250px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none;">
+                <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 14px;">
                     조회하기
                 </button>
             </form>
@@ -31,19 +31,19 @@
 
         {% if session.get('is_admin') %}
         <div style="background: #fff; border: 1px solid #eeece1; border-radius: 20px; padding: 25px; margin-bottom: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.01);">
-            <h3 style="margin-top: 0; margin-bottom: 20px; color: #7b2cbf; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-                <span style="font-size: 16px;">+</span> 신규 재고 시약 등록 (관리자전용)
+            <h3 style="margin-top: 0; margin-bottom: 20px; color: #7b2cbf; font-size: 15px; font-weight: 700;">
+                + 신규 재고 시약 등록 (관리자전용)
             </h3>
             
             <form action="/addReagent" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                     <input type="text" name="name" placeholder="시약명" required
-                           style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff;">
+                           style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
                     
                     <input type="text" name="formula" placeholder="화학식" required
-                           style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff;">
+                           style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
                     
-                    <select name="category" style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer; color: #333;">
+                    <select name="category" style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
                         <option value="무기화합물">무기화합물</option>
                         <option value="유기화합물">유기화합물</option>
                         <option value="염기성물질">염기성물질</option>
@@ -52,23 +52,23 @@
                     </select>
                     
                     <input type="text" name="location" placeholder="보관 위치" required
-                           style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff;">
+                           style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none;">
                 </div>
                 
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-                    <select name="risk" style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                    <select name="risk" style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff;">
                         <option value="낮음">위험도: 낮음</option>
                         <option value="경고">위험도: 경고</option>
                         <option value="위험">위험도: 위험</option>
                     </select>
                     
-                    <select name="status" style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff; cursor: pointer;">
+                    <select name="status" style="flex: 1; min-width: 180px; padding: 12px 14px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 14px; outline: none; background: #fff;">
                         <option value="보관중">보관중</option>
                         <option value="사용중">사용중</option>
                         <option value="재고없음">재고없음</option>
                     </select>
                     
-                    <button type="submit" style="flex: 1; min-width: 180px; padding: 12px; background: #2d2d2d; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s;">
+                    <button type="submit" style="flex: 1; min-width: 180px; padding: 12px; background: #2d2d2d; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px;">
                         등록
                     </button>
                 </div>
@@ -95,11 +95,15 @@
                     {% for r in reagents %}
                     <tr style="border-bottom: 1px solid #f4f3ed; transition: background 0.15s;" onmouseover="this.style.background='#faf9f5'" onmouseout="this.style.background='transparent'">
                         <td style="padding: 15px 20px; font-weight: 700; color: #222;">{{ r[1] }}</td>
+                        
                         <td style="padding: 15px 20px; font-weight: 600; color: #bfa11d;">{{ r[2] }}</td>
+                        
                         <td style="padding: 15px 20px;">
                             <span style="background: #eef3ff; color: #4e54c8; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">{{ r[3] }}</span>
                         </td>
+                        
                         <td style="padding: 15px 20px; color: #555;"><span style="color: #ff416c; margin-right: 4px;">📍</span>{{ r[4] }}</td>
+                        
                         <td style="padding: 15px 20px; text-align: center;">
                             {% if r[6] == '위험' %}
                                 <span style="background: #ffeef0; color: #ff416c; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">위험</span>
@@ -109,6 +113,7 @@
                                 <span style="background: #eafaf1; color: #11998e; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">낮음</span>
                             {% endif %}
                         </td>
+                        
                         <td style="padding: 15px 20px; text-align: center;">
                             <span style="font-size: 13px; font-weight: 700; color: {% if r[5] == '보관중' %}#11998e{% else %}#999{% endif %};">
                                 {{ r[5] }}

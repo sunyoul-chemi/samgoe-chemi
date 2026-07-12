@@ -63,32 +63,34 @@
             </div>
 
             <div style="background: #fafaf7; border-top: 1px solid #eeece1; padding: 22px 25px;">
-                <h5 style="font-size: 13px; font-weight: 800; color: #666; margin: 0 0 14px 0; display: flex; align-items: center; gap: 5px;">
+                <h5 style="font-size: 13px; font-weight: 800; color: #666; margin: 0 0 15px 0; display: flex; align-items: center; gap: 5px;">
                     💬 피드백 및 반응 ({{ post.comment_count }})
                 </h5>
                 
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; max-height: 300px; overflow-y: auto; padding-right: 5px; align-items: flex-start;">
                     {% for comment in post.comments %}
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: transparent; padding: 2px 0; font-size: 14px; line-height: 1.5;">
-                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 1;">
-                            <span style="font-weight: 800; color: #222; white-space: nowrap;">{{ comment[1] }}</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 100%; margin-bottom: 2px;">
+                        
+                        <div style="display: inline-flex; align-items: center; gap: 8px; background: #eeebde; padding: 10px 16px; border-radius: 18px 18px 18px 4px; border: 1px solid #e3dfd0; max-width: 85%; box-shadow: 0 1px 3px rgba(0,0,0,0.02); flex-wrap: wrap;">
+                            
+                            <span style="font-weight: 800; color: #111; font-size: 13.5px; white-space: nowrap;">{{ comment[1] }}</span>
                             
                             {% if comment[3] %}
-                            <span style="background: #eeebe0; color: #555; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 2px;">
+                            <span style="background: #fff; color: #4a4538; padding: 1px 6px; border-radius: 10px; font-size: 11px; font-weight: 700; border: 1px solid #dcd8ca; display: inline-flex; align-items: center; white-space: nowrap;">
                                 {{ comment[3] }}
                             </span>
                             {% endif %}
                             
-                            <span style="color: #444; word-break: break-all;">{{ comment[2] }}</span>
+                            <span style="color: #3d3d3d; font-weight: 500; font-size: 13.5px; letter-spacing: -0.2px; word-break: break-all; line-height: 1.4;">{{ comment[2] }}</span>
                         </div>
                         
                         {% if session.get('is_admin') %}
                         <a href="/deleteComment/{{ comment[0] }}" onclick="return confirm('이 댓글을 삭제하시겠습니까?');" 
-                           style="color: #bbb; text-decoration: none; font-size: 11px; font-weight: bold; margin-left: 10px; transition: color 0.1s; white-space: nowrap;" onmouseover="this.style.color='#dc3545'" onmouseout="this.style.color='#bbb'">삭제</a>
+                           style="color: #bbb; text-decoration: none; font-size: 11px; font-weight: bold; margin-left: 12px; transition: color 0.1s; white-space: nowrap;" onmouseover="this.style.color='#dc3545'" onmouseout="this.style.color='#bbb'">삭제</a>
                         {% endif %}
                     </div>
                     {% else %}
-                    <div style="text-align: center; color: #b5b1a5; font-size: 12px; font-style: italic; padding: 15px 0;">
+                    <div style="text-align: center; color: #b5b1a5; font-size: 12px; font-style: italic; padding: 20px 0; width: 100%;">
                         첫 피드백을 남겨 조장을 도와주세요! ✨
                     </div>
                     {% endfor %}

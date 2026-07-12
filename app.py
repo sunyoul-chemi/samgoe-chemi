@@ -96,6 +96,15 @@ def init_db():
         summary TEXT NOT NULL
     )
     """)
+
+    # 🚨 [신규] 한 줄 공지사항 테이블 생성
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS notices(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        content TEXT NOT NULL,
+        reg_date TEXT
+    )
+    """)
     conn.commit()
 
     reagents = [
@@ -119,10 +128,45 @@ def init_db():
     conn.commit()
     conn.close()
 
+# 🏠 1. 홈 화면 라우터 (최신 공지사항 연동 완료)
 @app.route('/')
 def home():
     main_photo = "KakaoTalk_20260709_143736435.jpg"
-    return render_template("index.html", main_photo=main_photo)
+    
+    # DB에서 가장 최근에 등록된 공지사항 딱 1개만 가져오기
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT id, content FROM notices ORDER BY id DESC LIMIT 1")
+    notice = c.fetchone()
+    conn.close()
+    
+    return render_template("index.html", main_photo=main_photo, notice=notice)
+
+# 📢 1-2. [신규] 관리자 전용 한 줄 공지사항 등록 라우터
+@app.route("/addNotice", methods=["POST"])
+def add_notice():
+    if session.get("is_admin"):
+        content = request.form.get("content", "").strip()
+        if content:
+            conn = get_db_connection()
+            c = conn.cursor()
+            # 💡 기존 공지를 모두 비우고 새로운 1개만 상시 유지하려면 아래 코드의 주석(#)을 푸셔도 됩니다.
+            # c.execute("DELETE FROM notices") 
+            c.execute("INSERT INTO notices(content, reg_date) VALUES(?, ?)", (content, datetime.now().strftime("%Y-%m-%d %H:%M")))
+            conn.commit()
+            conn.close()
+    return redirect(url_for("home"))
+
+# 🗑️ 1-3. [신규] 관리자 전용 한 줄 공지사항 파괴 라우터
+@app.route("/deleteNotice/<int:nid>")
+def delete_notice(nid):
+    if session.get("is_admin"):
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("DELETE FROM notices WHERE id = ?", (nid,))
+        conn.commit()
+        conn.close()
+    return redirect(url_for("home"))
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -303,7 +347,6 @@ def reagent_list():
                            keyword=keyword, 
                            selected_category=category_filter)
 
-# 🛠️ 들여쓰기 에러 해결 및 독립된 라우터로 완전히 벽에 붙여서 분리
 @app.route("/addReagent", methods=["POST"])
 def add_reagent():
     name = request.form.get("name")
@@ -311,12 +354,11 @@ def add_reagent():
     location = request.form.get("location")
     risk = request.form.get("risk")
     status = request.form.get("status", "보관중")
-    category = request.form.get("category", "일반시약") # category 기본값 매칭
+    category = request.form.get("category", "일반시약")
 
     if name:
         conn = get_db_connection()
         cursor = conn.cursor()
-        # 구조가 업데이트된 reagents 테이블의 6개 컬럼(id 제외)에 정확하게 6개의 값 주입
         cursor.execute(
             "INSERT INTO reagents (name, formula, location, risk, status, category) VALUES (?, ?, ?, ?, ?, ?)",
             (name, formula, location, risk, status, category)
@@ -325,10 +367,8 @@ def add_reagent():
         cursor.close()
         conn.close()
     
-    # 📌 목적지 함수명을 reagent_page에서 실제 존재하는 reagent_list로 수정
     return redirect(url_for("reagent_list"))
 
-# 🖼️ 2. 사진 갤러리 메인 보기 페이지 라우터
 @app.route("/upload")
 def upload():
     conn = get_db_connection()
@@ -338,7 +378,6 @@ def upload():
     conn.close()
     return render_template("upload.html", photos=photos)
 
-# 🌟 3. 신형 사진 업로드 처리 기능 (Cloudinary 무제한 연동 탑재!)
 @app.route("/uploadPhoto", methods=["POST"])
 def upload_photo():
     title = request.form.get("title", "제목 없음")
@@ -350,17 +389,15 @@ def upload_photo():
         return redirect(url_for("upload"))
         
     try:
-        # 🔥 핵심: 화질은 유지하되 용량을 80% 이상 압축하여 전송 속도를 획기적으로 단축합니다!
         upload_result = cloudinary.uploader.upload(
             file,
             options={
-                "quality": "auto",       # 용량을 사람 눈에 안 띄게 대폭 압축
-                "fetch_format": "auto"   # WebP 등 가장 가벼운 최신 이미지 포맷으로 변환
+                "quality": "auto",
+                "fetch_format": "auto"
             }
         )
         image_url = upload_result.get("secure_url")
         
-        # database.db에 이미지 주소 저장
         conn = get_db_connection()
         c = conn.cursor()
         c.execute("INSERT INTO photos(filename, title, tag) VALUES(?,?,?)", (image_url, title, tag))
@@ -374,13 +411,11 @@ def upload_photo():
         
     return redirect(url_for("upload"))
 
-# 🗑️ 4. 사진 데이터 파괴 단추 기능
 @app.route("/deletePhoto/<int:photo_id>")
 def delete_photo(photo_id):
     if session.get("is_admin"):
         conn = get_db_connection()
         c = conn.cursor()
-        # 데이터베이스 레코드 깔끔하게 청소
         c.execute("DELETE FROM photos WHERE id = ?", (photo_id,))
         conn.commit()
         conn.close()

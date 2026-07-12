@@ -251,10 +251,18 @@ body:has(.reagent-wrapper) {
     gap: 30px;
 }
 /* ==========================================
-   5. 팀 프로젝트 우주 오르빗 & 실시간 별똥별 (projects.html 전용)
+   5. 팀 프로젝트 우주 오르빗 & 모달 팝업 (projects.html 전용)
    ========================================== */
+.space-universe-bg {
+    background: radial-gradient(circle at center, #1b1931 0%, #07050d 100%) !important;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    padding-bottom: 60px;
+}
+
 .center-gradient-title {
-    font-size: 64px;
+    font-size: 54px;
     font-weight: 900;
     background: linear-gradient(135deg, #fff 0%, #ffd700 100%);
     -webkit-background-clip: text;
@@ -272,9 +280,17 @@ body:has(.reagent-wrapper) {
     display: block;
 }
 
+.orbit-system-container {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    height: 550px;
+    margin: 30px auto;
+}
+
 .moving-orbit-bubble {
-    width: 120px;
-    height: 120px;
+    width: 125px;
+    height: 125px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -283,10 +299,12 @@ body:has(.reagent-wrapper) {
     box-shadow: 0 0 25px rgba(255,255,255,0.15);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     animation: floatingOrbit 4s ease-in-out infinite alternate;
+    position: absolute;
+    z-index: 10;
 }
 
 .moving-orbit-bubble:hover {
-    transform: scale(1.15) !important;
+    transform: scale(1.18) !important;
     box-shadow: 0 0 35px var(--glow-color) !important;
     z-index: 50;
 }
@@ -299,7 +317,7 @@ body:has(.reagent-wrapper) {
 
 .bubble-num {
     display: block;
-    font-size: 9px;
+    font-size: 10px;
     opacity: 0.6;
     letter-spacing: 1px;
     margin-bottom: 2px;
@@ -307,19 +325,19 @@ body:has(.reagent-wrapper) {
 
 .bubble-title {
     display: block;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100px;
+    max-width: 105px;
 }
 
 .click-hint {
     display: block;
     font-size: 9px;
     color: #ffd700;
-    margin-top: 3px;
+    margin-top: 4px;
     opacity: 0;
     transition: opacity 0.2s;
 }
@@ -328,8 +346,8 @@ body:has(.reagent-wrapper) {
     opacity: 1;
 }
 
-/* 은하계 그라데이션 컬러링 엔진 */
-.bubble-color-1 { background: radial-gradient(circle at 30% 30%, #4e54c8, #1f1c2c); --glow-color: rgba(78,84,200,0.6); animation-delay: 0s; }
+/* 🪐 행성 그라데이션 컬러 */
+.bubble-color-1 { background: radial-gradient(circle at 30% 30%, #4e54c8, #1f1c2c); --glow-color: rgba(78,84,200,0.6); }
 .bubble-color-2 { background: radial-gradient(circle at 30% 30%, #ff416c, #ff4b2b); --glow-color: rgba(255,65,108,0.6); animation-delay: -0.7s; }
 .bubble-color-3 { background: radial-gradient(circle at 30% 30%, #11998e, #38ef7d); --glow-color: rgba(56,239,125,0.6); animation-delay: -1.5s; }
 .bubble-color-4 { background: radial-gradient(circle at 30% 30%, #f12711, #f5af19); --glow-color: rgba(245,175,25,0.6); animation-delay: -2.2s; }
@@ -337,10 +355,10 @@ body:has(.reagent-wrapper) {
 
 @keyframes floatingOrbit {
     0% { transform: translateY(0px) rotate(0deg); }
-    100% { transform: translateY(-12px) rotate(3deg); }
+    100% { transform: translateY(-15px) rotate(4deg); }
 }
 
-/* 🌠 우주 공간 전용 실시간 별똥별 매트릭스 */
+/* 🌠 실시간 별똥별 */
 .shooting-stars-background {
     position: absolute;
     top: 0;
@@ -388,9 +406,7 @@ body:has(.reagent-wrapper) {
     100% { transform: rotate(-35deg) translateX(-1000px); opacity: 0; }
 }
 
-/* ==========================================
-   6. 프로젝트 상세 보기 모달 팝업
-   ========================================== */
+/* 팝업 모달 */
 .project-modal-overlay {
     position: fixed;
     top: 0;
@@ -422,57 +438,6 @@ body:has(.reagent-wrapper) {
     max-width: 500px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.7);
     position: relative;
-}
-
-.modal-close-btn {
-    position: absolute;
-    top: 20px;
-    right: 25px;
-    color: #aaa;
-    font-size: 28px;
-    cursor: pointer;
-}
-
-.modal-close-btn:hover {
-    color: #ff4d4d;
-}
-
-.modal-header-tag {
-    font-size: 10px;
-    color: #ffd700;
-    font-weight: 800;
-    letter-spacing: 2px;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.modal-main-title {
-    color: white;
-    font-size: 22px;
-    font-weight: 800;
-    margin: 0 0 15px 0;
-}
-
-.modal-body-summary {
-    color: #b3b3cb;
-    font-size: 14px;
-    line-height: 1.6;
-    word-break: break-all;
-}
-
-.proj-delete-btn {
-    color: #ff4d4d;
-    font-size: 12px;
-    text-decoration: none;
-    font-weight: 700;
-    background: rgba(255,77,77,0.15);
-    padding: 5px 12px;
-    border-radius: 6px;
-    border: 1px solid rgba(255,77,77,0.2);
-    transition: background 0.2s;
-}
-.proj-delete-btn:hover {
-    background: rgba(255,77,77,0.3);
 }
 
 /* ==========================================

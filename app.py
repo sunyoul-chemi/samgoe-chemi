@@ -92,9 +92,9 @@ def init_supabase_db():
     # 기본 시약 데이터 세팅 (비어있을 때만 최초 1회 실행)
     if Reagent.query.count() == 0:
         reagents_list = [
-            Reagent(name="염산 (Hydrochloric acid)", formula="HCl", location="산성장 A-01", risk="위험", status="보관중", category="산성물질"),
-            Reagent(name="황산 (Sulfuric acid)", formula="H2SO4", location="산성장 A-02", risk="위험", status="보관중", category="산성물질"),
-            Reagent(name="질산 (Nitric acid)", formula="HNO3", location="산성장 A-03", risk="위험", status="보관중", category="산성물질"),
+            Reagent(name="염산 (Hydrochloric acid)", formula="HCl", location="산성장 A-01", risk="위험", status="보관중", category="위험성물질"),
+            Reagent(name="황산 (Sulfuric acid)", formula="H2SO4", location="산성장 A-02", risk="위험", status="보관중", category="위험성물질"),
+            Reagent(name="질산 (Nitric acid)", formula="HNO3", location="산성장 A-03", risk="위험", status="보관중", category="위험성물질"),
             Reagent(name="수산화나트륨 (Sodium hydroxide)", formula="NaOH", location="염기장 B-01", risk="경고", status="보관중", category="염기성물질"),
             Reagent(name="탄산나트륨 (Sodium carbonate)", formula="Na2CO3", location="무기장 C-02", risk="낮음", status="보관중", category="무기화합물"),
             Reagent(name="염화나트륨 (Sodium chloride)", formula="NaCl", location="무기장 C-03", risk="낮음", status="보관중", category="무기화합물"),

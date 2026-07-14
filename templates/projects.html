@@ -42,7 +42,7 @@
         <span class="modal-close-btn" onclick="document.getElementById('detailModal').classList.remove('active')">&times;</span>
         <span class="modal-header-tag">RESEARCH INFOMATION</span>
         <h3 id="modalTitle" class="modal-main-title">연구 프로젝트 제목</h3>
-        <p id="modalSummary" class="modal-body-summary">내용이 들어갑니다.</p>
+        <p id="modalSummary" class="modal-body-summary"현재 작성 중인 보고서의 링크를 공유해주세요. 구글Docs, 구글 Drive 등</p>
         <div style="margin-top: 25px; display: flex; justify-content: flex-end;" id="modalDeleteArea">
             </div>
     </div>
@@ -52,14 +52,14 @@
     <div class="project-modal-content" style="max-width: 450px;">
         <span class="modal-close-btn" onclick="document.getElementById('addModal').classList.remove('active')">&times;</span>
         <span class="modal-header-tag" style="color: #ff8c00;">LAUNCH NEW PLANET</span>
-        <h3 class="modal-main-title" style="margin-bottom: 20px;">새 연구 프로젝트 개설</h3>
+        <h3 class="modal-main-title" style="margin-bottom: 20px;">진행 중인 프로젝트</h3>
         
         <form action="/addProject" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
-            <input type="text" name="title" placeholder="프로젝트 팀명 또는 실험 주제" required 
+            <input type="text" name="title" placeholder="프로젝트 제목 / 팀원" required 
                    style="width: 100%; background: #221f30; border: 1px solid #444; padding: 12px; border-radius: 10px; color: white; font-size: 14px; outline: none;">
-            <textarea name="summary" rows="4" placeholder="실험의 핵심 목적이나 간단한 개요를 입력하세요..." required 
+            <textarea name="summary" rows="4" placeholder="현재 작성 중인 보고서의 링크를 공유해주세요. (구글Docs, 구글 Drive 등)" required 
                       style="width: 100%; background: #221f30; border: 1px solid #444; padding: 12px; border-radius: 10px; color: white; font-size: 14px; outline: none; resize: none;"></textarea>
-            <button type="submit" style="background: linear-gradient(90deg, #ff8c00, #ffd700); border: none; padding: 12px; border-radius: 10px; color: white; font-weight: 700; cursor: pointer; margin-top: 5px;">🚀 우주로 프로젝트 쏘기</button>
+            <button type="submit" style="background: linear-gradient(90deg, #ff8c00, #ffd700); border: none; padding: 12px; border-radius: 10px; color: white; font-weight: 700; cursor: pointer; margin-top: 5px;">🚀 우주로 보고서서 쏘기</button>
         </form>
     </div>
 </div>

@@ -17,7 +17,7 @@ cloudinary.config(
 
 app = Flask(__name__)
 app.secret_key = "chemi_secret_admin_key_1234"
-ADMIN_PASSWORD = "chemistry123!"
+ADMIN_PASSWORD = "chemi3542s!"
 
 # ==============================================================
 # 🗄️ 2. Supabase(PostgreSQL) 클라우드 연결 세팅 (삭제 버그 완벽 해결!)

@@ -39,7 +39,7 @@
             </div>
             <div>
                 <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">위험도</label>
-                <select name="danger" style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                <select name="risk" style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
                     <option value="낮음">낮음</option>
                     <option value="경고">경고</option>
                     <option value="위험">위험</option>
@@ -137,12 +137,19 @@
             </div>
             <div>
                 <label style="font-size:12px; font-weight:700; color:#555;">보관 위치</label>
-                <input type="text" name="location" id="edit-location" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                <select name="location" id="edit-location" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                    <option value="1층">1층</option>
+                    <option value="2층">2층</option>
+                    <option value="산성장">산성장</option>
+                    <option value="염기성장">염기성장</option>
+                    <option value="시약장 A">시약장 A</option>
+                    <option value="시약장 B">시약장 B</option>
+                </select>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div>
                     <label style="font-size:12px; font-weight:700; color:#555;">위험도</label>
-                    <select name="danger" id="edit-danger" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                    <select name="risk" id="edit-risk" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
                         <option value="낮음">낮음</option>
                         <option value="경고">경고</option>
                         <option value="위험">위험</option>
@@ -166,14 +173,14 @@
 </div>
 
 <script>
-    function openEditModal(id, name, formula, amount, category, location, danger, status) {
+    function openEditModal(id, name, formula, amount, category, location, risk, status) {
         document.getElementById('edit-id').value = id;
         document.getElementById('edit-name').value = name;
         document.getElementById('edit-formula').value = formula;
         document.getElementById('edit-amount').value = amount === 'None' || !amount ? '1개' : amount;
         document.getElementById('edit-category').value = category;
         document.getElementById('edit-location').value = location;
-        document.getElementById('edit-danger').value = danger;
+        document.getElementById('edit-risk').value = risk;
         document.getElementById('edit-status').value = status;
         document.getElementById('editModal').style.display = 'flex';
     }

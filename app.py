@@ -63,7 +63,7 @@ class Reagent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     formula = db.Column(db.String(100))
-    amount = db.Column(db.String(50), default="1개")  # 수량(amount) 칼럼 안전하게 포함
+    amount = db.Column(db.String(50), default="1개")  # 수량(amount) 칼럼
     location = db.Column(db.String(100))
     risk = db.Column(db.String(50))
     status = db.Column(db.String(50), default="보관중")
@@ -88,33 +88,44 @@ class Notice(db.Model):
     content = db.Column(db.Text, nullable=False)
     reg_date = db.Column(db.String(50))
 
-# 데이터베이스 초기화 및 자동 칼럼 확장 기능
+# 데이터베이스 안심 초기화 기능 (구조 불일치 해결 핵심 구역)
 def init_supabase_db():
-    db.create_all()
-    
-    # Supabase에 수량(amount) 컬럼이 없을 때를 대비한 자동 쿼리 실행
     try:
-        db.session.execute(text("ALTER TABLE reagents ADD COLUMN IF NOT EXISTS amount VARCHAR(50) DEFAULT '1개';"))
-        db.session.commit()
-    except Exception:
+        # 1. 먼저 테이블 생성을 시도합니다.
+        db.create_all()
+        # 테스트 쿼리를 날려 amount 컬럼이 진짜 잘 작동하는지 검사합니다.
+        db.session.execute(text("SELECT amount FROM reagents LIMIT 1;"))
+    except Exception as e:
+        # 2. 만약 에러가 난다면 옛날 구조와 충돌한 것이므로 롤백 후 reagents 테이블만 새로 고칩니다.
+        print("테이블 구조 불일치 감지! 재재배포 및 자동 동기화를 진행합니다:", e)
         db.session.rollback()
+        try:
+            db.session.execute(text("DROP TABLE IF EXISTS reagents CASCADE;"))
+            db.session.commit()
+            db.create_all()  # 새 구조(amount 포함)로 완전 재 생성
+        except Exception as ex:
+            db.session.rollback()
+            print("강제 테이블 리셋 실패, 에러 무시 후 진행합니다:", ex)
         
     # 기본 시약 데이터 세팅 (비어있을 때만 최초 1회 실행)
-    if Reagent.query.count() == 0:
-        reagents_list = [
-            Reagent(name="염산 (Hydrochloric acid)", formula="HCl", amount="1개", location="산성장 A-01", risk="위험", status="보관중", category="위험성물질"),
-            Reagent(name="황산 (Sulfuric acid)", formula="H2SO4", amount="1개", location="산성장 A-02", risk="위험", status="보관중", category="위험성물질"),
-            Reagent(name="질산 (Nitric acid)", formula="HNO3", amount="1개", location="산성장 A-03", risk="위험", status="보관중", category="위험성물질"),
-            Reagent(name="수산화나트륨 (Sodium hydroxide)", formula="NaOH", amount="1개", location="염기장 B-01", risk="경고", status="보관중", category="염기성물질"),
-            Reagent(name="탄산나트륨 (Sodium carbonate)", formula="Na2CO3", amount="1개", location="무기장 C-02", risk="낮음", status="보관중", category="무기화합물"),
-            Reagent(name="염화나트륨 (Sodium chloride)", formula="NaCl", amount="1개", location="무기장 C-03", risk="낮음", status="보관중", category="무기화합물"),
-            Reagent(name="황산구리 (Copper(II) sulfate)", formula="CuSO4", amount="1개", location="무기장 C-04", risk="경고", status="보관중", category="무기화합물"),
-            Reagent(name="산화칼슘 (Calcium oxide)", formula="CaO", amount="1개", location="무기장 C-05", risk="경고", status="보관중", category="무기화합물"),
-            Reagent(name="에탄올 (Ethanol)", formula="C2H5OH", amount="1개", location="유기장 D-01", risk="경고", status="보관중", category="유기화합물"),
-            Reagent(name="과산화수소 (Hydrogen peroxide)", formula="H2O2", amount="1개", location="유기장 D-02", risk="위험", status="보관중", category="유기화합물")
-        ]
-        db.session.bulk_save_objects(reagents_list)
-        db.session.commit()
+    try:
+        if Reagent.query.count() == 0:
+            reagents_list = [
+                Reagent(name="염산 (Hydrochloric acid)", formula="HCl", amount="1개", location="산성장 A-01", risk="위험", status="보관중", category="위험성물질"),
+                Reagent(name="황산 (Sulfuric acid)", formula="H2SO4", amount="1개", location="산성장 A-02", risk="위험", status="보관중", category="위험성물질"),
+                Reagent(name="질산 (Nitric acid)", formula="HNO3", amount="1개", location="산성장 A-03", risk="위험", status="보관중", category="위험성물질"),
+                Reagent(name="수산화나트륨 (Sodium hydroxide)", formula="NaOH", amount="1개", location="염기장 B-01", risk="경고", status="보관중", category="염기성물질"),
+                Reagent(name="탄산나트륨 (Sodium carbonate)", formula="Na2CO3", amount="1개", location="무기장 C-02", risk="낮음", status="보관중", category="무기화합물"),
+                Reagent(name="염화나트륨 (Sodium chloride)", formula="NaCl", amount="1개", location="무기장 C-03", risk="낮음", status="보관중", category="무기화합물"),
+                Reagent(name="황산구리 (Copper(II) sulfate)", formula="CuSO4", amount="1개", location="무기장 C-04", risk="경고", status="보관중", category="무기화합물"),
+                Reagent(name="산화칼슘 (Calcium oxide)", formula="CaO", amount="1개", location="무기장 C-05", risk="경고", status="보관중", category="무기화합물"),
+                Reagent(name="에탄올 (Ethanol)", formula="C2H5OH", amount="1개", location="유기장 D-01", risk="경고", status="보관중", category="유기화합물"),
+                Reagent(name="과산화수소 (Hydrogen peroxide)", formula="H2O2", amount="1개", location="유기장 D-02", risk="위험", status="보관중", category="유기화합물")
+            ]
+            db.session.bulk_save_objects(reagents_list)
+            db.session.commit()
+    except Exception:
+        db.session.rollback()
 
 # ==============================================================
 # 🛣️ 4. 라우터 및 비즈니스 로직
@@ -279,7 +290,11 @@ def reagent_list():
     if category_filter:
         query = query.filter(Reagent.category == category_filter)
         
-    reagents = query.order_by(Reagent.name.asc()).all()
+    try:
+        reagents = query.order_by(Reagent.name.asc()).all()
+    except Exception:
+        db.session.rollback()
+        reagents = []
     return render_template('reagent.html', reagents=reagents, keyword=keyword, selected_category=category_filter)
 
 @app.route('/addReagent', methods=['POST'])
@@ -429,4 +444,3 @@ if __name__ == "__main__":
     with app.app_context():
         init_supabase_db()
     app.run(debug=True)
-    

@@ -8,7 +8,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import cloudinary
 import cloudinary.uploader
-from supabase import create_client, Client
 
 # ==============================================================
 # ☁️ 1. Cloudinary 공식 영구 저장소 보안 세팅
@@ -24,7 +23,7 @@ app.secret_key = "chemi_secret_admin_key_1234"
 ADMIN_PASSWORD = "chemi3542s!"
 
 # ==============================================================
-# 🗄️ 2. Supabase(PostgreSQL) 클라우드 연결 및 API 세팅
+# 🗄️ 2. Supabase(PostgreSQL) 클라우드 연결 세팅
 # ==============================================================
 SUPABASE_DATABASE_URL = "postgresql+psycopg2://postgres.etdfporsnhyhqguuqkqd:ehqhr0843!!@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
 
@@ -32,11 +31,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = SUPABASE_DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-
-# 💡 실시간 대량 등록 및 수정을 위한 Supabase API 클라이언트 객체 자동 연동
-SUPABASE_URL = "https://etdfporsnhyhqguuqkqd.supabase.co"
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0ZGZwb3Jzbmh5aHFndXVxa3FkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk4MTU2MDAsImV4cCI6MjAzNTM5MTYwMH0.example_key") # 실제 키가 없다면 환경변수로 주입 가능합니다.
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ==============================================================
 # 📐 3. 데이터베이스 모델 (테이블) 정의
@@ -69,9 +63,9 @@ class Reagent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     formula = db.Column(db.String(100))
-    amount = db.Column(db.String(50), default="1개") # ⭕ 시약 개수 보관용 칼럼 추가
+    amount = db.Column(db.String(50), default="1개")  # 수량(amount) 칼럼 안전하게 포함
     location = db.Column(db.String(100))
-    risk = db.Column(db.String(50)) 
+    risk = db.Column(db.String(50))
     status = db.Column(db.String(50), default="보관중")
     category = db.Column(db.String(100), default="일반시약")
 
@@ -94,11 +88,11 @@ class Notice(db.Model):
     content = db.Column(db.Text, nullable=False)
     reg_date = db.Column(db.String(50))
 
-# 데이터베이스 초기화 및 구조 안전 자동 변경 기능
+# 데이터베이스 초기화 및 자동 칼럼 확장 기능
 def init_supabase_db():
     db.create_all()
     
-    # ⭕ Supabase 사이트 접근 불필요! 수량(amount) 컬럼을 코드가 켜지며 스스로 자동 생성하게 만듭니다.
+    # Supabase에 수량(amount) 컬럼이 없을 때를 대비한 자동 쿼리 실행
     try:
         db.session.execute(text("ALTER TABLE reagents ADD COLUMN IF NOT EXISTS amount VARCHAR(50) DEFAULT '1개';"))
         db.session.commit()
@@ -273,7 +267,7 @@ def delete_schedule(sid):
             db.session.commit()
     return redirect(url_for("calendar"))
 
-# 🧪 통합 완료된 시약 통합 라우터 (중복 및 버그 해결)
+# 🧪 5. 시약 관리 (SQLAlchemy 연동 통합 완료)
 @app.route('/reagent')
 def reagent_list():
     keyword = request.args.get('keyword', '')
@@ -295,7 +289,7 @@ def add_reagent():
     amount = request.form.get('amount', '1개')
     category = request.form.get('category', '일반시약')
     location = request.form.get('location')
-    risk = request.form.get('danger', '낮음')  # html의 danger 값 매핑
+    risk = request.form.get('danger', '낮음')  
     status = request.form.get('status', '보관중')
     
     if name:
@@ -363,9 +357,9 @@ def upload_reagent_excel():
         db.session.rollback()
         return jsonify({"success": False, "message": str(e)})
 
-# ----------------------------------------------------
-# 5. 사진 업로드 및 동아리 관리 라우터
-# ----------------------------------------------------
+# ==============================================================
+# 📷 6. 사진 및 프로젝트 관리
+# ==============================================================
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     photos_list = Photo.query.order_by(Photo.id.desc()).all()
@@ -433,5 +427,6 @@ def delete_project(project_id):
 
 if __name__ == "__main__":
     with app.app_context():
-        init_supabase_db()  # 앱 구동 시 필요한 설정 및 구조 변경 자동 실행
+        init_supabase_db()
     app.run(debug=True)
+    

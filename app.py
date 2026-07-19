@@ -63,7 +63,7 @@ class Reagent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     formula = db.Column(db.String(100))
-    amount = db.Column(db.String(50), default="1개")  # 수량(amount) 칼럼
+    amount = db.Column(db.String(50), default="1개")  
     location = db.Column(db.String(100))
     risk = db.Column(db.String(50))
     status = db.Column(db.String(50), default="보관중")
@@ -88,26 +88,22 @@ class Notice(db.Model):
     content = db.Column(db.Text, nullable=False)
     reg_date = db.Column(db.String(50))
 
-# 데이터베이스 안심 초기화 기능 (구조 불일치 해결 핵심 구역)
+# 데이터베이스 초기화
 def init_supabase_db():
     try:
-        # 1. 먼저 테이블 생성을 시도합니다.
         db.create_all()
-        # 테스트 쿼리를 날려 amount 컬럼이 진짜 잘 작동하는지 검사합니다.
         db.session.execute(text("SELECT amount FROM reagents LIMIT 1;"))
     except Exception as e:
-        # 2. 만약 에러가 난다면 옛날 구조와 충돌한 것이므로 롤백 후 reagents 테이블만 새로 고칩니다.
-        print("테이블 구조 불일치 감지! 재재배포 및 자동 동기화를 진행합니다:", e)
+        print("테이블 구조 불일치 감지! 자동 동기화를 진행합니다:", e)
         db.session.rollback()
         try:
             db.session.execute(text("DROP TABLE IF EXISTS reagents CASCADE;"))
             db.session.commit()
-            db.create_all()  # 새 구조(amount 포함)로 완전 재 생성
+            db.create_all()  
         except Exception as ex:
             db.session.rollback()
-            print("강제 테이블 리셋 실패, 에러 무시 후 진행합니다:", ex)
+            print("강제 테이블 리셋 실패:", ex)
         
-    # 기본 시약 데이터 세팅 (비어있을 때만 최초 1회 실행)
     try:
         if Reagent.query.count() == 0:
             reagents_list = [
@@ -278,7 +274,7 @@ def delete_schedule(sid):
             db.session.commit()
     return redirect(url_for("calendar"))
 
-# 🧪 5. 시약 관리 (SQLAlchemy 연동 통합 완료)
+# 🧪 5. 시약 관리 (HTML 폼의 risk와 danger 변수 모두 호환되도록 완벽 보완)
 @app.route('/reagent')
 def reagent_list():
     keyword = request.args.get('keyword', '')
@@ -304,7 +300,9 @@ def add_reagent():
     amount = request.form.get('amount', '1개')
     category = request.form.get('category', '일반시약')
     location = request.form.get('location')
-    risk = request.form.get('danger', '낮음')  
+    
+    # 🚨 중요: HTML의 name이 'risk' 혹은 'danger' 무엇으로 넘어와도 에러 없이 매칭
+    risk = request.form.get('risk') or request.form.get('danger') or '낮음'  
     status = request.form.get('status', '보관중')
     
     if name:
@@ -324,7 +322,7 @@ def edit_reagent():
             reagent.amount = request.form.get('amount', '1개')
             reagent.category = request.form.get('category')
             reagent.location = request.form.get('location')
-            reagent.risk = request.form.get('danger')
+            reagent.risk = request.form.get('risk') or request.form.get('danger') or '낮음'
             reagent.status = request.form.get('status')
             db.session.commit()
     return redirect(url_for('reagent_list'))
@@ -443,4 +441,7 @@ def delete_project(project_id):
 if __name__ == "__main__":
     with app.app_context():
         init_supabase_db()
-    app.run(debug=True)
+    #  Render 배포 시 환경 변수 포트 동적 대응 추가
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)

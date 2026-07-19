@@ -87,9 +87,9 @@
                     <td style="padding: 15px 10px;"><span style="background:#f0eefc; color:#6b46c1; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">{{ r.category }}</span></td>
                     <td style="padding: 15px 10px; color:#4a5568;"><span style="color:#e53e3e;">📍</span> {{ r.location }}</td>
                     <td style="padding: 15px 10px;">
-                        {% if r.danger == '위험' %}
+                        {% if r.risk == '위험' %}
                             <span style="background:#fff5f5; color:#c53030; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">위험</span>
-                        {% elif r.danger == '경고' %}
+                        {% elif r.risk == '경고' %}
                             <span style="background:#fffaf0; color:#dd6b20; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">경고</span>
                         {% else %}
                             <span style="background:#f0fff4; color:#38a169; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">낮음</span>
@@ -98,7 +98,7 @@
                     <td style="padding: 15px 10px;"><span style="color:#38a169; font-weight:700;">{{ r.status }}</span></td>
                     <td style="padding: 15px 10px; text-align: center;">
                         <div style="display: flex; gap: 5px; justify-content: center;">
-                            <button onclick="openEditModal('{{ r.id }}', '{{ r.name }}', '{{ r.formula }}', '{{ r.amount }}', '{{ r.category }}', '{{ r.location }}', '{{ r.danger }}', '{{ r.status }}')" style="background:#ebf8ff; color:#2b6cb0; border:none; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">수정</button>
+                            <button onclick="openEditModal('{{ r.id }}', '{{ r.name }}', '{{ r.formula }}', '{{ r.amount }}', '{{ r.category }}', '{{ r.location }}', '{{ r.risk }}', '{{ r.status }}')" style="background:#ebf8ff; color:#2b6cb0; border:none; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">수정</button>
                             <a href="/deleteReagent/{{ r.id }}" style="background:#fff5f5; color:#c53030; text-decoration:none; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:700;" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
                         </div>
                     </td>
@@ -166,7 +166,6 @@
 </div>
 
 <script>
-    // 수정 모달 제어 함수
     function openEditModal(id, name, formula, amount, category, location, danger, status) {
         document.getElementById('edit-id').value = id;
         document.getElementById('edit-name').value = name;
@@ -183,7 +182,6 @@
         document.getElementById('editModal').style.display = 'none';
     }
 
-    // 드래그 앤 드롭 파일 기능 제어
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('excel-file-input');
 
@@ -217,7 +215,6 @@
         }
     });
 
-    // 백엔드로 엑셀 전송
     function uploadExcel(file) {
         const formData = new FormData();
         formData.append('file', file);

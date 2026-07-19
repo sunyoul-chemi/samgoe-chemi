@@ -1,189 +1,248 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="reagent-page-container" style="
-    padding: 40px 20px; 
-    min-height: 100vh; 
-    background-image: url('/static/chemi_list.png') !important; 
-    background-size: cover !important; 
-    background-position: center !important; 
-    background-repeat: no-repeat !important; 
-    background-attachment: fixed !important;
-">
-    
-    <div style="background: rgba(253, 252, 247, 0.95); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 24px; padding: 40px 30px; max-width: 1200px; margin: 0 auto; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05); border: 1px solid #eeece1;">
-        
-        <div style="text-align: center; margin-bottom: 30px;">
-            <span style="font-size: 35px;">🧪</span>
-            <h2 style="font-size: 28px; color: #333; margin: 10px 0 5px 0; font-weight: 800;">시약 정보 검색 시스템</h2>
-            <p style="color: #888; font-size: 15px;">안전한 실험을 위해 시약의 위치와 분류, 위험도를 상시 확인하세요.
-            시약 분류와 보관 위치는 현재 시약의 위치를 말합니다.</p>
-        </div>
-
-        <div style="margin-bottom: 30px;">
-            <form action="/reagent" method="GET" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-                <input type="text" name="keyword" value="{{ keyword if keyword else '' }}" placeholder="시약명 또는 화학식 검색 (예: HCl)" 
-                       style="flex: 2; min-width: 250px; padding: 12px 18px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none;">
-                
-                <select name="category_filter" style="flex: 1; min-width: 160px; padding: 12px 15px; border: 1px solid #e8e6dc; border-radius: 12px; font-size: 14px; outline: none; background: #fff; cursor: pointer; color: #4a4538;">
-                    <option value="">-- 모든 분류 보기 --</option>
-                    <option value="위험성물질" {% if selected_category == '위험성물질' %}selected{% endif %}>위험성물질</option>
-                    <option value="염기성물질" {% if selected_category == '염기성물질' %}selected{% endif %}>염기성물질</option>
-                    <option value="유기화합물" {% if selected_category == '유기화합물' %}selected{% endif %}>유기화합물</option>
-                    <option value="무기화합물" {% if selected_category == '무기화합물' %}selected{% endif %}>무기화합물</option>
-                    <option value="일반시약" {% if selected_category == '일반시약' %}selected{% endif %}>일반시약</option>
+<div style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    <div style="background: #fff; border: 1px solid #eeece1; border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 30px;">
+        <h3 style="color: #bfa11d; margin-top: 0; margin-bottom: 20px; font-weight: 800;">➕ 신규 재고 시약 등록 (관리자전용)</h3>
+        <form action="/addReagent" method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; align-items: end;">
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">시약명</label>
+                <input type="text" name="name" placeholder="예: 5% 질산은수용액" required style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">화학식</label>
+                <input type="text" name="formula" placeholder="예: AgNO3(aq)" required style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">시약 개수(수량)</label>
+                <input type="text" name="amount" placeholder="예: 2병 또는 500ml" required style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">시약 분류</label>
+                <select name="category" style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                    <option value="일반시약">일반시약</option>
+                    <option value="무기화합물">무기화합물</option>
+                    <option value="유기화합물">유기화합물</option>
+                    <option value="위험물">위험물</option>
                 </select>
-                
-                <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px; white-space: nowrap;">
-                    조회하기
-                </button>
-                {% if keyword or selected_category %}
-                    <a href="/reagent" style="text-decoration: none; padding: 12px 20px; background: #eee; color: #555; border-radius: 12px; font-size: 14px; font-weight: 600;">초기화</a>
-                {% endif %}
-            </form>
-        </div>
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">보관 위치</label>
+                <select name="location" style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                    <option value="1층">1층</option>
+                    <option value="2층">2층</option>
+                    <option value="산성장">산성장</option>
+                    <option value="염기성장">염기성장</option>
+                    <option value="시약장 A">시약장 A</option>
+                    <option value="시약장 B">시약장 B</option>
+                </select>
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">위험도</label>
+                <select name="danger" style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                    <option value="낮음">낮음</option>
+                    <option value="경고">경고</option>
+                    <option value="위험">위험</option>
+                </select>
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">상태</label>
+                <select name="status" style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                    <option value="보관중">보관중</option>
+                    <option value="사용중">사용중</option>
+                    <option value="소진">소진</option>
+                </select>
+            </div>
+            <button type="submit" style="grid-column: span 1; padding: 12px; background: #2d3748; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">등록</button>
+        </form>
+    </div>
 
-        {% if session.get('is_admin') %}
-        <div style="background: #fff; border: 1px solid #eeece1; border-radius: 20px; padding: 25px; margin-bottom: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.01);">
-            <h3 style="margin-top: 0; margin-bottom: 20px; color: #bfa11d; font-size: 16px; font-weight: 800;">
-                ➕ 신규 재고 시약 등록 (관리자전용)
-            </h3>
-            
-            <form action="/addReagent" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
-                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <input type="text" name="name" placeholder="시약명" required
-                           style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none;">
-                    
-                    <input type="text" name="formula" placeholder="화학식" required
-                           style="flex: 1; min-width: 120px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none;">
-                    
-                    <select name="category" required style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #555;">
-                        <option value="일반시약">일반시약</option>
-                        <option value="위험성물질">위험성물질</option>
-                        <option value="염기성물질">염기성물질</option>
-                        <option value="유기화합물">유기화합물</option>
-                        <option value="무기화합물">무기화합물</option>
-                    </select>
-                    
-                    <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 5px;">
-                        <select id="locationSelect" onchange="toggleInput('locationSelect', 'locationInput')" style="width: 100%; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #555; cursor: pointer;">
-                            <option value="1층">1층</option>
-                            <option value="2층">2층</option>
-                            <option value="냉장고">냉장고</option>
-                            <option value="생명화학실">생명화학실</option>
-                            <option value="물리지구실">물리지구실</option>
-                            <option value="custom">기타 (직접 입력)</option>
-                        </select>
-                        <input type="text" id="locationInput" name="location" value="1층" placeholder="보관 위치 직접 입력" style="display: none; width: 100%; padding: 10px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none;">
-                    </div>
-                </div>
-                
-                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start;">
-                    <select name="risk" style="flex: 1; min-width: 150px; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #555;">
-                        <option value="낮음">위험도: 낮음</option>
-                        <option value="경고">위험도: 경고</option>
-                        <option value="위험">위험도: 위험</option>
-                    </select>
-                    
-                    <div style="flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 5px;">
-                        <select id="statusSelect" onchange="toggleInput('statusSelect', 'statusInput')" style="width: 100%; padding: 12px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none; background: #fff; color: #555; cursor: pointer;">
-                            <option value="보관중">보관중</option>
-                            <option value="사용중">사용중</option>
-                            <option value="재고없음">재고없음</option>
-                            <option value="custom">기타 (직접 입력)</option>
-                        </select>
-                        <input type="text" id="statusInput" name="status" value="보관중" placeholder="상태 직접 입력" style="display: none; width: 100%; padding: 10px 14px; border: 1px solid #eeece1; border-radius: 10px; font-size: 13px; outline: none;">
-                    </div>
-                    
-                    <button type="submit" style="flex: 1; min-width: 150px; padding: 12px; background: #333; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px; height: 45px;">
-                        등록
-                    </button>
-                </div>
-            </form>
-        </div>
+    <div id="drop-zone" style="border: 2px dashed #bfa11d; background: #fffdf6; border-radius: 20px; padding: 30px; text-align: center; margin-bottom: 30px; cursor: pointer; transition: all 0.3s;">
+        <span style="font-size: 30px;">📊</span>
+        <h4 style="margin: 10px 0 5px 0; color: #bfa11d; font-weight: 800;">엑셀 파일(.xlsx / .csv) 드래그 앤 드롭 등록</h4>
+        <p style="margin: 0; font-size: 13px; color: #718096;">파일을 이 자리로 끌어다 놓거나 클릭해서 선택해 주세요. (열 순서: 시약명, 화학식, 수량, 분류, 위치, 위험도, 상태)</p>
+        <input type="file" id="excel-file-input" accept=".xlsx, .csv" style="display: none;">
+    </div>
 
-        <script>
-            function toggleInput(selectId, inputId) {
-                var selectEl = document.getElementById(selectId);
-                var inputEl = document.getElementById(inputId);
-                if (selectEl.value === "custom") {
-                    inputEl.style.display = "block";
-                    inputEl.value = "";
-                    inputEl.focus();
-                    inputEl.required = true;
-                } else {
-                    inputEl.style.display = "none";
-                    inputEl.value = selectEl.value;
-                    inputEl.required = false;
-                }
-            }
-        </script>
-        {% endif %}
-
-        <div style="overflow-x: auto; border-radius: 16px; border: 1px solid #eeece1; background: #fff;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
-                <thead>
-                    <tr style="background: #faf9f5; border-bottom: 1px solid #eeece1; color: #666; font-weight: 700;">
-                        <th style="padding: 18px 20px;">시약 정보</th>
-                        <th style="padding: 18px 20px;">화학식</th>
-                        <th style="padding: 18px 20px;">시약 분류</th>
-                        <th style="padding: 18px 20px;">보관 위치</th>
-                        <th style="padding: 18px 20px; text-align: center;">위험도</th>
-                        <th style="padding: 18px 20px; text-align: center;">상태</th>
-                        {% if session.get('is_admin') %}
-                        <th style="padding: 18px 20px; text-align: center;">관리</th>
+    <div style="background: #fff; border: 1px solid #eeece1; border-radius: 20px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+            <thead>
+                <tr style="border-bottom: 2px solid #eeece1; color: #718096;">
+                    <th style="padding: 15px 10px; font-weight: 700;">시약 정보</th>
+                    <th style="padding: 15px 10px; font-weight: 700;">화학식</th>
+                    <th style="padding: 15px 10px; font-weight: 700;">시약 개수</th>
+                    <th style="padding: 15px 10px; font-weight: 700;">시약 분류</th>
+                    <th style="padding: 15px 10px; font-weight: 700;">보관 위치</th>
+                    <th style="padding: 15px 10px; font-weight: 700;">위험도</th>
+                    <th style="padding: 15px 10px; font-weight: 700;">상태</th>
+                    <th style="padding: 15px 10px; font-weight: 700; text-align: center;">관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reagents %}
+                <tr style="border-bottom: 1px solid #f7f6f0;">
+                    <td style="padding: 15px 10px; font-weight: 700; color: #1a202c;">{{ r.name }}</td>
+                    <td style="padding: 15px 10px; color: #bfa11d; font-weight: 600;">{{ r.formula }}</td>
+                    <td style="padding: 15px 10px; color: #4a5568;">{{ r.amount if r.amount else '1개' }}</td>
+                    <td style="padding: 15px 10px;"><span style="background:#f0eefc; color:#6b46c1; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">{{ r.category }}</span></td>
+                    <td style="padding: 15px 10px; color:#4a5568;"><span style="color:#e53e3e;">📍</span> {{ r.location }}</td>
+                    <td style="padding: 15px 10px;">
+                        {% if r.danger == '위험' %}
+                            <span style="background:#fff5f5; color:#c53030; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">위험</span>
+                        {% elif r.danger == '경고' %}
+                            <span style="background:#fffaf0; color:#dd6b20; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">경고</span>
+                        {% else %}
+                            <span style="background:#f0fff4; color:#38a169; padding:4px 8px; border-radius:6px; font-size:12px; font-weight:700;">낮음</span>
                         {% endif %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in reagents %}
-                    <tr style="border-bottom: 1px solid #f4f3ed; transition: background 0.2s;" onmouseover="this.style.background='#faf9f5'" onmouseout="this.style.background='transparent'">
-                        <td style="padding: 18px 20px; font-weight: 700; color: #333;">{{ r[1] }}</td>
-                        
-                        <td style="padding: 18px 20px; font-family: 'Courier New', monospace; font-weight: bold; color: #bfa11d;">{{ r[2] }}</td>
-                        
-                        <td style="padding: 18px 20px;">
-                            <span style="background: #f0edf5; color: #6c5ce7; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">
-                                {{ r[6] if r[6] else '미분류' }}
-                            </span>
-                        </td>
-                        
-                        <td style="padding: 18px 20px; color: #666; font-weight: 500;">📍 {{ r[3] }}</td>
-                        
-                        <td style="padding: 18px 20px; text-align: center;">
-                            {% if r[4] == '위험' %}
-                                <span style="background: #ffe3e3; color: #dc3545; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">위험</span>
-                            {% elif r[4] == '경고' %}
-                                <span style="background: #fff3cd; color: #856404; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">경고</span>
-                            {% else %}
-                                <span style="background: #d4edda; color: #155724; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold;">낮음</span>
-                            {% endif %}
-                        </td>
-                        
-                        <td style="padding: 18px 20px; text-align: center;">
-                            <span style="font-size: 13px; font-weight: 600; color: {% if r[5] == '보관중' or r[5] == '사용중' %}#28a745{% else %}#999{% endif %};">
-                                {{ r[5] if r[5] else '보관중' }}
-                            </span>
-                        </td>
-                        
-                        {% if session.get('is_admin') %}
-                        <td style="padding: 18px 20px; text-align: center;">
-                            <a href="/deleteReagent/{{ r[0] }}" onclick="return confirm('정말 이 시약을 대장에서 삭제하시겠습니까?');" style="color: #dc3545; text-decoration: none; font-size: 12px; font-weight: bold; background: #ffe3e3; padding: 5px 10px; border-radius: 6px;">삭제</a>
-                        </td>
-                        {% endif %}
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="{{ '7' if session.get('is_admin') else '6' }}" style="padding: 40px; text-align: center; color: #999; font-style: italic;">
-                            조건에 일치하는 등록된 동아리 시약 정보가 없습니다. 🔍
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
+                    </td>
+                    <td style="padding: 15px 10px;"><span style="color:#38a169; font-weight:700;">{{ r.status }}</span></td>
+                    <td style="padding: 15px 10px; text-align: center;">
+                        <div style="display: flex; gap: 5px; justify-content: center;">
+                            <button onclick="openEditModal('{{ r.id }}', '{{ r.name }}', '{{ r.formula }}', '{{ r.amount }}', '{{ r.category }}', '{{ r.location }}', '{{ r.danger }}', '{{ r.status }}')" style="background:#ebf8ff; color:#2b6cb0; border:none; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">수정</button>
+                            <a href="/deleteReagent/{{ r.id }}" style="background:#fff5f5; color:#c53030; text-decoration:none; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:700;" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+
+<div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999;">
+    <div style="background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+        <h3 style="margin-top:0; color:#bfa11d; font-weight:800;">📝 시약 정보 수정</h3>
+        <form action="/editReagent" method="POST" id="editForm" style="display: flex; flex-direction: column; gap: 12px;">
+            <input type="hidden" name="id" id="edit-id">
+            <div>
+                <label style="font-size:12px; font-weight:700; color:#555;">시약명</label>
+                <input type="text" name="name" id="edit-name" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+            </div>
+            <div>
+                <label style="font-size:12px; font-weight:700; color:#555;">화학식</label>
+                <input type="text" name="formula" id="edit-formula" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+            </div>
+            <div>
+                <label style="font-size:12px; font-weight:700; color:#555;">시약 개수(수량)</label>
+                <input type="text" name="amount" id="edit-amount" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+            </div>
+            <div>
+                <label style="font-size:12px; font-weight:700; color:#555;">시약 분류</label>
+                <select name="category" id="edit-category" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                    <option value="일반시약">일반시약</option>
+                    <option value="무기화합물">무기화합물</option>
+                    <option value="유기화합물">유기화합물</option>
+                    <option value="위험물">위험물</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size:12px; font-weight:700; color:#555;">보관 위치</label>
+                <input type="text" name="location" id="edit-location" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label style="font-size:12px; font-weight:700; color:#555;">위험도</label>
+                    <select name="danger" id="edit-danger" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                        <option value="낮음">낮음</option>
+                        <option value="경고">경고</option>
+                        <option value="위험">위험</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:700; color:#555;">상태</label>
+                    <select name="status" id="edit-status" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;">
+                        <option value="보관중">보관중</option>
+                        <option value="사용중">사용중</option>
+                        <option value="소진">소진</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end;">
+                <button type="button" onclick="closeEditModal()" style="padding:10px 15px; background:#e2e8f0; border:none; border-radius:8px; cursor:pointer; font-weight:700;">취소</button>
+                <button type="submit" style="padding:10px 20px; background:#2d3748; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:700;">변경 내용 저장 💾</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 수정 모달 제어 함수
+    function openEditModal(id, name, formula, amount, category, location, danger, status) {
+        document.getElementById('edit-id').value = id;
+        document.getElementById('edit-name').value = name;
+        document.getElementById('edit-formula').value = formula;
+        document.getElementById('edit-amount').value = amount === 'None' || !amount ? '1개' : amount;
+        document.getElementById('edit-category').value = category;
+        document.getElementById('edit-location').value = location;
+        document.getElementById('edit-danger').value = danger;
+        document.getElementById('edit-status').value = status;
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // 드래그 앤 드롭 파일 기능 제어
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('excel-file-input');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.background = '#f3ebcd';
+        dropZone.style.borderColor = '#967d11';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.background = '#fffdf6';
+        dropZone.style.borderColor = '#bfa11d';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.background = '#fffdf6';
+        dropZone.style.borderColor = '#bfa11d';
+        
+        const files = e.dataTransfer.files;
+        if(files.length > 0) {
+            uploadExcel(files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if(fileInput.files.length > 0) {
+            uploadExcel(fileInput.files[0]);
+        }
+    });
+
+    // 백엔드로 엑셀 전송
+    function uploadExcel(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        dropZone.innerHTML = "⌛ 파일 처리 중... 잠시만 기다려 주세요.";
+
+        fetch('/uploadReagentExcel', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert('엑셀 데이터가 성공적으로 처리되어 반영되었습니다! 🎉');
+                window.location.reload();
+            } else {
+                alert('오류 발생: ' + data.message);
+                window.location.reload();
+            }
+        })
+        .catch(err => {
+            alert('업로드 도중 통신 에러가 발생했습니다.');
+            window.location.reload();
+        });
+    }
+</script>
 
 {% endblock %}

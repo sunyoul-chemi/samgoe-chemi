@@ -270,6 +270,98 @@ def reagent_list():
         
     reagents = [(r.id, r.name, r.formula, r.location, r.risk, r.status, r.category) for r in query.all()]
     return render_template('reagent.html', reagents=reagents, keyword=keyword, selected_category=category_filter)
+    # 1. 시약 조회 (수량 데이터 맵핑 보완)
+@app.route('/reagent')
+def reagent_page():
+    try:
+        res = supabase.table("reagents").select("*").order_by("name").execute()
+        reagents = res.data if hasattr(res, 'data') else res
+    except Exception as e:
+        reagents = []
+    return render_template("reagent.html", reagents=reagents)
+
+# 2. 개별 신규 시약 등록 (수량 amount 파라미터 추가)
+@app.route('/addReagent', methods=['POST'])
+def add_reagent():
+    name = request.form.get('name')
+    formula = request.form.get('formula')
+    amount = request.form.get('amount', '1개')
+    category = request.form.get('category')
+    location = request.form.get('location')
+    danger = request.form.get('danger')
+    status = request.form.get('status')
+    
+    data = {
+        "name": name, "formula": formula, "amount": amount,
+        "category": category, "location": location, "danger": danger, "status": status
+    }
+    supabase.table("reagents").insert(data).execute()
+    return redirect('/reagent')
+
+# 3. [추가기능] 시약 데이터 실시간 수정 라우터
+@app.route('/editReagent', methods=['POST'])
+def edit_reagent():
+    rid = request.form.get('id')
+    name = request.form.get('name')
+    formula = request.form.get('formula')
+    amount = request.form.get('amount')
+    category = request.form.get('category')
+    location = request.form.get('location')
+    danger = request.form.get('danger')
+    status = request.form.get('status')
+    
+    update_data = {
+        "name": name, "formula": formula, "amount": amount,
+        "category": category, "location": location, "danger": danger, "status": status
+    }
+    supabase.table("reagents").update(update_data).eq("id", rid).execute()
+    return redirect('/reagent')
+
+# 4. [추가기능] 엑셀 드래그 앤 드롭 대량 등록 연동 파트
+import csv
+import io
+
+@app.route('/uploadReagentExcel', methods=['POST'])
+def upload_reagent_excel():
+    if 'file' not in request.files:
+        return jsonify({"success": False, "message": "파일이 전송되지 않았습니다."})
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"success": False, "message": "선택된 파일이 없습니다."})
+        
+    try:
+        # 드롭된 파일 스트림 읽기 (CSV 및 일반 텍스트 포맷 디코딩 처리)
+        stream = io.StringIO(file.stream.read().decode("utf-8-sig"), newline=null)
+        csv_input = csv.reader(stream)
+        
+        insert_rows = []
+        for i, row in enumerate(csv_input):
+            if i == 0: 
+                continue # 첫 줄(헤더: 시약명, 화학식 등) 건너뛰기
+            if not row or len(row) < 2:
+                continue
+                
+            # 엑셀 열 배치 구성에 따라 안전하게 매핑
+            name = row[0].strip()
+            formula = row[1].strip()
+            amount = row[2].strip() if len(row) > 2 else "1개"
+            category = row[3].strip() if len(row) > 3 else "일반시약"
+            location = row[4].strip() if len(row) > 4 else "1층"
+            danger = row[5].strip() if len(row) > 5 else "낮음"
+            status = row[6].strip() if len(row) > 6 else "보관중"
+            
+            insert_rows.append({
+                "name": name, "formula": formula, "amount": amount,
+                "category": category, "location": location, "danger": danger, "status": status
+            })
+            
+        if insert_rows:
+            supabase.table("reagents").insert(insert_rows).execute()
+            
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)})
 
 @app.route("/addReagent", methods=["POST"])
 def add_reagent():

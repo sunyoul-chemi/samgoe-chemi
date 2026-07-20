@@ -5,12 +5,11 @@ from datetime import datetime
 import calendar as pycalendar
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
 import cloudinary
 import cloudinary.uploader
 
 # ==============================================================
-# ☁️ 1. Cloudinary 공식 영구 저장소 세팅
+# ☁️ 1. Cloudinary 영구 저장소 세팅
 # ==============================================================
 cloudinary.config(
     cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "keflcpmi"),
@@ -332,7 +331,7 @@ def upload_reagent_excel():
 @app.route("/upload")
 def upload():
     photos = Photo.query.order_by(Photo.id.desc()).all()
-    # upload.html의 {{ post[0] }}, {{ post[1] }} 인덱스 순서에 맞게 튜플로 매핑
+    # upload.html의 {{ post[0] }}, {{ post[1] }} 인덱스 호환
     photo_list = [(p.id, p.url, p.caption, p.tags) for p in photos]
     return render_template("upload.html", photos=photo_list)
 

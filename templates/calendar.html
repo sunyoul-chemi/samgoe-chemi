@@ -13,77 +13,37 @@
     <div style="background: #fff; border-radius: 20px; padding: 20px; border: 1px solid #e8e6dc; margin-bottom: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.02);">
         <form action="/addSchedule" method="POST" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
             <input type="date" name="date" required style="padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
-            <input type="text" name="title" placeholder="새로운 일정을 입력하세요" required style="flex: 1; min-width: 200px; padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
-            <button type="submit" style="padding: 10px 24px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px;">일정 등록</button>
+            <input type="text" name="title" placeholder="일정 내용을 입력하세요..." required style="flex: 1; min-width: 200px; padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
+            <button type="submit" style="padding: 10px 20px; background: #bfa11d; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">일정 등록 ➕</button>
         </form>
     </div>
     {% endif %}
 
-    <div style="display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start;">
-        
-        <div style="flex: 1; min-width: 320px; background: #fff; border-radius: 24px; border: 1px solid #eeece1; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.01);">
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <a href="/calendar?year={{ year if month > 1 else year - 1 }}&month={{ month - 1 if month > 1 else 12 }}" style="text-decoration: none; font-size: 20px; color: #bfa11d; font-weight: bold; padding: 5px 10px;">&lt;</a>
-                <h3 style="margin: 0; font-size: 22px; font-weight: 800; color: #333;">{{ year }}년 {{ month }}월</h3>
-                <a href="/calendar?year={{ year if month < 12 else year + 1 }}&month={{ month + 1 if month < 12 else 1 }}" style="text-decoration: none; font-size: 20px; color: #bfa11d; font-weight: bold; padding: 5px 10px;">&gt;</a>
-            </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <a href="/calendar?year={{ year }}&month={{ month - 1 }}" style="text-decoration: none; padding: 8px 16px; background: #fff; border: 1px solid #e8e6dc; border-radius: 10px; color: #333; font-weight: 700; font-size: 14px;">◀ 이전달</a>
+        <h3 style="font-size: 22px; font-weight: 800; color: #333; margin: 0;">{{ year }}년 {{ month }}월</h3>
+        <a href="/calendar?year={{ year }}&month={{ month + 1 }}" style="text-decoration: none; padding: 8px 16px; background: #fff; border: 1px solid #e8e6dc; border-radius: 10px; color: #333; font-weight: 700; font-size: 14px;">다음달 ▶</a>
+    </div>
 
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 700; font-size: 13px; color: #888; margin-bottom: 15px; border-bottom: 1px solid #eeece1; padding-bottom: 10px;">
-                <div style="color: #dc3545;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #0d6efd;">토</div>
-            </div>
+    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; background: #fff; padding: 20px; border-radius: 20px; border: 1px solid #e8e6dc; box-shadow: 0 8px 20px rgba(0,0,0,0.02);">
+        {% for day_name in ['일', '월', '화', '수', '목', '금', '토'] %}
+        <div style="text-align: center; font-weight: 800; padding: 10px 0; color: {{ '#e53e3e' if loop.first else '#4a5568' }}; font-size: 14px;">{{ day_name }}</div>
+        {% endfor %}
 
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 12px; column-gap: 8px;">
-                {% for d in days %}
-                <div style="min-height: 75px; padding: 6px; border-radius: 14px; 
-                            background: {% if d.day %}#faf9f5{% else %}transparent{% endif %}; 
-                            border: 1px solid {% if d.day %}#eeece1{% else %}transparent{% endif %}; 
-                            display: flex; flex-direction: column; justify-content: space-between;">
-                    
-                    {% if d.day %}
-                        <span style="font-size: 13px; font-weight: 700; color: #4a4538;">{{ d.day }}</span>
-                        <div style="display: flex; flex-direction: column; gap: 3px; margin-top: 4px;">
-                            {% for sch in d.schedules %}
-                            <span style="background: #bfa11d; color: white; font-size: 10px; padding: 2px 4px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" title="{{ sch }}">
-                                {{ sch }}
-                            </span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <span></span>
-                    {% endif %}
+        {% for d in days %}
+        <div style="min-height: 90px; border: 1px solid #f0eef6; border-radius: 10px; padding: 8px; background: {{ '#fff' if d.day else '#fbfbfa' }};">
+            {% if d.day %}
+            <span style="font-weight: 700; font-size: 13px; color: #2d3748;">{{ d.day }}</span>
+            <div style="margin-top: 5px;">
+                {% for sch in d.schedules %}
+                <div style="background: #fefcbf; color: #744210; font-size: 11px; padding: 3px 6px; border-radius: 4px; margin-bottom: 3px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    {{ sch }}
                 </div>
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
-
-        <div style="width: 100%; max-width: 280px; background: #faf9f5; border-radius: 24px; border: 1px solid #eeece1; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.01); box-sizing: border-box;">
-            <h3 style="margin: 0 0 20px 0; font-size: 17px; font-weight: 800; color: #4a4538; border-bottom: 2px solid #eeece1; padding-bottom: 10px;">📋 {{ month }}월 일정 목록</h3>
-            <div style="overflow-y: auto; max-height: 420px; padding-right: 3px;">
-                {% set month_prefix = "%04d-%02d"|format(year, month) %}
-                {% set ns = namespace(has_schedule=false) %}
-                
-                {% for s in schedules %}
-                    {% if s.date.startswith(month_prefix) %}
-                    {% set ns.has_schedule = true %}
-                    <div style="background: #fff; padding: 12px; border-radius: 14px; border: 1px solid #eeece1; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                        <div style="flex: 1; min-width: 0;">
-                            <span style="font-size: 11px; font-weight: 700; color: #bfa11d; display: block; margin-bottom: 2px;">📅 {{ s.date }}</span>
-                            <span style="font-size: 13px; font-weight: 600; color: #333; display: block; word-break: break-all;">{{ s.title }}</span>
-                        </div>
-                        {% if session.get('is_admin') %}
-                            <a href="/deleteSchedule/{{ s.id }}" onclick="return confirm('해당 일정을 삭제하시겠습니까?');" style="color: #dc3545; font-size: 11px; text-decoration: none; font-weight: 700; background: #ffe3e3; padding: 3px 6px; border-radius: 5px; flex-shrink: 0;">삭제</a>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                {% endfor %}
-
-                {% if not ns.has_schedule %}
-                <div style="text-align: center; color: #a09c92; font-size: 13px; font-style: italic; padding: 10px 0;">이번 달 등록된 일정이 없습니다. ✨</div>
-                {% endif %}
-            </div>
-        </div>
-
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

@@ -155,17 +155,8 @@ header nav a:hover {
 }
 
 /* ==========================================
-   3. 캘린더 & 시약 페이지 전용 실험실 배경 매핑
+   3. (배경 스타일은 8, 9번 섹션에서 정의합니다 - 중복 제거)
    ========================================== */
-body:has(.calendar-wrapper),
-body:has(.reagent-wrapper) {
-    background-image: url('/static/chemi_schedule.png') !important;
-    background-size: 400px !important;
-    background-repeat: no-repeat !important;
-    background-position: bottom 30px right 30px !important;
-    background-attachment: fixed !important;
-    background-color: #fdfcf7 !important;
-}
 
 
 /* ==========================================

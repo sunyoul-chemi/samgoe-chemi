@@ -10,41 +10,46 @@
     <div style="flex: 1; min-width: 300px;">
         <h1 style="font-size: 38px; font-weight: 800; color: #bfa11d; margin-bottom: 12px; letter-spacing: -1px;">삼괴고 최고의 실험 동아리</h1>
         <h2 style="font-size: 24px; color: #2d3748; font-weight: 700; margin-bottom: 20px;">HighEnd를 향해</h2>
-        <p style="font-size: 16px; color: #718096; line-height: 1.7; margin: 0;">최고의 학생들이 있을 곳은 최고의 동아리 케미니까.</p>
+        <p style="font-size: 16px; color: #718096; line-height: 1.7; margin-bottom: 30px;">
+            우리는 직접 탐구하고, 실험하며, 새로운 화학의 세계를 만들어갑니다.<br>
+            케미 동아리원들을 위한 공식 탐구 플랫폼입니다.
+        </p>
     </div>
 </section>
 
-<section style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
-    {% if notice %}
-        <div style="background: #E60033; color: #ffffff; border-radius: 16px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 8px 20px rgba(230, 0, 51, 0.25); position: relative; overflow: hidden;">
-            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
-                <span style="font-size: 20px; animation: chemiPulse 1.5s infinite; display: inline-block;">📢</span>
-                <span style="font-size: 13px; font-weight: 800; letter-spacing: -0.3px; white-space: nowrap; background: rgba(255,255,255,0.22); padding: 3px 9px; border-radius: 6px;">중요공지</span>
-                <p style="margin: 0; font-size: 15px; font-weight: 600; line-height: 1.4; white-space: pre-wrap; word-break: break-all;">{{ notice.content }}</p>
+<section class="notice-board-section" style="max-width: 900px; margin: 0 auto 50px auto; padding: 0 20px;">
+    <div style="background: #fff; border-radius: 20px; border: 1px solid #eeece1; padding: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.02);">
+        <h3 style="margin-top: 0; font-size: 20px; font-weight: 800; color: #333; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span>📢</span> 동아리 주요 공지사항
+        </h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            {% for ann in announcements %}
+            <div style="background: #faf9f5; border-radius: 14px; padding: 18px 20px; border: 1px solid #eeece1; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
+                <div>
+                    <h4 style="margin: 0 0 6px 0; font-size: 16px; color: #2d3748; font-weight: 700;">{{ ann.title }}</h4>
+                    <p style="margin: 0; font-size: 14px; color: #718096; line-height: 1.5; white-space: pre-wrap;">{{ ann.content }}</p>
+                    <span style="font-size: 11px; color: #a09c92; display: block; margin-top: 8px;">{{ ann.created_at.strftime('%Y-%m-%d') if ann.created_at else '' }}</span>
+                </div>
+                {% if session.get('is_admin') %}
+                <a href="/deleteNotice/{{ ann.id }}" onclick="return confirm('이 공지사항을 삭제하시겠습니까?');" style="color: #dc3545; font-size: 11px; font-weight: 700; text-decoration: none; background: #ffe3e3; padding: 4px 8px; border-radius: 6px; flex-shrink: 0;">삭제</a>
+                {% endif %}
             </div>
-            
-            {% if session.get('is_admin') %}
-                <a href="/deleteNotice/{{ notice.id }}" style="color: rgba(255,255,255,0.8); text-decoration: none; font-size: 12px; font-weight: 800; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;" onmouseover="this.style.background='rgba(0,0,0,0.4)'; this.style.color='#fff';" onmouseout="this.style.background='rgba(0,0,0,0.2)'; this.style.color='rgba(255,255,255,0.8)';">삭제</a>
-            {% endif %}
+            {% else %}
+            <div style="text-align: center; color: #a09c92; font-size: 14px; padding: 20px 0;">등록된 공지사항이 없습니다. 🧪</div>
+            {% endfor %}
         </div>
-    {% else %}
-        {% if session.get('is_admin') %}
-            <div style="border: 2px dashed #E60033; color: #E60033; border-radius: 16px; padding: 15px; text-align: center; font-size: 14px; font-weight: 700; background: rgba(230,0,51,0.02);">
-                현재 홈 화면에 공지사항이 비어있습니다. 아래 폼에서 새로 등록해 주세요! 👇
-            </div>
-        {% endif %}
-    {% endif %}
+    </div>
 
     {% if session.get('is_admin') %}
-        <div style="background: #fff; border: 1px solid #eeece1; border-radius: 16px; padding: 18px; margin-top: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.01);">
-            <form action="/addNotice" method="POST" style="display: flex; gap: 10px;">
-                <input type="text" name="content" placeholder="홈 화면에 공지할 내용을 입력해 주세요. (예: 이번주 동아리 시간 화학실 청소 순번 필독)" required
-                       style="flex: 1; padding: 12px 15px; border: 1px solid #e1ded3; border-radius: 10px; font-size: 13px; outline: none; background: #faf9f5;">
-                <button type="submit" style="padding: 0 20px; background: #E60033; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px; white-space: nowrap; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                    공지 등록 🚀
-                </button>
-            </form>
-        </div>
+    <div style="background: #fff; border-radius: 20px; border: 1px solid #eeece1; padding: 25px; margin-top: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.02);">
+        <h4 style="margin-top: 0; color: #bfa11d; font-weight: 800; font-size: 16px; margin-bottom: 15px;">➕ 공지사항 작성 (관리자)</h4>
+        <form action="/addNotice" method="POST" style="display: flex; flex-direction: column; gap: 12px;">
+            <input type="text" name="title" placeholder="공지 제목 입력" required style="padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 14px;">
+            <textarea name="content" placeholder="공지 내용 입력..." rows="3" required style="padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 14px; resize: none;"></textarea>
+            <button type="submit" style="padding: 10px; background: #bfa11d; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px;">공지 등록 🚀</button>
+        </form>
+    </div>
     {% endif %}
 </section>
 
@@ -55,39 +60,26 @@
     </p>
 </section>
 
-<section class="cards">
-    <a href="/ideas" class="card">
-        <h2>💡 아이디어 피드</h2>
-        <p>실험 아이디어와 프로젝트를 자유롭게 공유하세요.</p>
+<section class="cards" style="max-width: 1000px; margin: 0 auto 60px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; padding: 0 20px;">
+    <a href="/ideas" class="card" style="background: #fff; padding: 25px; border-radius: 18px; border: 1px solid #eeece1; text-decoration: none; color: inherit; transition: transform 0.2s;">
+        <h2 style="font-size: 18px; color: #bfa11d; margin-bottom: 8px;">💡 아이디어 피드</h2>
+        <p style="font-size: 13px; color: #718096; margin: 0;">실험 아이디어와 프로젝트를 자유롭게 공유하세요.</p>
     </a>
     
-    <a href="/calendar" class="card">
-        <h2>📅 케미 캘린더</h2>
-        <p>동아리 일정과 실험 일정을 한눈에 확인하세요.</p>
+    <a href="/calendar" class="card" style="background: #fff; padding: 25px; border-radius: 18px; border: 1px solid #eeece1; text-decoration: none; color: inherit; transition: transform 0.2s;">
+        <h2 style="font-size: 18px; color: #bfa11d; margin-bottom: 8px;">📅 케미 캘린더</h2>
+        <p style="font-size: 13px; color: #718096; margin: 0;">동아리 일정과 실험 일정을 한눈에 확인하세요.</p>
     </a>
     
-    <a href="/reagent" class="card">
-        <h2>🧪 시약 찾기</h2>
-        <p>필요한 시약의 위치를 빠르게 검색할 수 있습니다.</p>
+    <a href="/reagent" class="card" style="background: #fff; padding: 25px; border-radius: 18px; border: 1px solid #eeece1; text-decoration: none; color: inherit; transition: transform 0.2s;">
+        <h2 style="font-size: 18px; color: #bfa11d; margin-bottom: 8px;">🧪 시약 찾기</h2>
+        <p style="font-size: 13px; color: #718096; margin: 0;">필요한 시약의 위치를 빠르게 검색할 수 있습니다.</p>
     </a>
     
-    <a href="/upload" class="card">
-        <h2>📷 실험 사진</h2>
-        <p>실험 사진을 업로드하고 모두와 공유해 보세요.</p>
+    <a href="/upload" class="card" style="background: #fff; padding: 25px; border-radius: 18px; border: 1px solid #eeece1; text-decoration: none; color: inherit; transition: transform 0.2s;">
+        <h2 style="font-size: 18px; color: #bfa11d; margin-bottom: 8px;">📷 실험 사진</h2>
+        <p style="font-size: 13px; color: #718096; margin: 0;">실험 사진을 업로드하고 생생한 탐구를 기록하세요.</p>
     </a>
 </section>
-
-<section class="about" style="max-width: 800px; margin: 60px auto 80px auto; text-align: center; padding: 0 20px;">
-    <h2 style="font-size: 22px; font-weight: 800; color: #2d3748; margin-bottom: 12px;">CHEMI 소개</h2>
-    <p style="color: #718096; font-size: 14px;">케미는 최고의 역량을 지닌 학생들이 모인 삼괴고등학교 최고의 실험 동아리입니다.</p>
-</section>
-
-<style>
-@keyframes chemiPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.18); }
-    100% { transform: scale(1); }
-}
-</style>
 
 {% endblock %}

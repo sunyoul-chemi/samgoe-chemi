@@ -20,18 +20,12 @@
 
         {% for proj in projects %}
         <div class="moving-orbit-bubble bubble-color-{{ loop.cycle('1', '2', '3', '4', '5') }}" 
-             style="--pos-x: {{ [15, 75, 20, 80, 50, 10, 85]|random }}%; --pos-y: {{ [20, 30, 70, 80, 15, 65, 40]|random }}%; --float-duration: {{ [18, 22, 25, 28, 32]|random }}s;"
-             onclick='openDetailModal({{ proj.title|tojson }}, {{ proj.summary|tojson }}, {{ proj.id }})'>
-            <div class="planet-visual-core">
-                <div class="planet-ring-glow"></div>
-            </div>
-            <div class="planet-info-label">
-                <h4>{{ proj.title }}</h4>
-            </div>
+             onclick="openDetailModal('{{ proj.title }}', '{{ proj.summary }}', '{{ proj.id }}')">
+            <span>{{ proj.title }}</span>
         </div>
         {% else %}
-        <div style="position: absolute; top: 65%; left: 50%; transform: translateX(-50%); color: #888; font-size: 14px; z-index: 10;">
-            등록된 프로젝트 행성이 없습니다. 중앙의 버튼을 눌러 첫 행성을 생성하세요! 🪐
+        <div style="position: absolute; top: 40%; width: 100%; text-align: center; color: rgba(255,255,255,0.5);">
+            행성이 아직 생성되지 않았습니다. 메인 태양버튼을 눌러 팀 보고서를 등록해 보세요! 🪐
         </div>
         {% endfor %}
     </div>
@@ -40,8 +34,8 @@
 
 <div id="detailModal" class="project-modal-overlay" onclick="closeDetailModal(event)">
     <div class="project-modal-content">
-        <button class="modal-close-btn" onclick="document.getElementById('detailModal').classList.remove('active')">&times;</button>
-        <span class="modal-header-tag">🚀 CHEMI PROJECT PLANET</span>
+        <span class="modal-close-btn" onclick="document.getElementById('detailModal').classList.remove('active')">✕</span>
+        <span class="modal-header-tag">PLANET EXPLORATION</span>
         <h3 id="modalTitle" class="modal-main-title"></h3>
         <p id="modalSummary" class="modal-body-summary"></p>
         <div id="modalDeleteArea" style="margin-top: 20px; text-align: right;"></div>
@@ -49,13 +43,13 @@
 </div>
 
 <div id="addModal" class="project-modal-overlay" onclick="closeAddModal(event)">
-    <div class="project-modal-content">
-        <button class="modal-close-btn" onclick="document.getElementById('addModal').classList.remove('active')">&times;</button>
-        <h3 style="color: #ffd700; font-size: 20px; margin-top: 0; margin-bottom: 20px; font-weight: 800;">🪐 새로운 프로젝트 행성 창조</h3>
-        <form action="/addProject" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
-            <input type="text" name="title" placeholder="프로젝트 / 연구 주제" required style="background: rgba(255,255,255,0.05); border: 1px solid #444; padding: 12px; border-radius: 10px; color: white; font-size: 14px; outline: none;">
-            <textarea name="summary" placeholder="연구 개요 및 노션/구글드라이브 링크를 자유롭게 적어주세요." rows="5" required style="background: rgba(255,255,255,0.05); border: 1px solid #444; padding: 12px; border-radius: 10px; color: white; font-size: 14px; outline: none; resize: none;"></textarea>
-            <button type="submit" style="background: linear-gradient(90deg, #ff8c00, #ffd700); border: none; padding: 12px; border-radius: 10px; color: white; font-weight: 700; cursor: pointer; margin-top: 5px;">🪐 나만의 행성 만들기</button>
+    <div class="project-modal-content" style="max-width: 450px;">
+        <span class="modal-close-btn" onclick="document.getElementById('addModal').classList.remove('active')">✕</span>
+        <h3 class="modal-main-title" style="color: #ffd700 !important;">🪐 새로운 팀 프로젝트 행성 생성</h3>
+        <form action="/addProject" method="POST" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+            <input type="text" name="title" placeholder="프로젝트/팀 이름" required style="background: rgba(0,0,0,0.5); border: 1px solid #444; padding: 12px; border-radius: 10px; color: white; font-size: 14px; outline: none;">
+            <textarea name="summary" placeholder="프로젝트 주요 탐구 내용 및 탐구보고서를 자유롭게 작성해 주세요..." required rows="6" style="background: rgba(0,0,0,0.5); border: 1px solid #444; padding: 12px; border-radius: 10px; color: white; font-size: 14px; outline: none; resize: none;"></textarea>
+            <button type="submit" style="background: linear-gradient(90deg, #ff8c00, #ffd700); border: none; padding: 12px; border-radius: 10px; color: white; font-weight: 700; cursor: pointer; margin-top: 5px;">나만의 행성 만들기 🚀</button>
         </form>
     </div>
 </div>
@@ -67,7 +61,7 @@ function openDetailModal(title, summary, id) {
     
     const deleteArea = document.getElementById('modalDeleteArea');
     {% if session.get('is_admin') %}
-    deleteArea.innerHTML = `<a href="/deleteProject/${id}" class="proj-delete-btn" onclick="return confirm('이 행성을 파괴하시겠습니까?');">행성 삭제</a>`;
+    deleteArea.innerHTML = `<a href="/deleteProject/${id}" class="proj-delete-btn" onclick="return confirm('이 행성을 삭제하시겠습니까?');">행성 삭제</a>`;
     {% else %}
     deleteArea.innerHTML = '';
     {% endif %}
@@ -79,6 +73,7 @@ function closeDetailModal(e) {
         document.getElementById('detailModal').classList.remove('active');
     }
 }
+
 function openAddModal() {
     document.getElementById('addModal').classList.add('active');
 }

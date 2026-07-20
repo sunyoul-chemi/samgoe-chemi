@@ -19,9 +19,11 @@
         </div>
 
         {% for proj in projects %}
-        <div class="moving-orbit-bubble bubble-color-{{ loop.cycle('1', '2', '3', '4', '5') }}" 
+        <div class="moving-orbit-bubble bubble-color-{{ loop.cycle('1', '2', '3', '4', '5') }} project-bubble"
              style="top: {{ [15, 20, 65, 70, 45]|random }}%; left: {{ [10, 30, 55, 75, 22]|random }}%;"
-             onclick="openDetailModal('{{ proj.title|e }}', '{{ proj.summary|e }}', '{{ proj.id }}')">
+             data-title="{{ proj.title }}"
+             data-summary="{{ proj.summary }}"
+             data-id="{{ proj.id }}">
             <div class="bubble-inner-content">
                 <span class="bubble-num">PROJ_0{{ loop.index }}</span>
                 <span class="bubble-title">{{ proj.title }}</span>
@@ -42,7 +44,7 @@
         <span class="modal-close-btn" onclick="document.getElementById('detailModal').classList.remove('active')">&times;</span>
         <span class="modal-header-tag">RESEARCH INFOMATION</span>
         <h3 id="modalTitle" class="modal-main-title">연구 프로젝트 제목</h3>
-        <p id="modalSummary" class="modal-body-summary"현재 작성 중인 보고서의 링크를 공유해주세요. 구글Docs, 구글 Drive 등</p>
+        <p id="modalSummary" class="modal-body-summary">현재 작성 중인 보고서의 링크를 공유해주세요. 구글Docs, 구글 Drive 등</p>
         <div style="margin-top: 25px; display: flex; justify-content: flex-end;" id="modalDeleteArea">
             </div>
     </div>
@@ -65,6 +67,12 @@
 </div>
 
 <script>
+document.querySelectorAll('.project-bubble').forEach(function (bubble) {
+    bubble.addEventListener('click', function () {
+        openDetailModal(bubble.dataset.title, bubble.dataset.summary, bubble.dataset.id);
+    });
+});
+
 function openDetailModal(title, summary, id) {
     document.getElementById('modalTitle').innerText = title;
     document.getElementById('modalSummary').innerText = summary;

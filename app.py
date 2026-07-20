@@ -72,9 +72,12 @@ class Reagent(db.Model):
     __tablename__ = 'reagents'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
+    formula = db.Column(db.String(255), nullable=True)
+    amount = db.Column(db.String(100), nullable=True, default='1개')
+    category = db.Column(db.String(100), nullable=True, default='일반시약')
     location = db.Column(db.String(255), nullable=False)
-    amount = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String(100), nullable=True, default='정상')
+    risk = db.Column(db.String(50), nullable=True, default='낮음')
+    status = db.Column(db.String(100), nullable=True, default='보관중')
 
 class Photo(db.Model):
     __tablename__ = 'photos'
@@ -195,8 +198,8 @@ def calendar():
         year += 1
 
     cal = pycalendar.monthcalendar(year, month)
-    
     schedules = Calendar.query.all()
+    
     schedule_dict = {}
     for s in schedules:
         schedule_dict.setdefault(s.date, []).append(s.title)
@@ -247,12 +250,34 @@ def reagent():
 def add_reagent():
     if session.get("is_admin"):
         name = request.form.get("name")
-        location = request.form.get("location")
+        formula = request.form.get("formula")
         amount = request.form.get("amount")
+        category = request.form.get("category")
+        location = request.form.get("location")
+        risk = request.form.get("risk")
         status = request.form.get("status")
-        if name and location and amount:
-            rg = Reagent(name=name, location=location, amount=amount, status=status)
+        if name and location:
+            rg = Reagent(
+                name=name, formula=formula, amount=amount,
+                category=category, location=location, risk=risk, status=status
+            )
             db.session.add(rg)
+            db.session.commit()
+    return redirect(url_for("reagent"))
+
+@app.route("/editReagent", methods=["POST"])
+def edit_reagent():
+    if session.get("is_admin"):
+        rg_id = request.form.get("id")
+        rg = Reagent.query.get(rg_id)
+        if rg:
+            rg.name = request.form.get("name")
+            rg.formula = request.form.get("formula")
+            rg.amount = request.form.get("amount")
+            rg.category = request.form.get("category")
+            rg.location = request.form.get("location")
+            rg.risk = request.form.get("risk")
+            rg.status = request.form.get("status")
             db.session.commit()
     return redirect(url_for("reagent"))
 
@@ -280,34 +305,41 @@ def upload_reagent_excel():
         
         count = 0
         for row in csv_input:
-            if not row or len(row) < 3:
+            if not row or len(row) < 2:
                 continue
             name = row[0].strip()
-            location = row[1].strip()
-            amount = row[2].strip()
-            status = row[3].strip() if len(row) > 3 else "정상"
+            formula = row[1].strip() if len(row) > 1 else ""
+            amount = row[2].strip() if len(row) > 2 else "1개"
+            category = row[3].strip() if len(row) > 3 else "일반시약"
+            location = row[4].strip() if len(row) > 4 else "1층"
+            risk = row[5].strip() if len(row) > 5 else "낮음"
+            status = row[6].strip() if len(row) > 6 else "보관중"
             
-            if name and location and amount:
-                rg = Reagent(name=name, location=location, amount=amount, status=status)
+            if name and location:
+                rg = Reagent(
+                    name=name, formula=formula, amount=amount,
+                    category=category, location=location, risk=risk, status=status
+                )
                 db.session.add(rg)
                 count += 1
                 
         db.session.commit()
-        return jsonify({"success": True, "message": f"{count}개의 시약이 성공적으로 등록되었습니다."})
+        return jsonify({"success": True, "message": f"{count}개의 시약이 등록되었습니다."})
     except Exception as e:
         db.session.rollback()
-        return jsonify({"success": False, "message": f"CSV 파일 처리 중 오류 발생: {str(e)}"})
+        return jsonify({"success": False, "message": f"파일 처리 중 오류: {str(e)}"})
 
 @app.route("/upload")
 def upload():
     photos = Photo.query.order_by(Photo.id.desc()).all()
-    photo_tuples = [(p.id, p.url, p.caption, p.tags) for p in photos]
-    return render_template("upload.html", photos=photo_tuples)
+    # upload.html의 {{ post[0] }}, {{ post[1] }} 인덱스 순서에 맞게 튜플로 매핑
+    photo_list = [(p.id, p.url, p.caption, p.tags) for p in photos]
+    return render_template("upload.html", photos=photo_list)
 
 @app.route("/uploadPhoto", methods=["POST"])
 def upload_photo():
     if not session.get("is_admin"):
-        flash("관리자만 사진을 올려줄 수 있습니다.")
+        flash("관리자만 사진을 업로드할 수 있습니다.")
         return redirect(url_for("upload"))
 
     file = request.files.get("file")

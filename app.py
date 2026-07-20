@@ -8,43 +8,25 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import cloudinary
 import cloudinary.uploader
-from dotenv import load_dotenv
 import openpyxl
-
-# 로컬 개발 시 .env 파일에서 환경변수를 읽어옵니다.
-# (배포 환경에서는 호스팅 플랫폼의 환경변수 설정을 그대로 사용합니다)
-load_dotenv()
 
 # ==============================================================
 # ☁️ 1. Cloudinary 공식 영구 저장소 보안 세팅
-#    ⚠️ 절대 여기에 실제 키를 하드코딩하지 마세요! .env 파일 또는
-#       배포 플랫폼의 환경변수(Environment Variables)에 설정해주세요.
 # ==============================================================
 cloudinary.config(
-    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key = os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret = os.environ.get("CLOUDINARY_API_SECRET")
+    cloud_name = "keflcpmi",
+    api_key = "833587119529933",
+    api_secret = "FSsEX_w_Mnf_Ri__wsZ6Wdi_sRw"
 )
 
 app = Flask(__name__)
-
-# ⚠️ SECRET_KEY, ADMIN_PASSWORD도 반드시 환경변수로 설정해야 합니다.
-app.secret_key = os.environ.get("FLASK_SECRET_KEY")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
-
-if not app.secret_key or not ADMIN_PASSWORD:
-    raise RuntimeError(
-        "FLASK_SECRET_KEY와 ADMIN_PASSWORD 환경변수가 설정되지 않았습니다. "
-        ".env 파일(로컬) 또는 배포 플랫폼의 환경변수 설정을 확인해주세요."
-    )
+app.secret_key = "chemi_secret_admin_key_1234"
+ADMIN_PASSWORD = "chemi3542s!"
 
 # ==============================================================
 # 🗄️ 2. Supabase(PostgreSQL) 클라우드 연결 세팅
-#    ⚠️ 연결 문자열도 반드시 환경변수(DATABASE_URL)로 관리하세요.
 # ==============================================================
-SUPABASE_DATABASE_URL = os.environ.get("DATABASE_URL")
-if not SUPABASE_DATABASE_URL:
-    raise RuntimeError("DATABASE_URL 환경변수가 설정되지 않았습니다.")
+SUPABASE_DATABASE_URL = "postgresql+psycopg2://postgres.etdfporsnhyhqguuqkqd:ehqhr0843!!@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = SUPABASE_DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -313,11 +295,6 @@ def reagent_list():
 
 @app.route('/addReagent', methods=['POST'])
 def add_reagent():
-    # 🔒 버그 수정: 관리자 권한 체크가 누락되어 있어 누구나 시약을 등록할 수 있었습니다.
-    if not session.get("is_admin"):
-        flash("관리자만 시약을 등록할 수 있습니다.")
-        return redirect(url_for('reagent_list'))
-
     name = request.form.get('name')
     formula = request.form.get('formula')
     amount = request.form.get('amount', '1개')
@@ -361,10 +338,6 @@ def delete_reagent(reagent_id):
 
 @app.route('/uploadReagentExcel', methods=['POST'])
 def upload_reagent_excel():
-    # 🔒 버그 수정: 관리자 권한 체크가 누락되어 있었습니다.
-    if not session.get("is_admin"):
-        return jsonify({"success": False, "message": "관리자만 업로드할 수 있습니다."})
-
     if 'file' not in request.files:
         return jsonify({"success": False, "message": "파일이 전송되지 않았습니다."})
 

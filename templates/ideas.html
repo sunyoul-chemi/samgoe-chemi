@@ -10,74 +10,66 @@
 
     <div class="idea-form-card" style="background: rgba(255, 255, 255, 0.93); backdrop-filter: blur(5px); border-radius: 22px; border: 1px solid #eeece1; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 40px;">
         <form action="/addIdea" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
-            <input type="text" name="author" placeholder="작성자 이름 (예: 2학년 김케미)" required style="padding: 12px 18px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
-            <textarea name="content" placeholder="실험 아이디어나 질문을 입력해 주세요..." rows="3" required style="padding: 15px 18px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px; resize: none;"></textarea>
-            <button type="submit" style="padding: 12px; background: #bfa11d; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 15px; align-self: flex-end; width: 140px;">등록하기 ✨</button>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <input type="text" name="author" placeholder="작성자 이름 (예: 2학년 김케미)" required style="flex: 1; min-width: 200px; padding: 12px 16px; border: 1px solid #e1ded3; border-radius: 12px; font-size: 14px; background: #faf9f5; outline: none;">
+            </div>
+            <textarea name="content" placeholder="공유하고 싶은 실험 아이디어나 질문을 남겨주세요..." required rows="4" style="width: 100%; padding: 15px; border: 1px solid #e1ded3; border-radius: 12px; font-size: 14px; background: #faf9f5; outline: none; resize: vertical;"></textarea>
+            <button type="submit" style="align-self: flex-end; padding: 12px 30px; background: #bfa11d; color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(191,161,29,0.2);">아이디어 게시하기 🚀</button>
         </form>
     </div>
 
     <div class="ideas-feed-list" style="display: flex; flex-direction: column; gap: 25px;">
         {% for idea in ideas %}
-        <div class="idea-card" style="background: #fff; border-radius: 22px; border: 1px solid #eeece1; padding: 28px; box-shadow: 0 8px 25px rgba(0,0,0,0.015);">
-            
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                <div>
-                    <strong style="font-size: 16px; color: #4a4538; font-weight: 800;">👤 {{ idea.author }}</strong>
-                    <span style="font-size: 12px; color: #a09c92; margin-left: 10px;">{{ idea.created_at.strftime('%Y-%m-%d %H:%M') if idea.created_at else '' }}</span>
+        <div style="background: #ffffff; border: 1px solid #eeece1; border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-weight: 800; color: #2d3748; font-size: 16px;">👤 {{ idea.author }}</span>
+                    <span style="font-size: 12px; color: #a0aec0;">{{ idea.created_at.strftime('%Y-%m-%d %H:%M') if idea.created_at else '' }}</span>
                 </div>
                 {% if session.get('is_admin') %}
-                <a href="/deleteIdea/{{ idea.id }}" onclick="return confirm('이 게시글을 삭제하시겠습니까?');" style="color: #dc3545; font-size: 12px; font-weight: 700; text-decoration: none; background: #ffe3e3; padding: 4px 8px; border-radius: 6px;">글 삭제</a>
+                <a href="/deleteIdea/{{ idea.id }}" onclick="return confirm('이 아이디어를 삭제하시겠습니까?');" style="color: #e53e3e; text-decoration: none; font-size: 13px; font-weight: 700; background: #fff5f5; padding: 4px 10px; border-radius: 8px;">삭제</a>
                 {% endif %}
             </div>
 
-            <p style="font-size: 15px; color: #2d3748; line-height: 1.7; margin: 0 0 20px 0; white-space: pre-wrap; word-break: break-all;">{{ idea.content }}</p>
+            <p style="color: #4a5568; font-size: 15px; line-height: 1.7; white-space: pre-wrap; margin-bottom: 20px;">{{ idea.content }}</p>
 
-            <div style="background: #faf9f5; border-radius: 16px; padding: 20px; border: 1px solid #eeece1;">
-                <h4 style="margin: 0 0 15px 0; font-size: 13px; color: #718096; font-weight: 700;">💬 피드백 / 댓글 {{ idea.comments|length }}개</h4>
-
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
-                    {% for comment in idea.comments %}
-                    <div style="background: #fff; padding: 12px 16px; border-radius: 12px; border: 1px solid #eeece1; display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <span style="font-size: 12px; font-weight: 700; color: #bfa11d;">{{ comment.author }}</span>
-                            {% if comment.emoticon %}
-                            <span style="font-size: 14px; margin-left: 5px;">{{ comment.emoticon }}</span>
-                            {% endif %}
-                            <p style="margin: 4px 0 0 0; font-size: 13px; color: #4a5568;">{{ comment.content }}</p>
-                        </div>
-                        {% if session.get('is_admin') %}
-                        <a href="/deleteComment/{{ comment.id }}" onclick="return confirm('댓글을 삭제하시겠습니까?');" style="color: #dc3545; font-size: 10px; font-weight: 700; text-decoration: none;">삭제</a>
-                        {% endif %}
+            <div style="background: #faf9f5; border-radius: 14px; padding: 18px; border: 1px solid #f0eef6;">
+                <h4 style="font-size: 13px; color: #718096; margin-top: 0; margin-bottom: 12px;">💬 댓글 목록</h4>
+                
+                {% for comment in idea.comments %}
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed #e2e8f0;">
+                    <div>
+                        <span style="font-size: 13px; font-weight: 700; color: #2d3748;">{{ comment.author }}</span>
+                        {% if comment.emoticon %}<span style="margin-left: 4px;">{{ comment.emoticon }}</span>{% endif %}
+                        <p style="font-size: 13px; color: #4a5568; margin: 3px 0 0 0;">{{ comment.content }}</p>
                     </div>
-                    {% else %}
-                    <div style="color: #a09c92; font-size: 12px; font-style: italic;">첫 댓글을 남겨주세요! 💬</div>
-                    {% endfor %}
+                    {% if session.get('is_admin') %}
+                    <a href="/deleteComment/{{ comment.id }}" onclick="return confirm('댓글을 삭제하시겠습니까?');" style="color: #e53e3e; font-size: 11px; text-decoration: none;">삭제</a>
+                    {% endif %}
                 </div>
+                {% endfor %}
 
-                <form action="/addComment/{{ idea.id }}" method="POST" style="display: flex; flex-direction: column; gap: 8px;">
+                <form action="/addComment/{{ idea.id }}" method="POST" style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
                     <div style="display: flex; gap: 8px;">
-                        <input type="text" name="author" placeholder="닉네임" required style="width: 110px; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 8px; font-size: 12px; outline: none; background: #fff;">
-                        <input type="text" name="content" placeholder="댓글 내용 입력..." required style="flex: 1; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 8px; font-size: 12px; outline: none; background: #fff;">
+                        <input type="text" name="author" placeholder="작성자" required style="width: 120px; padding: 8px 12px; border: 1px solid #d4d0be; border-radius: 8px; font-size: 12px;">
+                        <input type="text" name="content" placeholder="댓글을 입력하세요..." required style="flex: 1; padding: 8px 12px; border: 1px solid #d4d0be; border-radius: 8px; font-size: 12px;">
                     </div>
-                    
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <select name="emoticon" style="padding: 6px 10px; border: 1px solid #d4d0be; border-radius: 8px; font-size: 12px; background: #fff; color: #555; outline: none; font-weight: 600; cursor: pointer;">
+                        <select name="emoticon" style="padding: 6px 10px; border: 1px solid #d4d0be; border-radius: 8px; font-size: 12px;">
                             <option value="">✨ 반응 선택</option>
                             <option value="😍">😍 최고예요</option>
                             <option value="👍">👍 공감해요</option>
                             <option value="💡">💡 좋은생각</option>
                             <option value="🔥">🔥 응원해요</option>
                         </select>
-                        <button type="submit" style="padding: 7px 18px; background: #4a4538; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">전송 ✉️</button>
+                        <button type="submit" style="padding: 7px 18px; background: #2d3748; color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">전송 ✉️</button>
                     </div>
                 </form>
             </div>
-
         </div>
         {% else %}
-        <div style="text-align: center; color: #a09c92; font-size: 14px; font-style: italic; padding: 70px 0;">아직 등록된 아이디어가 없습니다. 첫 아이디어를 올려보세요! 💡</div>
+        <div style="text-align: center; color: #a09c92; font-size: 14px; padding: 50px 0;">등록된 아이디어가 없습니다. 첫 번째 아이디어를 공유해 보세요! 💡</div>
         {% endfor %}
     </div>
-
 </div>
 {% endblock %}

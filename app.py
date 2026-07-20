@@ -8,24 +8,43 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import cloudinary
 import cloudinary.uploader
+from dotenv import load_dotenv
+import openpyxl
+
+# 로컬 개발 시 .env 파일에서 환경변수를 읽어옵니다.
+# (배포 환경에서는 호스팅 플랫폼의 환경변수 설정을 그대로 사용합니다)
+load_dotenv()
 
 # ==============================================================
 # ☁️ 1. Cloudinary 공식 영구 저장소 보안 세팅
+#    ⚠️ 절대 여기에 실제 키를 하드코딩하지 마세요! .env 파일 또는
+#       배포 플랫폼의 환경변수(Environment Variables)에 설정해주세요.
 # ==============================================================
 cloudinary.config(
-    cloud_name = "keflcpmi",
-    api_key = "833587119529933",
-    api_secret = "FSsEX_w_Mnf_Ri__wsZ6Wdi_sRw"
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key = os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret = os.environ.get("CLOUDINARY_API_SECRET")
 )
 
 app = Flask(__name__)
-app.secret_key = "chemi_secret_admin_key_1234"
-ADMIN_PASSWORD = "chemi3542s!"
+
+# ⚠️ SECRET_KEY, ADMIN_PASSWORD도 반드시 환경변수로 설정해야 합니다.
+app.secret_key = os.environ.get("FLASK_SECRET_KEY")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
+
+if not app.secret_key or not ADMIN_PASSWORD:
+    raise RuntimeError(
+        "FLASK_SECRET_KEY와 ADMIN_PASSWORD 환경변수가 설정되지 않았습니다. "
+        ".env 파일(로컬) 또는 배포 플랫폼의 환경변수 설정을 확인해주세요."
+    )
 
 # ==============================================================
 # 🗄️ 2. Supabase(PostgreSQL) 클라우드 연결 세팅
+#    ⚠️ 연결 문자열도 반드시 환경변수(DATABASE_URL)로 관리하세요.
 # ==============================================================
-SUPABASE_DATABASE_URL = "postgresql+psycopg2://postgres.etdfporsnhyhqguuqkqd:ehqhr0843!!@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
+SUPABASE_DATABASE_URL = os.environ.get("DATABASE_URL")
+if not SUPABASE_DATABASE_URL:
+    raise RuntimeError("DATABASE_URL 환경변수가 설정되지 않았습니다.")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = SUPABASE_DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -232,12 +251,11 @@ def calendar():
     now = datetime.now()
     year = request.args.get("year", default=now.year, type=int)
     month = request.args.get("month", default=now.month, type=int)
-    if month < 1:
-        month = 12
-        year -= 1
-    elif month > 12:
-        month = 1
-        year += 1
+    # 🐛 버그 수정: month가 0/13처럼 한 단위만 벗어나는 경우만 처리되어 있어서,
+    # URL을 직접 조작해 month=25 같은 값을 넣으면 잘못된 날짜로 계산되었습니다.
+    # divmod로 몇 달이 벗어나든 항상 올바르게 정규화합니다.
+    year += (month - 1) // 12
+    month = (month - 1) % 12 + 1
     start_weekday, total_days = pycalendar.monthrange(year, month)
     empty_cells = (start_weekday + 1) % 7
     
@@ -295,6 +313,11 @@ def reagent_list():
 
 @app.route('/addReagent', methods=['POST'])
 def add_reagent():
+    # 🔒 버그 수정: 관리자 권한 체크가 누락되어 있어 누구나 시약을 등록할 수 있었습니다.
+    if not session.get("is_admin"):
+        flash("관리자만 시약을 등록할 수 있습니다.")
+        return redirect(url_for('reagent_list'))
+
     name = request.form.get('name')
     formula = request.form.get('formula')
     amount = request.form.get('amount', '1개')
@@ -338,32 +361,54 @@ def delete_reagent(reagent_id):
 
 @app.route('/uploadReagentExcel', methods=['POST'])
 def upload_reagent_excel():
+    # 🔒 버그 수정: 관리자 권한 체크가 누락되어 있었습니다.
+    if not session.get("is_admin"):
+        return jsonify({"success": False, "message": "관리자만 업로드할 수 있습니다."})
+
     if 'file' not in request.files:
         return jsonify({"success": False, "message": "파일이 전송되지 않았습니다."})
-    
+
     file = request.files['file']
     if file.filename == '':
         return jsonify({"success": False, "message": "선택된 파일이 없습니다."})
-        
+
+    filename = file.filename.lower()
+
     try:
-        stream = io.StringIO(file.stream.read().decode("utf-8-sig"), newline=None)
-        csv_input = csv.reader(stream)
-        
-        for i, row in enumerate(csv_input):
-            if i == 0 or not row or len(row) < 2: 
+        rows = []
+
+        if filename.endswith('.xlsx'):
+            # 🐛 버그 수정: 화면 안내와 달리 기존 코드는 .xlsx(엑셀 바이너리)를
+            # 텍스트로 디코딩하려 시도해서 항상 실패했습니다. openpyxl로 실제 파싱합니다.
+            workbook = openpyxl.load_workbook(io.BytesIO(file.read()), data_only=True)
+            sheet = workbook.active
+            for row in sheet.iter_rows(values_only=True):
+                rows.append(["" if cell is None else str(cell).strip() for cell in row])
+        else:
+            # .csv 처리 (기존 로직 유지)
+            stream = io.StringIO(file.stream.read().decode("utf-8-sig"), newline=None)
+            csv_input = csv.reader(stream)
+            for row in csv_input:
+                rows.append(row)
+
+        for i, row in enumerate(rows):
+            if i == 0 or not row or len(row) < 2 or not row[0]:
                 continue
-                
+
             name = row[0].strip()
-            formula = row[1].strip()
-            amount = row[2].strip() if len(row) > 2 else "1개"
-            category = row[3].strip() if len(row) > 3 else "일반시약"
-            location = row[4].strip() if len(row) > 4 else "1층"
-            risk = row[5].strip() if len(row) > 5 else "낮음"
-            status = row[6].strip() if len(row) > 6 else "보관중"
-            
+            formula = row[1].strip() if len(row) > 1 else ""
+            amount = row[2].strip() if len(row) > 2 and row[2] else "1개"
+            category = row[3].strip() if len(row) > 3 and row[3] else "일반시약"
+            location = row[4].strip() if len(row) > 4 and row[4] else "1층"
+            risk = row[5].strip() if len(row) > 5 and row[5] else "낮음"
+            status = row[6].strip() if len(row) > 6 and row[6] else "보관중"
+
+            if not name:
+                continue
+
             new_reagent = Reagent(name=name, formula=formula, amount=amount, category=category, location=location, risk=risk, status=status)
             db.session.add(new_reagent)
-            
+
         db.session.commit()
         return jsonify({"success": True})
     except Exception as e:
@@ -438,10 +483,16 @@ def delete_project(project_id):
             db.session.commit()
     return redirect(url_for("projects_page"))
 
+# 🐛 버그 수정: 기존에는 init_supabase_db()가 `if __name__ == "__main__"` 안에서만
+# 호출되어, gunicorn으로 배포했을 때(requirements.txt에 gunicorn이 포함되어 있으므로
+# 실제 운영 환경은 gunicorn 사용을 전제로 함) DB 테이블 초기화가 전혀 실행되지 않았습니다.
+# 모듈이 임포트되는 시점(개발 서버든 gunicorn이든 항상)에 실행되도록 이동합니다.
+with app.app_context():
+    init_supabase_db()
+
 if __name__ == "__main__":
-    with app.app_context():
-        init_supabase_db()
-    #  Render 배포 시 환경 변수 포트 동적 대응 추가
-    import os
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    # 🔒 버그 수정: debug=True가 하드코딩되어 있으면 운영 환경에서도 Flask 디버거가
+    # 켜져 심각한 보안 위험(원격 코드 실행 가능)이 됩니다. 환경변수로 제어합니다.
+    debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)

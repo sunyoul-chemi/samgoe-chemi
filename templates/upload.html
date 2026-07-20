@@ -9,49 +9,26 @@
                 <strong>CHEMI_feed</strong>
                 <span style="font-size: 14px; background: #efefef; color: #262626; padding: 5px 12px; border-radius: 4px; font-weight: 600;">동아리 공식</span>
             </h2>
-            <p style="color: #262626; font-size: 16px; margin: 0 0 5px 0;"><strong>삼괴고등학교 화학동아리 케미</strong></p>
-            <p style="color: #8e8e8e; font-size: 14px; margin: 0;">멋진 실험 순간과 소중한 활동 기록을 공유하는 공간입니다. ✨</p>
+            <p style="color: #8e8e8e; font-size: 15px; margin: 0;">삼괴고등학교 화학동아리 CHEMI의 실험 순간들을 공유합니다. 📸</p>
         </div>
     </div>
 
-    <div class="upload-box-container" style="background: #ffffff; border: 1px solid #dbdbdb; border-radius: 12px; max-width: 450px; margin: 0 auto 50px auto; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <div style="text-align: center; padding: 14px; border-bottom: 1px solid #dbdbdb; font-weight: 600; color: #262626; font-size: 16px;">
-            새 게시물 만들기
-        </div>
-        <form action="/uploadPhoto" method="POST" enctype="multipart/form-data" style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
-            
-            <input type="text" name="title" placeholder="문구 입력 (실험 이야기...)" required 
-                   style="width: 100%; padding: 12px; border: 1px solid #dbdbdb; border-radius: 6px; box-sizing: border-box; font-size: 14px; background: #fafafa;">
-            
-            <input type="text" name="tag" placeholder="태그 입력 (#화학실험 #삼괴고)" 
-                   style="width: 100%; padding: 12px; border: 1px solid #dbdbdb; border-radius: 6px; box-sizing: border-box; font-size: 14px; background: #fafafa;">
-            
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: #fafafa; border: 1px dashed #cccccc; border-radius: 6px; text-align: center; gap: 8px;">
-                <span style="font-size: 30px;">📁</span>
-                <span style="font-size: 13px; color: #262626; font-weight: 600;">컴퓨터/폰에서 사진 선택</span>
-                <input type="file" name="photo" required style="font-size: 12px; color: #8e8e8e; margin-top: 5px;">
-            </div>
-            
-            <button type="submit" style="background: #0095f6; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s;">
-                공유하기
-            </button>
+    {% if session.get('is_admin') %}
+    <div class="upload-box" style="background: #fff; border: 1px solid #dbdbdb; border-radius: 12px; padding: 25px; margin-bottom: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+        <h3 style="margin-top: 0; font-size: 16px; color: #262626; margin-bottom: 15px;">📸 새 실험 사진 게시하기 (관리자)</h3>
+        
+        <form action="/uploadPhoto" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 12px;">
+            <input type="file" name="file" accept="image/*" required style="font-size: 14px; padding: 8px; border: 1px solid #dbdbdb; border-radius: 6px; background: #fafafa;">
+            <input type="text" name="caption" placeholder="사진에 대한 설명을 입력하세요..." required style="padding: 10px 12px; border: 1px solid #dbdbdb; border-radius: 6px; outline: none; font-size: 14px;">
+            <input type="text" name="tags" placeholder="태그 입력 (예: #화학실험 #CHEMI)" style="padding: 10px 12px; border: 1px solid #dbdbdb; border-radius: 6px; outline: none; font-size: 14px;">
+            <button type="submit" style="background: #0095f6; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 5px;">게시하기</button>
         </form>
     </div>
+    {% endif %}
 
-    <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;">
+    <div class="feed-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 28px;">
         {% for post in photos %}
-        <div class="instagram-card" style="background: #fff; border: 1px solid #dbdbdb; border-radius: 4px; overflow: hidden; display: flex; flex-direction: column;">
-            
-            <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #efefef;">
-                <div class="profile-group" style="display: flex; align-items: center; gap: 8px;">
-                    <span class="profile-avatar" style="font-size: 16px; background: #fafafa; border: 1px solid #dbdbdb; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">🧪</span>
-                    <span class="profile-name" style="font-weight: 700; color: #262626; font-size: 14px;">CHEMI</span>
-                </div>
-                {% if session.get('is_admin') %}
-                <a href="/deletePhoto/{{ post[0] }}" onclick="return confirm('이 사진을 피드에서 삭제하시겠습니까?');" 
-                   style="color: #ed4956; font-size: 12px; text-decoration: none; font-weight: 600;">삭제</a>
-                {% endif %}
-            </div>
+        <div class="feed-card" style="background: #fff; border: 1px solid #dbdbdb; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.06)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
             
             <div class="card-image-wrapper" style="width: 100%; position: relative; padding-top: 100%; background: #fafafa; overflow: hidden;">
                 <img src="{{ post[1] }}" alt="업로드 이미지" 
@@ -60,27 +37,24 @@
             </div>
             
             <div class="card-body" style="padding: 14px; background: #fff; border-top: 1px solid #efefef; flex-grow: 1;">
-                <p class="card-title" style="margin: 0 0 6px 0; font-size: 14px; color: #262626; line-height: 1.4;">
-                    <span style="font-weight: 700; margin-right: 6px;">CHEMI</span>{{ post[2] }}
-                </p>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <p class="card-title" style="margin: 0 0 6px 0; font-size: 14px; color: #262626; line-height: 1.4;">
+                        <span style="font-weight: 700; margin-right: 6px;">CHEMI</span>{{ post[2] }}
+                    </p>
+                    {% if session.get('is_admin') %}
+                        <a href="/deletePhoto/{{ post[0] }}" onclick="return confirm('이 사진을 삭제하시겠습니까?');" style="color: #dc3545; font-size: 11px; font-weight: 700; text-decoration: none; background: #ffe3e3; padding: 3px 6px; border-radius: 4px; flex-shrink: 0; margin-left: 8px;">삭제</a>
+                    {% endif %}
+                </div>
                 <span class="card-tags" style="color: #00376b; font-size: 13px; display: block; margin-top: 4px;">{{ post[3] if post[3] else '#CHEMI #삼괴고' }}</span>
             </div>
         </div>
         {% else %}
-        <div style="grid-column: 1 / -1; text-align: center; color: #8e8e8e; font-size: 15px; padding: 100px 0; border: 1px dashed #dbdbdb; border-radius: 8px; background: #fff;">
-            아직 게시물이 없습니다. 첫 번째 사진을 공유해 보세요! 🌱
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 0; color: #8e8e8e;">
+            <p style="font-size: 16px; margin-bottom: 5px;">아직 게시된 실험 사진이 없습니다. 🧪</p>
+            <p style="font-size: 13px;">동아리 활동 사진을 업로드해 보세요!</p>
         </div>
         {% endfor %}
     </div>
 
 </div>
-
-<style>
-@media (max-width: 768px) {
-    .gallery-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px !important;
-    }
-}
-</style>
 {% endblock %}

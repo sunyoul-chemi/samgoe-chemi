@@ -1,41 +1,62 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="gallery-wrapper" style="max-width: 935px; margin: 0 auto; padding: 40px 20px; font-family: Pretendard, sans-serif;">
+<div class="gallery-wrapper" style="max-width: 935px; margin: 0 auto; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
     <div class="gallery-title-area" style="display: flex; align-items: center; justify-content: center; gap: 30px; padding-bottom: 40px; border-bottom: 1px solid #dbdbdb; margin-bottom: 40px;">
         <div style="font-size: 80px; background: #fafafa; border: 1px solid #dbdbdb; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">🧪</div>
         <div style="text-align: left;">
-            <h2 style="font-size: 28px; color: #262626; margin: 0 0 10px 0; font-weight: 800; display: flex; align-items: center; gap: 15px;">
+            <h2 style="font-size: 28px; color: #262626; margin: 0 0 10px 0; font-weight: 300; display: flex; align-items: center; gap: 15px;">
                 <strong>CHEMI_feed</strong>
                 <span style="font-size: 14px; background: #efefef; color: #262626; padding: 5px 12px; border-radius: 4px; font-weight: 600;">동아리 공식</span>
             </h2>
-            <p style="margin: 0; color: #8e8e8e; font-size: 15px; line-height: 1.5;">
-                삼괴고등학교 화학 동아리 CHEMI의 실험 과정 및 활동 기록 보관소입니다. 📸
-            </p>
+            <p style="color: #262626; font-size: 16px; margin: 0 0 5px 0;"><strong>삼괴고등학교 화학동아리 케미</strong></p>
+            <p style="color: #8e8e8e; font-size: 14px; margin: 0;">멋진 실험 순간과 소중한 활동 기록을 공유하는 공간입니다. ✨</p>
         </div>
     </div>
 
-    {% if session.get('is_admin') %}
-    <div class="upload-box-card" style="background: #ffffff; border: 1px solid #dbdbdb; border-radius: 12px; padding: 25px; margin-bottom: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-        <h3 style="margin-top: 0; font-size: 16px; color: #bfa11d; font-weight: 800; margin-bottom: 15px;">📷 새 실험 사진 업로드 (관리자)</h3>
-        <form action="/uploadPhoto" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 12px;">
-            <input type="file" name="file" accept="image/*" required style="font-size: 14px;">
-            <input type="text" name="caption" placeholder="사진 설명을 입력하세요 (예: 은거울 반응 실험 완료!)" required style="padding: 10px; border: 1px solid #dbdbdb; border-radius: 6px; font-size: 14px;">
-            <input type="text" name="tags" placeholder="태그 입력 (예: #CHEMI #실험 #은거울반응)" style="padding: 10px; border: 1px solid #dbdbdb; border-radius: 6px; font-size: 14px;">
-            <button type="submit" style="padding: 10px; background: #2d3748; color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;">게시하기 🚀</button>
+    <div class="upload-box-container" style="background: #ffffff; border: 1px solid #dbdbdb; border-radius: 12px; max-width: 450px; margin: 0 auto 50px auto; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <div style="text-align: center; padding: 14px; border-bottom: 1px solid #dbdbdb; font-weight: 600; color: #262626; font-size: 16px;">
+            새 게시물 만들기
+        </div>
+        <form action="/uploadPhoto" method="POST" enctype="multipart/form-data" style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+            
+            <input type="text" name="title" placeholder="문구 입력 (실험 이야기...)" required 
+                   style="width: 100%; padding: 12px; border: 1px solid #dbdbdb; border-radius: 6px; box-sizing: border-box; font-size: 14px; background: #fafafa;">
+            
+            <input type="text" name="tag" placeholder="태그 입력 (#화학실험 #삼괴고)" 
+                   style="width: 100%; padding: 12px; border: 1px solid #dbdbdb; border-radius: 6px; box-sizing: border-box; font-size: 14px; background: #fafafa;">
+            
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: #fafafa; border: 1px dashed #cccccc; border-radius: 6px; text-align: center; gap: 8px;">
+                <span style="font-size: 30px;">📁</span>
+                <span style="font-size: 13px; color: #262626; font-weight: 600;">컴퓨터/폰에서 사진 선택</span>
+                <input type="file" name="photo" required style="font-size: 12px; color: #8e8e8e; margin-top: 5px;">
+            </div>
+            
+            <button type="submit" style="background: #0095f6; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s;">
+                공유하기
+            </button>
         </form>
     </div>
-    {% endif %}
 
-    <div class="insta-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 28px;">
+    <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;">
         {% for post in photos %}
-        <div class="insta-card" style="background: #fff; border: 1px solid #dbdbdb; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; position: relative;">
-            {% if session.get('is_admin') %}
-            <a href="/deletePhoto/{{ post[0] }}" onclick="return confirm('이 사진을 삭제하시겠습니까?');" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 12px; z-index: 10;">✕</a>
-            {% endif %}
+        <div class="instagram-card" style="background: #fff; border: 1px solid #dbdbdb; border-radius: 4px; overflow: hidden; display: flex; flex-direction: column;">
+            
+            <div class="card-header" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #efefef;">
+                <div class="profile-group" style="display: flex; align-items: center; gap: 8px;">
+                    <span class="profile-avatar" style="font-size: 16px; background: #fafafa; border: 1px solid #dbdbdb; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">🧪</span>
+                    <span class="profile-name" style="font-weight: 700; color: #262626; font-size: 14px;">CHEMI</span>
+                </div>
+                {% if session.get('is_admin') %}
+                <a href="/deletePhoto/{{ post[0] }}" onclick="return confirm('이 사진을 피드에서 삭제하시겠습니까?');" 
+                   style="color: #ed4956; font-size: 12px; text-decoration: none; font-weight: 600;">삭제</a>
+                {% endif %}
+            </div>
             
             <div class="card-image-wrapper" style="width: 100%; position: relative; padding-top: 100%; background: #fafafa; overflow: hidden;">
-                <img src="{{ post[1] }}" alt="업로드 이미지" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://placehold.co/600x400?text=No+Image';">
+                <img src="{{ post[1] }}" alt="업로드 이미지" 
+                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" 
+                     onerror="this.src='https://placehold.co/600x400?text=No+Image';">
             </div>
             
             <div class="card-body" style="padding: 14px; background: #fff; border-top: 1px solid #efefef; flex-grow: 1;">
@@ -46,11 +67,20 @@
             </div>
         </div>
         {% else %}
-        <div style="grid-column: 1 / -1; text-align: center; color: #8e8e8e; padding: 60px 0;">
-            등록된 실험 사진이 없습니다. 첫 번째 활동 기록을 게시해 보세요! 🧪
+        <div style="grid-column: 1 / -1; text-align: center; color: #8e8e8e; font-size: 15px; padding: 100px 0; border: 1px dashed #dbdbdb; border-radius: 8px; background: #fff;">
+            아직 게시물이 없습니다. 첫 번째 사진을 공유해 보세요! 🌱
         </div>
         {% endfor %}
     </div>
 
 </div>
+
+<style>
+@media (max-width: 768px) {
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+}
+</style>
 {% endblock %}

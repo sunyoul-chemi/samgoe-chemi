@@ -1,3 +1,6 @@
+/* ==========================================
+   0. 글로벌 초기화 및 전역 Pretendard 서체 주입
+   ========================================== */
 * {
     margin: 0;
     padding: 0;
@@ -11,8 +14,12 @@ body {
     line-height: 1.6;
 }
 
+/* ==========================================
+   1. 내비게이션 헤더 (상단 바 디자인 고정)
+   ========================================== */
+/* header 부분을 style.css 내에서 찾아서 이 스타일로 유지 혹은 덮어써주세요 */
 header {
-    background-color: #f7e987;
+    background-color: #f7e987; /* 네 번째 사진의 따뜻하고 예쁜 노란색 상단바 톤 고정 */
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     padding: 18px 40px;
     display: flex;
@@ -26,109 +33,517 @@ header {
 header .logo {
     font-size: 22px;
     font-weight: 900;
-    color: #ffffff;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    color: #fff; /* 노란 배경 위에서 하얗고 선명하게 빛나는 로고 텍스트 */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 header nav a {
     text-decoration: none;
-    color: #4a4538;
-    margin-left: 20px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-left: 25px;
+    font-size: 15px;
     font-weight: 700;
-    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+header nav a:hover {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
 /* ==========================================
-   우주 배경 & 팀 프로젝트 애니메이션
+   2. 메인 홈 화면 (index.html) 스타일 패키지
+   ========================================== */
+.hero {
+    position: relative;
+    height: 480px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(65%);
+    z-index: 1;
+}
+
+.hero-text {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #fff;
+    padding: 0 20px;
+}
+
+.hero-text h1 {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.hero-text h2 {
+    font-size: 24px;
+    color: #ffd700;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.hero-text p {
+    font-size: 17px;
+    opacity: 0.9;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.intro, .about {
+    max-width: 800px;
+    margin: 60px auto;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.intro h2, .about h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.cards {
+    max-width: 1100px;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 25px;
+    padding: 0 20px;
+}
+
+.cards .card {
+    background: #fff;
+    border: 1px solid #eeece1;
+    border-radius: 20px;
+    padding: 30px 25px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.01);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.cards .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(191, 161, 29, 0.08);
+    border-color: #bfa11d;
+}
+
+.cards .card h2 {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.cards .card p {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* ==========================================
+   3. 캘린더 & 시약 페이지 전용 실험실 배경 매핑
+   ========================================== */
+body:has(.calendar-wrapper),
+body:has(.reagent-wrapper) {
+    background-image: url('/static/chemi_schedule.png') !important;
+    background-size: 400px !important;
+    background-repeat: no-repeat !important;
+    background-position: bottom 30px right 30px !important;
+    background-attachment: fixed !important;
+    background-color: #fdfcf7 !important;
+}
+
+
+/* ==========================================
+   4. 실험 사진 업로드 박스 (한 줄 정렬 및 미디어 최적화)
+   ========================================== */
+.gallery-wrapper {
+    max-width: 1140px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.gallery-title-area {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.upload-box-container {
+    background: #fff;
+    border-radius: 22px;
+    border: 1px solid #eeece1;
+    padding: 20px 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.01);
+    margin-bottom: 45px;
+}
+
+/* 🌟 모든 요소를 가로 한 줄로 배치하는 마법의 레이아웃 */
+.upload-flex-form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: nowrap; /* 절대 아래로 떨어지지 않게 고정 */
+}
+
+.upload-input-text {
+    flex: 2;
+    min-width: 150px;
+    padding: 12px 16px;
+    border: 1px solid #e1ded3;
+    border-radius: 12px;
+    outline: none;
+    font-size: 14px;
+    background: #faf9f5;
+}
+
+.upload-input-text.tag-input {
+    flex: 1;
+}
+
+.upload-file-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #faf9f5;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid #e1ded3;
+    white-space: nowrap;
+}
+
+.upload-file-hidden {
+    font-size: 13px;
+    color: #555;
+    max-width: 180px;
+}
+
+.upload-submit-btn {
+    padding: 12px 24px;
+    background: #bfa11d;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(191,161,29,0.15);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+/* ==========================================
+   5. 팀 프로젝트 우주 오르빗 & 모달 팝업 (projects.html 전용)
    ========================================== */
 .space-universe-bg {
-    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    background: radial-gradient(circle at center, #1b1931 0%, #07050d 100%) !important;
     min-height: 100vh;
-    padding-bottom: 80px;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    padding-bottom: 60px;
 }
 
 .center-gradient-title {
-    font-size: 36px;
+    font-size: 54px;
     font-weight: 900;
-    background: linear-gradient(90deg, #ffd700, #ff8c00);
+    background: linear-gradient(135deg, #fff 0%, #ffd700 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: 2px;
+    margin: 0;
+    letter-spacing: 4px;
 }
 
 .center-sub {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 12px;
-    letter-spacing: 4px;
-    display: block;
+    color: #6a6a8e;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 6px;
     margin-top: 5px;
+    display: block;
 }
 
 .orbit-system-container {
     position: relative;
     width: 100%;
-    max-width: 900px;
+    max-width: 1000px;
     height: 550px;
-    margin: 40px auto 0 auto;
+    margin: 30px auto;
 }
 
 .moving-orbit-bubble {
-    position: absolute;
+    width: 125px;
+    height: 125px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    color: #fff;
-    font-weight: 700;
-    font-size: 13px;
     cursor: pointer;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    transition: transform 0.3s ease;
-    padding: 10px;
+    box-shadow: 0 0 25px rgba(255,255,255,0.15);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: floatingOrbit 4s ease-in-out infinite alternate;
+    position: absolute;
+    z-index: 10;
 }
 
 .moving-orbit-bubble:hover {
-    transform: scale(1.15);
+    transform: scale(1.18) !important;
+    box-shadow: 0 0 35px var(--glow-color) !important;
+    z-index: 50;
 }
 
-.bubble-color-1 { background: radial-gradient(circle, #4facfe, #00f2fe); width: 100px; height: 100px; top: 15%; left: 15%; }
-.bubble-color-2 { background: radial-gradient(circle, #ff0844, #ffb199); width: 110px; height: 110px; top: 60%; left: 18%; }
-.bubble-color-3 { background: radial-gradient(circle, #f12711, #f5af19); width: 105px; height: 105px; top: 18%; right: 15%; }
-.bubble-color-4 { background: radial-gradient(circle, #b224ef, #7579ff); width: 120px; height: 120px; top: 62%; right: 18%; }
-.bubble-color-5 { background: radial-gradient(circle, #11998e, #38ef7d); width: 95px; height: 95px; top: 70%; left: 45%; }
+.bubble-inner-content {
+    text-align: center;
+    padding: 10px;
+    color: white;
+}
 
-/* 모달 피드백 */
+.bubble-num {
+    display: block;
+    font-size: 10px;
+    opacity: 0.6;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.bubble-title {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 105px;
+}
+
+.click-hint {
+    display: block;
+    font-size: 9px;
+    color: #ffd700;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.moving-orbit-bubble:hover .click-hint {
+    opacity: 1;
+}
+
+/* 🪐 행성 그라데이션 컬러 */
+.bubble-color-1 { background: radial-gradient(circle at 30% 30%, #4e54c8, #1f1c2c); --glow-color: rgba(78,84,200,0.6); }
+.bubble-color-2 { background: radial-gradient(circle at 30% 30%, #ff416c, #ff4b2b); --glow-color: rgba(255,65,108,0.6); animation-delay: -0.7s; }
+.bubble-color-3 { background: radial-gradient(circle at 30% 30%, #11998e, #38ef7d); --glow-color: rgba(56,239,125,0.6); animation-delay: -1.5s; }
+.bubble-color-4 { background: radial-gradient(circle at 30% 30%, #f12711, #f5af19); --glow-color: rgba(245,175,25,0.6); animation-delay: -2.2s; }
+.bubble-color-5 { background: radial-gradient(circle at 30% 30%, #800080, #ffc0cb); --glow-color: rgba(128,0,128,0.6); animation-delay: -2.9s; }
+
+@keyframes floatingOrbit {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-15px) rotate(4deg); }
+}
+
+/* 🌠 실시간 별똥별 */
+.shooting-stars-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.shooting-stars-background span {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.1), 0 0 0 8px rgba(255,255,255,0.1), 0 0 20px rgba(255,255,255,1);
+    animation: animateStar 3s linear infinite;
+    opacity: 0;
+}
+
+.shooting-stars-background span::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 1px;
+    background: linear-gradient(90deg, #fff, transparent);
+}
+
+.shooting-stars-background span:nth-child(1) { top: 5%; left: 20%; animation-delay: 0s; animation-duration: 2s; }
+.shooting-stars-background span:nth-child(2) { top: 12%; left: 40%; animation-delay: 0.4s; animation-duration: 3s; }
+.shooting-stars-background span:nth-child(3) { top: 25%; left: 70%; animation-delay: 1.2s; animation-duration: 2.5s; }
+.shooting-stars-background span:nth-child(4) { top: 8%; left: 90%; animation-delay: 0.8s; animation-duration: 1.8s; }
+.shooting-stars-background span:nth-child(5) { top: 35%; left: 10%; animation-delay: 2.1s; animation-duration: 3.5s; }
+.shooting-stars-background span:nth-child(6) { top: 18%; left: 60%; animation-delay: 1.7s; animation-duration: 2.2s; }
+
+@keyframes animateStar {
+    0% { transform: rotate(-35deg) translateX(0); opacity: 1; }
+    70% { opacity: 1; }
+    100% { transform: rotate(-35deg) translateX(-1000px); opacity: 0; }
+}
+
+/* 팝업 모달 */
 .project-modal-overlay {
-    display: none;
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(7, 5, 13, 0.85);
     backdrop-filter: blur(8px);
-    z-index: 9999;
-    justify-content: center;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
 .project-modal-overlay.active {
-    display: flex;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .project-modal-content {
-    background: #111625;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
+    background: linear-gradient(145deg, #1e1b29, #110e1b);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 35px;
+    border-radius: 24px;
     width: 90%;
-    max-width: 550px;
-    padding: 30px;
+    max-width: 500px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
     position: relative;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
 }
 
-.project-modal-content .modal-header-tag { color: #ffe600; font-size: 11px; font-weight: 800; letter-spacing: 2px; }
-.project-modal-content .modal-main-title { color: #f8f9fa; font-size: 24px; font-weight: 800; margin: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px; }
-.project-modal-content .modal-body-summary { color: #ffffff; font-size: 15px; line-height: 1.7; white-space: pre-wrap; }
-.project-modal-content .modal-close-btn { position: absolute; top: 20px; right: 20px; color: #fff; cursor: pointer; font-weight: 800; }
-.proj-delete-btn { color: #ff4d4f; text-decoration: none; font-size: 13px; font-weight: 700; border: 1px solid #ff4d4f; padding: 5px 12px; border-radius: 6px; }
+
+
+/* ==========================================
+   7. 아이디어 플랫폼 전역 배경 전용 룰 (화면 꽉 차게 변경)
+   ========================================== */
+body:has(.ideas-page-container) {
+    background-image: url('/static/chemi_idea.png') !important;
+    background-size: cover !important; /* 👈 이미지를 화면 크기에 맞춰 꽉 채우는 마법의 속성입니다 */
+    background-repeat: no-repeat !important;
+    background-position: center !important; /* 이미지 중심이 화면 가운데 오도록 고정 */
+    background-attachment: fixed !important; /* 스크롤해도 배경은 가만히 고정되도록 설정 */
+    background-color: #fdfcf7 !important;
+}
+
+/* ==========================================
+   8. 케미 캘린더 전역 배경 전용 룰 (화면 꽉 차게)
+   ========================================== */
+body:has(.calendar-wrapper) {
+    background-image: url('/static/chemi_schedule.png') !important;
+    background-size: cover !important;        /* 화면 크기에 맞춰 꽉 채우기 */
+    background-repeat: no-repeat !important;
+    background-position: center !important;    /* 가운데 정렬 */
+    background-attachment: fixed !important;    /* 스크롤 시 배경 고정 */
+    background-color: #fdfcf7 !important;
+}
+
+/* ==========================================
+   9. 시약 정보 검색 전역 배경 전용 룰 (화면 꽉 차게)
+   ========================================== */
+body:has(.reagent-page-container) {
+    /* ⚠️ 만약 static 폴더 안에 실제 파일명이 chemi_list.jpg 라면 확장자를 .jpg로 꼭 바꿔주셔야 합니다! */
+    background-image: url('/static/chemi_list.png') !important; 
+    background-size: cover !important;        /* 화면 크기에 맞춰 꽉 채우기 */
+    background-repeat: no-repeat !important;
+    background-position: center !important;    /* 가운데 정렬 */
+    background-attachment: fixed !important;    /* 스크롤 시 배경 고정 */
+    background-color: #fdfcf7 !important;
+}
+
+/* ==========================================
+   9-2. 팀 프로젝트 상세 모달 글자 가독성 보정 (백금 & 화이트)
+   ========================================== */
+/* 상단 캡션 (RESEARCH INFORMATION) - 화사한 네온 옐로우 */
+.project-modal-content .modal-header-tag {
+    color: #ffe600 !important;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(255, 230, 0, 0.3);
+}
+
+/* 메인 타이틀 (행성 제목) - 눈부신 백금색 (#f8f9fa) */
+.project-modal-content .modal-main-title {
+    color: #f8f9fa !important;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 12px;
+}
+
+/* 본문 요약 (상세 설명) - 깨끗한 화이트 (#ffffff) */
+.project-modal-content .modal-body-summary {
+    color: #ffffff !important;
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: 0.95;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* 우측 상단 닫기 X 버튼 - 백금색 */
+.project-modal-content .modal-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    color: #f8f9fa !important;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.project-modal-content .modal-close-btn:hover {
+    opacity: 1;
+}
+
+/* 관리자 삭제 버튼 - 네온 핑크 톤으로 변경하여 대비 상승 */
+.proj-delete-btn {
+    color: #ff6b6b !important;
+    background: rgba(255, 107, 107, 0.15) !important;
+    border: 1px solid rgba(255, 107, 107, 0.4) !important;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.proj-delete-btn:hover {
+    background: rgba(255, 107, 107, 0.3) !important;
+}
+
+

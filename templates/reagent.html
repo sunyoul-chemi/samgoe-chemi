@@ -176,33 +176,32 @@
         fileInput.addEventListener('change', () => {
             if(fileInput.files.length > 0) uploadCSV(fileInput.files[0]);
         });
+    }
 
-       function uploadExcel(file) {
-    const formData = new FormData();
-    formData.append('file', file);
+    function uploadCSV(file) {
+        const formData = new FormData();
+        formData.append('file', file);
 
-    dropZone.innerHTML = "⌛ 파일 처리 중... 잠시만 기다려 주세요.";
+        if (dropZone) dropZone.innerHTML = "<p style='margin:0; color:#bfa11d; font-weight:800;'>⌛ 파일 처리 중... 잠시만 기다려 주세요.</p>";
 
-    fetch('/uploadReagentExcel', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success) {
-            alert('엑셀(CSV) 데이터가 성공적으로 반영되었습니다! 🎉');
+        fetch('/uploadReagentExcel', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message || 'CSV 데이터가 성공적으로 반영되었습니다! 🎉');
+                window.location.reload();
+            } else {
+                alert('업로드 오류: ' + (data.message || '업로드 실패'));
+                window.location.reload();
+            }
+        })
+        .catch(err => {
+            alert('서버통신 오류: ' + err.message);
             window.location.reload();
-        } else {
-            alert('오류: ' + (data.message || '업로드 실패'));
-            window.location.reload();
-        }
-    })
-    .catch(err => {
-        alert('서버통신 오류: ' + err.message);
-        window.location.reload();
-    });
-}
-        }
+        });
     }
 </script>
 

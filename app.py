@@ -63,11 +63,11 @@ class Reagent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     formula = db.Column(db.String(100))
-    amount = db.Column(db.String(50), default="1개")  
     location = db.Column(db.String(100))
-    risk = db.Column(db.String(50))
+    amount = db.Column(db.String(50), default="1개")  
+    risk = db.Column(db.String(50), default="낮음")
     status = db.Column(db.String(50), default="보관중")
-    category = db.Column(db.String(100), default="일반시약")
+    note = db.Column(db.String(200), default="")  # 👈 카테고리 제거, 비고(note) 추가
 
 class Photo(db.Model):
     __tablename__ = 'photos'
@@ -92,7 +92,7 @@ class Notice(db.Model):
 def init_supabase_db():
     try:
         db.create_all()
-        db.session.execute(text("SELECT amount FROM reagents LIMIT 1;"))
+        db.session.execute(text("SELECT note FROM reagents LIMIT 1;"))
     except Exception as e:
         print("테이블 구조 불일치 감지! 자동 동기화를 진행합니다:", e)
         db.session.rollback()
@@ -107,16 +107,16 @@ def init_supabase_db():
     try:
         if Reagent.query.count() == 0:
             reagents_list = [
-                Reagent(name="염산 (Hydrochloric acid)", formula="HCl", amount="1개", location="산성장 A-01", risk="위험", status="보관중", category="위험성물질"),
-                Reagent(name="황산 (Sulfuric acid)", formula="H2SO4", amount="1개", location="산성장 A-02", risk="위험", status="보관중", category="위험성물질"),
-                Reagent(name="질산 (Nitric acid)", formula="HNO3", amount="1개", location="산성장 A-03", risk="위험", status="보관중", category="위험성물질"),
-                Reagent(name="수산화나트륨 (Sodium hydroxide)", formula="NaOH", amount="1개", location="염기장 B-01", risk="경고", status="보관중", category="염기성물질"),
-                Reagent(name="탄산나트륨 (Sodium carbonate)", formula="Na2CO3", amount="1개", location="무기장 C-02", risk="낮음", status="보관중", category="무기화합물"),
-                Reagent(name="염화나트륨 (Sodium chloride)", formula="NaCl", amount="1개", location="무기장 C-03", risk="낮음", status="보관중", category="무기화합물"),
-                Reagent(name="황산구리 (Copper(II) sulfate)", formula="CuSO4", amount="1개", location="무기장 C-04", risk="경고", status="보관중", category="무기화합물"),
-                Reagent(name="산화칼슘 (Calcium oxide)", formula="CaO", amount="1개", location="무기장 C-05", risk="경고", status="보관중", category="무기화합물"),
-                Reagent(name="에탄올 (Ethanol)", formula="C2H5OH", amount="1개", location="유기장 D-01", risk="경고", status="보관중", category="유기화합물"),
-                Reagent(name="과산화수소 (Hydrogen peroxide)", formula="H2O2", amount="1개", location="유기장 D-02", risk="위험", status="보관중", category="유기화합물")
+                Reagent(name="염산 (Hydrochloric acid)", formula="HCl", location="산성장 A-01", amount="1개", risk="위험", status="보관중", note=""),
+                Reagent(name="황산 (Sulfuric acid)", formula="H2SO4", location="산성장 A-02", amount="1개", risk="위험", status="보관중", note=""),
+                Reagent(name="질산 (Nitric acid)", formula="HNO3", location="산성장 A-03", amount="1개", risk="위험", status="보관중", note=""),
+                Reagent(name="수산화나트륨 (Sodium hydroxide)", formula="NaOH", location="염기장 B-01", amount="1개", risk="경고", status="보관중", note=""),
+                Reagent(name="탄산나트륨 (Sodium carbonate)", formula="Na2CO3", location="무기장 C-02", amount="1개", risk="낮음", status="보관중", note=""),
+                Reagent(name="염화나트륨 (Sodium chloride)", formula="NaCl", location="무기장 C-03", amount="1개", risk="낮음", status="보관중", note=""),
+                Reagent(name="황산구리 (Copper(II) sulfate)", formula="CuSO4", location="무기장 C-04", amount="1개", risk="경고", status="보관중", note=""),
+                Reagent(name="산화칼슘 (Calcium oxide)", formula="CaO", location="무기장 C-05", amount="1개", risk="경고", status="보관중", note=""),
+                Reagent(name="에탄올 (Ethanol)", formula="C2H5OH", location="유기장 D-01", amount="1개", risk="경고", status="보관중", note=""),
+                Reagent(name="과산화수소 (Hydrogen peroxide)", formula="H2O2", location="유기장 D-02", amount="1개", risk="위험", status="보관중", note="")
             ]
             db.session.bulk_save_objects(reagents_list)
             db.session.commit()
@@ -274,39 +274,37 @@ def delete_schedule(sid):
             db.session.commit()
     return redirect(url_for("calendar"))
 
-# 🧪 5. 시약 관리 (HTML 폼의 risk와 danger 변수 모두 호환되도록 완벽 보완)
+# 🧪 5. 시약 관리 (수정 반영)
 @app.route('/reagent')
 def reagent_list():
     keyword = request.args.get('keyword', '')
-    category_filter = request.args.get('category_filter', '')
     
     query = Reagent.query
     if keyword:
         query = query.filter((Reagent.name.like(f'%{keyword}%')) | (Reagent.formula.like(f'%{keyword}%')))
-    if category_filter:
-        query = query.filter(Reagent.category == category_filter)
         
     try:
         reagents = query.order_by(Reagent.name.asc()).all()
     except Exception:
         db.session.rollback()
         reagents = []
-    return render_template('reagent.html', reagents=reagents, keyword=keyword, selected_category=category_filter)
+    return render_template('reagent.html', reagents=reagents, keyword=keyword)
 
 @app.route('/addReagent', methods=['POST'])
 def add_reagent():
     name = request.form.get('name')
-    formula = request.form.get('formula')
-    amount = request.form.get('amount', '1개')
-    category = request.form.get('category', '일반시약')
+    formula = request.form.get('formula', '')
     location = request.form.get('location')
-    
-    # 🚨 중요: HTML의 name이 'risk' 혹은 'danger' 무엇으로 넘어와도 에러 없이 매칭
+    amount = request.form.get('amount', '1개')
     risk = request.form.get('risk') or request.form.get('danger') or '낮음'  
     status = request.form.get('status', '보관중')
+    note = request.form.get('note', '')
     
-    if name:
-        new_reagent = Reagent(name=name, formula=formula, amount=amount, location=location, risk=risk, status=status, category=category)
+    if name and location:
+        new_reagent = Reagent(
+            name=name, formula=formula, location=location, 
+            amount=amount, risk=risk, status=status, note=note
+        )
         db.session.add(new_reagent)
         db.session.commit()
     return redirect(url_for('reagent_list'))
@@ -318,12 +316,12 @@ def edit_reagent():
         reagent = Reagent.query.get(rid)
         if reagent:
             reagent.name = request.form.get('name')
-            reagent.formula = request.form.get('formula')
-            reagent.amount = request.form.get('amount', '1개')
-            reagent.category = request.form.get('category')
+            reagent.formula = request.form.get('formula', '')
             reagent.location = request.form.get('location')
+            reagent.amount = request.form.get('amount', '1개')
             reagent.risk = request.form.get('risk') or request.form.get('danger') or '낮음'
-            reagent.status = request.form.get('status')
+            reagent.status = request.form.get('status', '보관중')
+            reagent.note = request.form.get('note', '')
             db.session.commit()
     return redirect(url_for('reagent_list'))
 
@@ -336,6 +334,7 @@ def delete_reagent(reagent_id):
             db.session.commit()
     return redirect(url_for("reagent_list"))
 
+# 📁 CSV 파일 7개 열 업로드 (1:시약명, 2:영어명/화학식, 3:보관장소, 4:용량/수량, 5:위험도, 6:상태, 7:비고)
 @app.route('/uploadReagentExcel', methods=['POST'])
 def upload_reagent_excel():
     if 'file' not in request.files:
@@ -350,18 +349,29 @@ def upload_reagent_excel():
         csv_input = csv.reader(stream)
         
         for i, row in enumerate(csv_input):
-            if i == 0 or not row or len(row) < 2: 
+            if i == 0 or not row or len(row) < 1: 
                 continue
                 
-            name = row[0].strip()
-            formula = row[1].strip()
-            amount = row[2].strip() if len(row) > 2 else "1개"
-            category = row[3].strip() if len(row) > 3 else "일반시약"
-            location = row[4].strip() if len(row) > 4 else "1층"
-            risk = row[5].strip() if len(row) > 5 else "낮음"
-            status = row[6].strip() if len(row) > 6 else "보관중"
+            name = row[0].strip() if len(row) > 0 else ""
+            if not name:
+                continue
+                
+            formula = row[1].strip() if len(row) > 1 else ""
+            location = row[2].strip() if len(row) > 2 else ""
+            amount = row[3].strip() if len(row) > 3 else "1개"
+            risk = row[4].strip() if len(row) > 4 else "낮음"
+            status = row[5].strip() if len(row) > 5 else "보관중"
+            note = row[6].strip() if len(row) > 6 else ""
             
-            new_reagent = Reagent(name=name, formula=formula, amount=amount, category=category, location=location, risk=risk, status=status)
+            new_reagent = Reagent(
+                name=name, 
+                formula=formula, 
+                location=location, 
+                amount=amount, 
+                risk=risk, 
+                status=status, 
+                note=note
+            )
             db.session.add(new_reagent)
             
         db.session.commit()
@@ -441,7 +451,6 @@ def delete_project(project_id):
 if __name__ == "__main__":
     with app.app_context():
         init_supabase_db()
-    #  Render 배포 시 환경 변수 포트 동적 대응 추가
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+    

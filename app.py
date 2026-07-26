@@ -67,7 +67,7 @@ class Reagent(db.Model):
     amount = db.Column(db.String(50), default="1개")  
     risk = db.Column(db.String(50), default="낮음")
     status = db.Column(db.String(50), default="보관중")
-    note = db.Column(db.String(200), default="")  # 👈 카테고리 제거, 비고(note) 추가
+    note = db.Column(db.String(200), default="")
 
 class Photo(db.Model):
     __tablename__ = 'photos'
@@ -274,7 +274,7 @@ def delete_schedule(sid):
             db.session.commit()
     return redirect(url_for("calendar"))
 
-# 🧪 5. 시약 관리 (수정 반영)
+# 🧪 5. 시약 관리
 @app.route('/reagent')
 def reagent_list():
     keyword = request.args.get('keyword', '')
@@ -334,10 +334,10 @@ def delete_reagent(reagent_id):
             db.session.commit()
     return redirect(url_for("reagent_list"))
 
-# 📁 CSV 파일 7개 열 업로드 (1:시약명, 2:영어명/화학식, 3:보관장소, 4:용량/수량, 5:위험도, 6:상태, 7:비고)
+# 📁 CSV 파일 업로드 (인코딩 자동감지 및 메시지 반환 보완)
 @app.route('/uploadReagentExcel', methods=['POST'])
 def upload_reagent_excel():
-    if not session.get('is_admin'):
+    if not session.get("is_admin"):
         return jsonify({"success": False, "message": "관리자 권한이 필요합니다."})
 
     if 'file' not in request.files:
@@ -350,7 +350,7 @@ def upload_reagent_excel():
     try:
         raw_bytes = file.stream.read()
         
-        # UTF-8 -> CP949(EUC-KR) 순서로 인코딩 시도
+        # UTF-8 -> CP949(한국 엑셀 CSV) 순서 디코딩 시도
         try:
             decoded_text = raw_bytes.decode("utf-8-sig")
         except UnicodeDecodeError:
@@ -359,8 +359,8 @@ def upload_reagent_excel():
         stream = io.StringIO(decoded_text, newline=None)
         csv_input = csv.reader(stream)
         
+        count = 0
         for i, row in enumerate(csv_input):
-            # 헤더 행 스킵 및 빈 행 예외 처리
             if i == 0 or not row or len(row) < 1: 
                 continue
                 
@@ -385,14 +385,13 @@ def upload_reagent_excel():
                 note=note
             )
             db.session.add(new_reagent)
+            count += 1
             
         db.session.commit()
-        return jsonify({"success": True})
-
+        return jsonify({"success": True, "message": f"{count}개의 시약 항목이 성공적으로 등록되었습니다!"})
     except Exception as e:
         db.session.rollback()
-        # 오류 메시지가 None이거나 비어있을 경우에 대한 방어 코드
-        err_msg = str(e) if str(e) else "파일 처리 중 알 수 없는 오류가 발생했습니다."
+        err_msg = str(e) if str(e) else "파일 데이터 처리 중 오류가 발생했습니다."
         return jsonify({"success": False, "message": err_msg})
 
 # ==============================================================
@@ -468,4 +467,3 @@ if __name__ == "__main__":
         init_supabase_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
-    

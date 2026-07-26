@@ -3,52 +3,52 @@
 
 <div style="
     max-width: 1200px; 
-    margin: 40px auto; 
-    padding: 30px 20px; 
+    margin: 30px auto; 
+    padding: 35px 25px; 
     border-radius: 24px; 
-    background: linear-gradient(rgba(253, 252, 247, 0.85), rgba(253, 252, 247, 0.92)), url('{{ url_for('static', filename='chemi_list.png') }}'); 
+    background: linear-gradient(rgba(253, 252, 247, 0.45), rgba(253, 252, 247, 0.65)), url('{{ url_for('static', filename='chemi_list.png') }}'); 
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
 
     <div style="text-align: center; margin-bottom: 30px;">
-        <span style="font-size: 38px;">🧪</span>
-        <h2 style="font-size: 28px; color: #333; margin: 10px 0 5px 0; font-weight: 800;">시약 재고 찾기</h2>
-        <p style="color: #666; font-size: 15px;">동아리실 시약 위치와 보관 상태를 빠르게 검색하세요.</p>
+        <span style="font-size: 42px;">🧪</span>
+        <h2 style="font-size: 30px; color: #1a1a1a; margin: 8px 0 6px 0; font-weight: 800; text-shadow: 0 2px 4px rgba(255,255,255,0.8);">시약 재고 찾기</h2>
+        <p style="color: #4a4a4a; font-size: 15px; font-weight: 600;">동아리실 시약 위치와 보관 상태를 빠르게 검색하세요.</p>
     </div>
 
     {% if session.get('is_admin') %}
-    <div style="background: rgba(255, 255, 255, 0.95); border: 1px solid #eeece1; border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 35px;">
-        <h3 style="color: #bfa11d; margin-top: 0; margin-bottom: 20px; font-weight: 800;">➕ 신규 재고 시약 등록 (관리자전용)</h3>
+    <div style="background: rgba(255, 255, 255, 0.92); border: 2px solid #e2d9b8; border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 30px; backdrop-filter: blur(8px);">
+        <h3 style="color: #bfa11d; margin-top: 0; margin-bottom: 20px; font-weight: 800; font-size: 18px;">➕ 신규 재고 시약 등록 (관리자전용)</h3>
         
         <form action="/addReagent" method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; align-items: end;">
             <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">시약명</label>
-                <input type="text" name="name" placeholder="예: 5% 질산은수용액" required style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">시약명</label>
+                <input type="text" name="name" placeholder="예: 5% 질산은수용액" required style="width:100%; padding:12px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
             <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">영어명/화학식</label>
-                <input type="text" name="formula" placeholder="예: AgNO3" style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">영어명/화학식</label>
+                <input type="text" name="formula" placeholder="예: AgNO3" style="width:100%; padding:12px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
             <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">보관 장소</label>
-                <input type="text" name="location" placeholder="예: 시약장 A-2" required style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">보관 장소</label>
+                <input type="text" name="location" placeholder="예: 시약장 A-2" required style="width:100%; padding:12px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
             <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">용량 / 수량</label>
-                <input type="text" name="amount" placeholder="예: 500ml 1병" style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">용량 / 수량</label>
+                <input type="text" name="amount" placeholder="예: 500ml 1병" style="width:100%; padding:12px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
             <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#718096; margin-bottom:5px;">특이사항 및 비고</label>
-                <input type="text" name="note" placeholder="예: 차광 보관 필수" style="width:100%; padding:12px; border:1px solid #e1ded3; border-radius:10px; outline:none; background:#faf9f5;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">특이사항 및 비고</label>
+                <input type="text" name="note" placeholder="예: 차광 보관 필수" style="width:100%; padding:12px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
             <button type="submit" style="background:#bfa11d; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; cursor:pointer; transition: 0.2s;">등록하기</button>
         </form>
 
-        <div id="excelDropZone" style="margin-top: 20px; border: 2px dashed #bfa11d; border-radius: 12px; padding: 25px; text-align: center; background: #fffdf6; cursor: pointer; transition: 0.2s;">
-            <p style="margin: 0; color: #bfa11d; font-weight: 700; font-size: 15px;">📁 엑셀 파일(.xlsx)을 여기에 드래그하거나 클릭하여 시약 목록 일괄 업로드</p>
-            <p style="margin: 5px 0 0 0; color: #888; font-size: 12px;">(열 순서: 시약명, 화학식, 장소, 용량, 비고)</p>
+        <div id="excelDropZone" style="margin-top: 20px; border: 2px dashed #bfa11d; border-radius: 12px; padding: 20px; text-align: center; background: rgba(255, 253, 246, 0.9); cursor: pointer; transition: 0.2s;">
+            <p style="margin: 0; color: #967d11; font-weight: 800; font-size: 15px;">📁 엑셀 파일(.xlsx)을 여기에 드래그하거나 클릭하여 시약 목록 일괄 업로드</p>
+            <p style="margin: 4px 0 0 0; color: #777; font-size: 12px;">(열 순서: 시약명, 화학식, 보관장소, 용량/수량, 비고)</p>
             <input type="file" id="excelFileInput" accept=".xlsx, .xls" style="display: none;">
         </div>
     </div>
@@ -56,40 +56,47 @@
 
     <div style="margin-bottom: 25px;">
         <input type="text" id="reagentSearch" onkeyup="filterReagents()" placeholder="🔍 검색할 시약명, 화학식, 위치를 입력하세요..." 
-               style="width: 100%; padding: 15px 20px; border: 1px solid #e1ded3; border-radius: 14px; font-size: 15px; outline: none; background: rgba(255,255,255,0.95); box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+               style="width: 100%; padding: 16px 22px; border: 2px solid #e2d9b8; border-radius: 16px; font-size: 15px; outline: none; background: rgba(255, 255, 255, 0.95); box-shadow: 0 4px 15px rgba(0,0,0,0.03); backdrop-filter: blur(5px);">
     </div>
 
-    <div style="background: rgba(255, 255, 255, 0.95); border-radius: 16px; border: 1px solid #eeece1; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+    <div style="background: rgba(255, 255, 255, 0.93); border-radius: 18px; border: 1px solid #e2d9b8; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.04); backdrop-filter: blur(5px);">
         <table id="reagentTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
             <thead>
-                <tr style="background: #faf8f0; border-bottom: 1px solid #eeece1; color: #555;">
-                    <th style="padding: 15px 20px;">시약명</th>
-                    <th style="padding: 15px 20px;">화학식/영어명</th>
-                    <th style="padding: 15px 20px;">보관 위치</th>
-                    <th style="padding: 15px 20px;">용량/수량</th>
-                    <th style="padding: 15px 20px;">비고</th>
+                <tr style="background: #f7f3e3; border-bottom: 2px solid #e2d9b8; color: #444;">
+                    <th style="padding: 16px 20px; font-weight: 800;">시약명</th>
+                    <th style="padding: 16px 20px; font-weight: 800;">화학식/영어명</th>
+                    <th style="padding: 16px 20px; font-weight: 800;">보관 위치</th>
+                    <th style="padding: 16px 20px; font-weight: 800;">용량/수량</th>
+                    <th style="padding: 16px 20px; font-weight: 800;">비고</th>
                     {% if session.get('is_admin') %}
-                    <th style="padding: 15px 20px; text-align: center;">관리</th>
+                    <th style="padding: 16px 20px; text-align: center; font-weight: 800;">관리</th>
                     {% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% for r in reagents %}
-                <tr class="reagent-row" style="border-bottom: 1px solid #f5f3eb;">
-                    <td style="padding: 15px 20px; font-weight: 700; color: #333;">{{ r[1] }}</td>
-                    <td style="padding: 15px 20px; color: #666;">{{ r[2] if r[2] else '-' }}</td>
-                    <td style="padding: 15px 20px;"><span style="background: #fdf5d8; color: #967d11; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 13px;">{{ r[3] }}</span></td>
-                    <td style="padding: 15px 20px; color: #666;">{{ r[4] if r[4] else '-' }}</td>
-                    <td style="padding: 15px 20px; color: #888; font-size: 13px;">{{ r[5] if r[5] else '-' }}</td>
+                <tr class="reagent-row" style="border-bottom: 1px solid #eee8d5; transition: background 0.15s;">
+                    <td style="padding: 16px 20px; font-weight: 700; color: #222;">{{ r[1] }}</td>
+                    <td style="padding: 16px 20px; color: #555; font-family: monospace; font-size: 14px;">{{ r[2] if r[2] else '-' }}</td>
+                    <td style="padding: 16px 20px;">
+                        <span style="background: #fef3c7; color: #92400e; padding: 5px 12px; border-radius: 8px; font-weight: 800; font-size: 13px; border: 1px solid #fde68a; display: inline-block;">
+                            📍 {{ r[3] }}
+                        </span>
+                    </td>
+                    <td style="padding: 16px 20px; color: #444; font-weight: 600;">{{ r[4] if r[4] else '-' }}</td>
+                    <td style="padding: 16px 20px; color: #666; font-size: 13px;">{{ r[5] if r[5] else '-' }}</td>
                     {% if session.get('is_admin') %}
-                    <td style="padding: 15px 20px; text-align: center;">
-                        <a href="/deleteReagent/{{ r[0] }}" onclick="return confirm('이 시약 항목을 삭제하시겠습니까?');" style="color: #dc3545; text-decoration: none; font-size: 12px; font-weight: 700; background: #ffe8e8; padding: 5px 10px; border-radius: 6px;">삭제</a>
+                    <td style="padding: 16px 20px; text-align: center;">
+                        <a href="/delete_reagent/{{ r[0] }}" onclick="return confirm('이 시약 항목을 삭제하시겠습니까?');" 
+                           style="color: #dc3545; text-decoration: none; font-size: 12px; font-weight: 700; background: #ffe8e8; padding: 6px 12px; border-radius: 8px; border: 1px solid #f8b4b4; display: inline-block;">
+                           삭제
+                        </a>
                     </td>
                     {% endif %}
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px; color: #a09c92; font-size: 14px;">
+                    <td colspan="6" style="text-align: center; padding: 50px; color: #888; font-size: 15px; font-weight: 600;">
                         등록된 시약 정보가 없습니다.
                     </td>
                 </tr>
@@ -101,7 +108,7 @@
 </div>
 
 <script>
-    // 1. 시약 목록 실시간 검색 필터
+    // 시약 실시간 검색
     function filterReagents() {
         const input = document.getElementById('reagentSearch');
         const filter = input.value.toLowerCase();
@@ -109,15 +116,11 @@
 
         rows.forEach(row => {
             const text = row.innerText.toLowerCase();
-            if (text.includes(filter)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+            row.style.display = text.includes(filter) ? '' : 'none';
         });
     }
 
-    // 2. 엑셀 업로드 스크립트 (관리자 로그인 시에만 작동)
+    // 엑셀 업로드 스크립트
     const dropZone = document.getElementById('excelDropZone');
     const fileInput = document.getElementById('excelFileInput');
 
@@ -127,36 +130,28 @@
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropZone.style.background = '#f3ebcd';
-            dropZone.style.borderColor = '#967d11';
         });
 
         dropZone.addEventListener('dragleave', () => {
-            dropZone.style.background = '#fffdf6';
-            dropZone.style.borderColor = '#bfa11d';
+            dropZone.style.background = 'rgba(255, 253, 246, 0.9)';
         });
 
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.style.background = '#fffdf6';
-            dropZone.style.borderColor = '#bfa11d';
-            
+            dropZone.style.background = 'rgba(255, 253, 246, 0.9)';
             const files = e.dataTransfer.files;
-            if(files.length > 0) {
-                uploadExcel(files[0]);
-            }
+            if(files.length > 0) uploadExcel(files[0]);
         });
 
         fileInput.addEventListener('change', () => {
-            if(fileInput.files.length > 0) {
-                uploadExcel(fileInput.files[0]);
-            }
+            if(fileInput.files.length > 0) uploadExcel(fileInput.files[0]);
         });
 
         function uploadExcel(file) {
             const formData = new FormData();
             formData.append('file', file);
 
-            dropZone.innerHTML = "⌛ 파일 처리 중... 잠시만 기다려 주세요.";
+            dropZone.innerHTML = "⌛ 엑셀 처리 중입니다... 잠시만 기다려 주세요.";
 
             fetch('/uploadReagentExcel', {
                 method: 'POST',
@@ -165,15 +160,15 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
-                    alert('엑셀 데이터가 성공적으로 반영되었습니다! 🎉');
+                    alert('엑셀 데이터가 성공적으로 업로드되었습니다! 🎉');
                     window.location.reload();
                 } else {
-                    alert('오류 발생: ' + (data.error || '엑셀 처리 중 문제가 발생했습니다.'));
+                    alert('오류: ' + (data.error || '엑셀 처리 중 오류가 발생했습니다.'));
                     window.location.reload();
                 }
             })
             .catch(err => {
-                alert('업로드 실패. 서버 상태 및 requirements.txt에 pandas, openpyxl이 설치되어 있는지 확인해주세요.');
+                alert('업로드 실패. requirements.txt에 pandas, openpyxl이 포함되어 있는지 확인해 주세요.');
                 window.location.reload();
             });
         }
@@ -181,4 +176,3 @@
 </script>
 
 {% endblock %}
-

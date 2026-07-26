@@ -40,10 +40,6 @@
                 <input type="text" name="amount" placeholder="예: 500ml 1병" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
             <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">카테고리</label>
-                <input type="text" name="category" placeholder="예: 일반시약" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
-            </div>
-            <div>
                 <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">위험도</label>
                 <select name="risk" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff; font-weight:600; cursor:pointer;">
                     <option value="낮음">🟢 낮음</option>
@@ -56,7 +52,7 @@
                 <select name="status" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff; font-weight:600; cursor:pointer;">
                     <option value="보관중">보관중</option>
                     <option value="사용중">사용중</option>
-                    <option value="폐기대상">폐기대상</option>
+                    <option value="대여중">대여중</option>
                 </select>
             </div>
             <div>
@@ -68,7 +64,7 @@
 
         <div id="excelDropZone" style="margin-top: 20px; border: 2px dashed #bfa11d; border-radius: 12px; padding: 20px; text-align: center; background: rgba(255, 253, 246, 0.9); cursor: pointer; transition: 0.2s;">
             <p style="margin: 0; color: #967d11; font-weight: 800; font-size: 15px;">📁 CSV 파일(.csv)을 여기에 드래그하거나 클릭하여 시약 목록 일괄 업로드</p>
-            <p style="margin: 4px 0 0 0; color: #777; font-size: 12px;">(열 순서: 시약명, 화학식, 보관장소, 용량/수량, 카테고리, 위험도, 상태, 비고)</p>
+            <p style="margin: 4px 0 0 0; color: #777; font-size: 12px;">(열 순서: 시약명, 화학식, 보관장소, 용량/수량, 위험도, 상태, 비고)</p>
             <input type="file" id="excelFileInput" accept=".csv" style="display: none;">
         </div>
     </div>

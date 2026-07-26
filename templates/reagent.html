@@ -177,30 +177,31 @@
             if(fileInput.files.length > 0) uploadCSV(fileInput.files[0]);
         });
 
-        function uploadCSV(file) {
-            const formData = new FormData();
-            formData.append('file', file);
+       function uploadExcel(file) {
+    const formData = new FormData();
+    formData.append('file', file);
 
-            dropZone.innerHTML = "⌛ 파일 처리 중입니다... 잠시만 기다려 주세요.";
+    dropZone.innerHTML = "⌛ 파일 처리 중... 잠시만 기다려 주세요.";
 
-            fetch('/uploadReagentExcel', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    alert('데이터가 성공적으로 등록되었습니다! 🎉');
-                    window.location.reload();
-                } else {
-                    alert('오류: ' + (data.message || '파일 처리 중 오류가 발생했습니다.'));
-                    window.location.reload();
-                }
-            })
-            .catch(err => {
-                alert('업로드 실패. 파일 인코딩 및 형식을 확인해 주세요.');
-                window.location.reload();
-            });
+    fetch('/uploadReagentExcel', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            alert('엑셀(CSV) 데이터가 성공적으로 반영되었습니다! 🎉');
+            window.location.reload();
+        } else {
+            alert('오류: ' + (data.message || '업로드 실패'));
+            window.location.reload();
+        }
+    })
+    .catch(err => {
+        alert('서버통신 오류: ' + err.message);
+        window.location.reload();
+    });
+}
         }
     }
 </script>

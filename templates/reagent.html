@@ -170,11 +170,11 @@
             e.preventDefault();
             dropZone.style.background = 'rgba(255, 253, 246, 0.9)';
             const files = e.dataTransfer.files;
-            if(files.length > 0) uploadCSV(files[0]);
+            if (files.length > 0) uploadCSV(files[0]);
         });
 
         fileInput.addEventListener('change', () => {
-            if(fileInput.files.length > 0) uploadCSV(fileInput.files[0]);
+            if (fileInput.files.length > 0) uploadCSV(fileInput.files[0]);
         });
     }
 
@@ -190,7 +190,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            if(data.success) {
+            if (data.success) {
                 alert(data.message || 'CSV 데이터가 성공적으로 반영되었습니다! 🎉');
                 window.location.reload();
             } else {

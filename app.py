@@ -337,6 +337,9 @@ def delete_reagent(reagent_id):
 # 📁 CSV 파일 7개 열 업로드 (1:시약명, 2:영어명/화학식, 3:보관장소, 4:용량/수량, 5:위험도, 6:상태, 7:비고)
 @app.route('/uploadReagentExcel', methods=['POST'])
 def upload_reagent_excel():
+    if not session.get('is_admin'):
+        return jsonify({"success": False, "message": "관리자 권한이 필요합니다."})
+
     if 'file' not in request.files:
         return jsonify({"success": False, "message": "파일이 전송되지 않았습니다."})
     
@@ -345,10 +348,19 @@ def upload_reagent_excel():
         return jsonify({"success": False, "message": "선택된 파일이 없습니다."})
         
     try:
-        stream = io.StringIO(file.stream.read().decode("utf-8-sig"), newline=None)
+        raw_bytes = file.stream.read()
+        
+        # UTF-8 -> CP949(EUC-KR) 순서로 인코딩 시도
+        try:
+            decoded_text = raw_bytes.decode("utf-8-sig")
+        except UnicodeDecodeError:
+            decoded_text = raw_bytes.decode("cp949")
+
+        stream = io.StringIO(decoded_text, newline=None)
         csv_input = csv.reader(stream)
         
         for i, row in enumerate(csv_input):
+            # 헤더 행 스킵 및 빈 행 예외 처리
             if i == 0 or not row or len(row) < 1: 
                 continue
                 
@@ -376,9 +388,12 @@ def upload_reagent_excel():
             
         db.session.commit()
         return jsonify({"success": True})
+
     except Exception as e:
         db.session.rollback()
-        return jsonify({"success": False, "message": str(e)})
+        # 오류 메시지가 None이거나 비어있을 경우에 대한 방어 코드
+        err_msg = str(e) if str(e) else "파일 처리 중 알 수 없는 오류가 발생했습니다."
+        return jsonify({"success": False, "message": err_msg})
 
 # ==============================================================
 # 📷 6. 사진 및 프로젝트 관리

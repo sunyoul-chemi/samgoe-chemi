@@ -6,7 +6,7 @@
     margin: 30px auto; 
     padding: 35px 25px; 
     border-radius: 24px; 
-    background: linear-gradient(rgba(253, 252, 247, 0.45), rgba(253, 252, 247, 0.65)), url('{{ url_for('static', filename='chemi_list.png') }}'); 
+    background: linear-gradient(rgba(253, 252, 247, 0.55), rgba(253, 252, 247, 0.75)), url('{{ url_for('static', filename='chemi_list.png') }}'); 
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat;
@@ -40,16 +40,16 @@
                 <input type="text" name="amount" placeholder="예: 500ml 1병" style="width:100%; padding:12px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
             <div>
-                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">특이사항 및 비고</label>
-                <input type="text" name="note" placeholder="예: 차광 보관 필수" style="width:100%; padding:12px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">위험도</label>
+                <input type="text" name="risk" placeholder="예: 위험 / 경고 / 낮음" style="width:100%; padding:12px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
             <button type="submit" style="background:#bfa11d; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; cursor:pointer; transition: 0.2s;">등록하기</button>
         </form>
 
         <div id="excelDropZone" style="margin-top: 20px; border: 2px dashed #bfa11d; border-radius: 12px; padding: 20px; text-align: center; background: rgba(255, 253, 246, 0.9); cursor: pointer; transition: 0.2s;">
-            <p style="margin: 0; color: #967d11; font-weight: 800; font-size: 15px;">📁 엑셀 파일(.xlsx)을 여기에 드래그하거나 클릭하여 시약 목록 일괄 업로드</p>
-            <p style="margin: 4px 0 0 0; color: #777; font-size: 12px;">(열 순서: 시약명, 화학식, 보관장소, 용량/수량, 비고)</p>
-            <input type="file" id="excelFileInput" accept=".xlsx, .xls" style="display: none;">
+            <p style="margin: 0; color: #967d11; font-weight: 800; font-size: 15px;">📁 CSV 파일(.csv)을 여기에 드래그하거나 클릭하여 시약 목록 일괄 업로드</p>
+            <p style="margin: 4px 0 0 0; color: #777; font-size: 12px;">(열 순서: 시약명, 화학식, 수량, 카테고리, 보관장소, 위험도, 상태)</p>
+            <input type="file" id="excelFileInput" accept=".csv" style="display: none;">
         </div>
     </div>
     {% endif %}
@@ -67,7 +67,7 @@
                     <th style="padding: 16px 20px; font-weight: 800;">화학식/영어명</th>
                     <th style="padding: 16px 20px; font-weight: 800;">보관 위치</th>
                     <th style="padding: 16px 20px; font-weight: 800;">용량/수량</th>
-                    <th style="padding: 16px 20px; font-weight: 800;">비고</th>
+                    <th style="padding: 16px 20px; font-weight: 800;">위험도</th>
                     {% if session.get('is_admin') %}
                     <th style="padding: 16px 20px; text-align: center; font-weight: 800;">관리</th>
                     {% endif %}
@@ -76,18 +76,26 @@
             <tbody>
                 {% for r in reagents %}
                 <tr class="reagent-row" style="border-bottom: 1px solid #eee8d5; transition: background 0.15s;">
-                    <td style="padding: 16px 20px; font-weight: 700; color: #222;">{{ r[1] }}</td>
-                    <td style="padding: 16px 20px; color: #555; font-family: monospace; font-size: 14px;">{{ r[2] if r[2] else '-' }}</td>
+                    <td style="padding: 16px 20px; font-weight: 700; color: #222;">{{ r.name }}</td>
+                    <td style="padding: 16px 20px; color: #555; font-family: monospace; font-size: 14px;">{{ r.formula if r.formula else '-' }}</td>
                     <td style="padding: 16px 20px;">
                         <span style="background: #fef3c7; color: #92400e; padding: 5px 12px; border-radius: 8px; font-weight: 800; font-size: 13px; border: 1px solid #fde68a; display: inline-block;">
-                            📍 {{ r[3] }}
+                            📍 {{ r.location }}
                         </span>
                     </td>
-                    <td style="padding: 16px 20px; color: #444; font-weight: 600;">{{ r[4] if r[4] else '-' }}</td>
-                    <td style="padding: 16px 20px; color: #666; font-size: 13px;">{{ r[5] if r[5] else '-' }}</td>
+                    <td style="padding: 16px 20px; color: #444; font-weight: 600;">{{ r.amount if r.amount else '-' }}</td>
+                    <td style="padding: 16px 20px; color: #666; font-size: 13px;">
+                        {% if r.risk == '위험' %}
+                            <span style="color: #dc3545; font-weight: 800;">⚠️ 위험</span>
+                        {% elif r.risk == '경고' %}
+                            <span style="color: #fd7e14; font-weight: 800;">⚡ 경고</span>
+                        {% else %}
+                            <span style="color: #28a745; font-weight: 700;">🟢 {{ r.risk if r.risk else '낮음' }}</span>
+                        {% endif %}
+                    </td>
                     {% if session.get('is_admin') %}
                     <td style="padding: 16px 20px; text-align: center;">
-                        <a href="/delete_reagent/{{ r[0] }}" onclick="return confirm('이 시약 항목을 삭제하시겠습니까?');" 
+                        <a href="/deleteReagent/{{ r.id }}" onclick="return confirm('이 시약 항목을 삭제하시겠습니까?');" 
                            style="color: #dc3545; text-decoration: none; font-size: 12px; font-weight: 700; background: #ffe8e8; padding: 6px 12px; border-radius: 8px; border: 1px solid #f8b4b4; display: inline-block;">
                            삭제
                         </a>
@@ -108,7 +116,7 @@
 </div>
 
 <script>
-    // 시약 실시간 검색
+    // 시약 실시간 검색 기능
     function filterReagents() {
         const input = document.getElementById('reagentSearch');
         const filter = input.value.toLowerCase();
@@ -120,7 +128,7 @@
         });
     }
 
-    // 엑셀 업로드 스크립트
+    // 파일 업로드 스크립트
     const dropZone = document.getElementById('excelDropZone');
     const fileInput = document.getElementById('excelFileInput');
 
@@ -140,18 +148,18 @@
             e.preventDefault();
             dropZone.style.background = 'rgba(255, 253, 246, 0.9)';
             const files = e.dataTransfer.files;
-            if(files.length > 0) uploadExcel(files[0]);
+            if(files.length > 0) uploadCSV(files[0]);
         });
 
         fileInput.addEventListener('change', () => {
-            if(fileInput.files.length > 0) uploadExcel(fileInput.files[0]);
+            if(fileInput.files.length > 0) uploadCSV(fileInput.files[0]);
         });
 
-        function uploadExcel(file) {
+        function uploadCSV(file) {
             const formData = new FormData();
             formData.append('file', file);
 
-            dropZone.innerHTML = "⌛ 엑셀 처리 중입니다... 잠시만 기다려 주세요.";
+            dropZone.innerHTML = "⌛ 파일 처리 중입니다... 잠시만 기다려 주세요.";
 
             fetch('/uploadReagentExcel', {
                 method: 'POST',
@@ -160,15 +168,15 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
-                    alert('엑셀 데이터가 성공적으로 업로드되었습니다! 🎉');
+                    alert('데이터가 성공적으로 등록되었습니다! 🎉');
                     window.location.reload();
                 } else {
-                    alert('오류: ' + (data.error || '엑셀 처리 중 오류가 발생했습니다.'));
+                    alert('오류: ' + (data.message || '파일 처리 중 오류가 발생했습니다. CSV 형식을 확인해주세요.'));
                     window.location.reload();
                 }
             })
             .catch(err => {
-                alert('업로드 실패. requirements.txt에 pandas, openpyxl이 포함되어 있는지 확인해 주세요.');
+                alert('업로드 실패. UTF-8 인코딩된 CSV 파일인지 확인해 주세요.');
                 window.location.reload();
             });
         }

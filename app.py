@@ -334,7 +334,7 @@ def delete_reagent(reagent_id):
             db.session.commit()
     return redirect(url_for("reagent_list"))
 
-# 📁 CSV 파일 업로드 (인코딩 자동감지 및 메시지 반환 보완)
+# 📁 CSV 파일 업로드
 @app.route('/uploadReagentExcel', methods=['POST'])
 def upload_reagent_excel():
     if not session.get("is_admin"):
@@ -350,7 +350,6 @@ def upload_reagent_excel():
     try:
         raw_bytes = file.stream.read()
         
-        # UTF-8 -> CP949(한국 엑셀 CSV) 순서 디코딩 시도
         try:
             decoded_text = raw_bytes.decode("utf-8-sig")
         except UnicodeDecodeError:

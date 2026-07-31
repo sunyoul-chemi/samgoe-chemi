@@ -396,11 +396,6 @@ def upload_reagent_excel():
         err_msg = str(e) if str(e) else "파일 데이터 처리 중 오류가 발생했습니다."
         return jsonify({"success": False, "message": err_msg})
 
-# 🟠 가상 화학 반응기 (실험 샌드박스) 라우트 추가
-@app.route("/reactor")
-def reactor():
-    return render_template("reactor.html")
-
 # ==============================================================
 # 📷 6. 사진 및 프로젝트 관리
 # ==============================================================

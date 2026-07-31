@@ -35,15 +35,16 @@
             
             <div class="moving-orbit-bubble bubble-color-{{ color_index }}" 
                  style="top: {{ top_pos }}%; left: {{ left_pos }}%;"
-                 data-title="{{ proj[1] }}"
-                 data-summary="{{ proj[2] }}"
-                 data-id="{{ proj[0] }}"
                  onclick="openProjectModal(this)">
                 <div class="bubble-inner-content">
                     <span class="bubble-num">PROJ_{{ '%02d' % loop.index }}</span>
-                    <strong class="bubble-title">{{ proj[1] }}</strong>
+                    <strong class="bubble-title">{{ proj.title }}</strong>
                     <span class="click-hint">CLICK ✨</span>
                 </div>
+
+                <div class="proj-data-title" style="display:none;">{{ proj.title }}</div>
+                <div class="proj-data-summary" style="display:none;">{{ proj.summary }}</div>
+                <div class="proj-data-id" style="display:none;">{{ proj.id }}</div>
             </div>
             {% else %}
             <div style="text-align: center; color: #8a8aa8; font-size: 15px; padding-top: 100px; font-weight: 600;">
@@ -61,7 +62,7 @@
         <span class="modal-close-btn" onclick="closeProjectModal(event, true)">&times;</span>
         <span class="modal-header-tag">✦ CHEMI TEAM PROJECT</span>
         <h2 id="modalTitle" class="modal-main-title">프로젝트 제목</h2>
-        <p id="modalSummary" class="modal-body-summary">프로젝트 내용이 여기에 나옵니다.</p>
+        <p id="modalSummary" class="modal-body-summary" style="white-space: pre-wrap; word-break: break-all;">프로젝트 내용이 여기에 나옵니다.</p>
         
         {% if session.get('is_admin') %}
         <div style="margin-top: 25px; text-align: right; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 15px;">
@@ -95,9 +96,9 @@
 
 <script>
 function openProjectModal(element) {
-    const title = element.getAttribute('data-title');
-    const summary = element.getAttribute('data-summary');
-    const id = element.getAttribute('data-id');
+    const title = element.querySelector('.proj-data-title').innerText;
+    const summary = element.querySelector('.proj-data-summary').innerText;
+    const id = element.querySelector('.proj-data-id').innerText;
 
     document.getElementById('modalTitle').innerText = title || '제목 없음';
     document.getElementById('modalSummary').innerText = summary || '내용 없음';

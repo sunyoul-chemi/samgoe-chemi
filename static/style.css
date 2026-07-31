@@ -156,10 +156,14 @@ header nav a:hover {
 /* ==========================================
    3. 📸 upload.html 전용 3D 폴라로이드 갤러리 패키지
    ========================================== */
+.upload-page-bg-wrapper {
+    min-height: calc(100vh - 80px);
+    padding: 40px 20px 60px 20px;
+}
+
 .gallery-wrapper {
     max-width: 1140px;
-    margin: 40px auto;
-    padding: 0 20px;
+    margin: 0 auto;
 }
 
 .gallery-title-area {
@@ -168,111 +172,63 @@ header nav a:hover {
 }
 
 .upload-box-container {
-    background: #fff;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
     border-radius: 22px;
     border: 1px solid #eeece1;
     padding: 20px 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.01);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
     margin-bottom: 45px;
 }
 
-.upload-flex-form {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    flex-wrap: nowrap;
-}
-
-.upload-input-text {
-    flex: 2;
-    min-width: 150px;
-    padding: 12px 16px;
-    border: 1px solid #e1ded3;
-    border-radius: 12px;
-    outline: none;
-    font-size: 14px;
-    background: #faf9f5;
-}
-
-.upload-input-text.tag-input {
-    flex: 1;
-}
-
-.upload-file-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #faf9f5;
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px solid #e1ded3;
-    white-space: nowrap;
-}
-
-.upload-file-hidden {
-    font-size: 13px;
-    color: #555;
-    max-width: 180px;
-}
-
-.upload-submit-btn {
-    padding: 12px 24px;
-    background: #bfa11d;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 14px;
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(191,161,29,0.15);
-}
-
-/* 🌟 폴라로이드 3D 카드 덱 스타일 최적화 */
+/* 🌟 가로 순서로 차곡차곡 채워지는 Flex 갤러리 레이아웃 */
 .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 35px;
-    perspective: 1200px; /* 3D 입체감 깊이 고정 */
-    padding: 20px 10px;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 25px !important;
+    align-items: flex-start !important;
+    padding: 10px 0;
 }
 
 .photo-card {
+    flex: 1 1 calc(33.333% - 20px);
+    min-width: 220px;
+    max-width: 310px;
     background: #ffffff !important;
-    padding: 14px 14px 25px 14px !important; /* 하단 폴라로이드 여백 형성 */
-    border-radius: 6px !important;
+    padding: 12px 12px 20px 12px !important; /* 하단 폴라로이드 여백 형성 */
+    border-radius: 8px !important;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.04) !important;
     border: 1px solid #eaeaea !important;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     cursor: pointer;
     position: relative;
     z-index: 1;
+    box-sizing: border-box;
 }
 
 /* 카드별 무작위 3D 기울임 각도 */
-.photo-card:nth-child(4n+1) { transform: rotate(-3deg) translateZ(0); }
-.photo-card:nth-child(4n+2) { transform: rotate(2.5deg) translateZ(0); }
-.photo-card:nth-child(4n+3) { transform: rotate(-2deg) translateZ(0); }
-.photo-card:nth-child(4n+0) { transform: rotate(3.5deg) translateZ(0); }
+.photo-card:nth-child(4n+1) { transform: rotate(-2.5deg); }
+.photo-card:nth-child(4n+2) { transform: rotate(2deg); }
+.photo-card:nth-child(4n+3) { transform: rotate(-1.8deg); }
+.photo-card:nth-child(4n+0) { transform: rotate(3deg); }
 
 /* 마우스 호버 시 3D로 앞으로 튀어나오면서 정면 정렬 */
 .photo-card:hover {
-    transform: scale(1.1) rotate(0deg) translateZ(40px) !important;
+    transform: scale(1.08) rotate(0deg) translateY(-8px) !important;
     z-index: 100 !important;
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.18), 0 8px 20px rgba(191, 161, 29, 0.25) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18), 0 8px 20px rgba(191, 161, 29, 0.25) !important;
 }
 
 .photo-card .card-image-wrapper {
     border-radius: 4px !important;
     overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: #fafafa;
 }
 
 .photo-card .card-body {
     background: transparent !important;
     border-top: none !important;
-    padding: 12px 4px 0 4px !important;
+    padding: 10px 2px 0 2px !important;
 }
 
 /* ==========================================
@@ -439,7 +395,7 @@ header nav a:hover {
     width: 100%;
     height: 100%;
     background: rgba(7, 5, 13, 0.75);
-    backdrop-filter: blur(12px); /* 배경 블러 처리 */
+    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
@@ -456,7 +412,7 @@ header nav a:hover {
 }
 
 .project-modal-content {
-    background: rgba(30, 27, 41, 0.65) !important; /* 반투명 유리 배경 */
+    background: rgba(30, 27, 41, 0.65) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
@@ -531,6 +487,16 @@ header nav a:hover {
 /* ==========================================
    5. 각 페이지별 풀스크린 배경 매핑
    ========================================== */
+/* 📸 upload.html 배경 이미지 추가 */
+body:has(.upload-page-bg-wrapper) {
+    background-image: linear-gradient(rgba(253, 252, 247, 0.75), rgba(253, 252, 247, 0.85)), url('/static/chemi_upload.png') !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-color: #fdfcf7 !important;
+}
+
 body:has(.ideas-page-container) {
     background-image: url('/static/chemi_idea.png') !important;
     background-size: cover !important;

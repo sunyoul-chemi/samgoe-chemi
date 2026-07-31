@@ -12,10 +12,49 @@
     background-repeat: no-repeat;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
 
-    <div style="text-align: center; margin-bottom: 30px;">
+    <div style="text-align: center; margin-bottom: 25px;">
         <span style="font-size: 42px;">🧪</span>
         <h2 style="font-size: 30px; color: #1a1a1a; margin: 8px 0 6px 0; font-weight: 800; text-shadow: 0 2px 4px rgba(255,255,255,0.8);">시약 재고 찾기</h2>
         <p style="color: #4a4a4a; font-size: 15px; font-weight: 600;">동아리실 시약 위치와 보관 상태를 빠르게 검색하세요.</p>
+    </div>
+
+    <div style="background: rgba(255, 255, 255, 0.92); border: 2px solid #e2d9b8; border-radius: 20px; padding: 20px; margin-bottom: 25px; backdrop-filter: blur(8px); box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
+        <div style="text-align: center; margin-bottom: 12px;">
+            <span style="font-size: 14px; font-weight: 800; color: #bfa11d; letter-spacing: 1px;">🗺️ 2D 시약장 위치 맵</span>
+            <p style="margin: 2px 0 0 0; color: #666; font-size: 12px;">구역 버튼을 클릭하면 해당 장소의 시약만 빠르게 필터링됩니다.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; max-width: 900px; margin: 0 auto;">
+            <div onclick="selectCabinet('산성장')" style="cursor: pointer; background: #fff5f5; border: 2px solid #fca5a5; border-radius: 14px; padding: 12px 8px; text-align: center; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';">
+                <span style="font-size: 22px;">🧪</span>
+                <div style="color: #dc2626; font-weight: 800; font-size: 14px; margin-top: 4px;">산성장 A</div>
+                <div style="color: #888; font-size: 11px;">(산성 시약)</div>
+            </div>
+
+            <div onclick="selectCabinet('염기장')" style="cursor: pointer; background: #eff6ff; border: 2px solid #93c5fd; border-radius: 14px; padding: 12px 8px; text-align: center; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';">
+                <span style="font-size: 22px;">🧼</span>
+                <div style="color: #2563eb; font-weight: 800; font-size: 14px; margin-top: 4px;">염기장 B</div>
+                <div style="color: #888; font-size: 11px;">(염기성 시약)</div>
+            </div>
+
+            <div onclick="selectCabinet('무기')" style="cursor: pointer; background: #ecfdf5; border: 2px solid #6ee7b7; border-radius: 14px; padding: 12px 8px; text-align: center; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';">
+                <span style="font-size: 22px;">💎</span>
+                <div style="color: #059669; font-weight: 800; font-size: 14px; margin-top: 4px;">무기장 C</div>
+                <div style="color: #888; font-size: 11px;">(무기화합물)</div>
+            </div>
+
+            <div onclick="selectCabinet('유기')" style="cursor: pointer; background: #fffbebfb; border: 2px solid #fcd34d; border-radius: 14px; padding: 12px 8px; text-align: center; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';">
+                <span style="font-size: 22px;">🔥</span>
+                <div style="color: #d97706; font-weight: 800; font-size: 14px; margin-top: 4px;">유기장 D</div>
+                <div style="color: #888; font-size: 11px;">(유기화합물)</div>
+            </div>
+
+            <div onclick="selectCabinet('')" style="cursor: pointer; background: #f3f4f6; border: 2px solid #d1d5db; border-radius: 14px; padding: 12px 8px; text-align: center; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-3px)';" onmouseout="this.style.transform='translateY(0)';">
+                <span style="font-size: 22px;">🔄</span>
+                <div style="color: #4b5563; font-weight: 800; font-size: 14px; margin-top: 4px;">전체 보기</div>
+                <div style="color: #888; font-size: 11px;">필터 해제</div>
+            </div>
+        </div>
     </div>
 
     {% if session.get('is_admin') %}
@@ -33,7 +72,7 @@
             </div>
             <div>
                 <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">보관 장소</label>
-                <input type="text" name="location" placeholder="예: 시약장 A-2" required style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
+                <input type="text" name="location" placeholder="예: 산성장 A-2" required style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
             <div>
                 <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">용량 / 수량</label>
@@ -140,17 +179,32 @@
 </div>
 
 <script>
+    // 💡 1. 2D 지도 버튼 클릭 시 검색창 입력 + 강제 검색 이벤트 발생
+    function selectCabinet(keyword) {
+        const input = document.getElementById('reagentSearch');
+        if (input) {
+            input.value = keyword;
+            filterReagents();
+        }
+    }
+
+    // 💡 2. 검색창 필터 함수 (공백 처리 및 대소문자 무시)
     function filterReagents() {
         const input = document.getElementById('reagentSearch');
-        const filter = input.value.toLowerCase();
+        const filter = input.value.toLowerCase().trim();
         const rows = document.querySelectorAll('.reagent-row');
 
         rows.forEach(row => {
             const text = row.innerText.toLowerCase();
-            row.style.display = text.includes(filter) ? '' : 'none';
+            if (filter === "" || text.indexOf(filter) > -1) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
         });
     }
 
+    // 💡 3. CSV 업로드 기능
     const dropZone = document.getElementById('excelDropZone');
     const fileInput = document.getElementById('excelFileInput');
 

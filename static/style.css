@@ -17,9 +17,8 @@ body {
 /* ==========================================
    1. 내비게이션 헤더 (상단 바 디자인 고정)
    ========================================== */
-/* header 부분을 style.css 내에서 찾아서 이 스타일로 유지 혹은 덮어써주세요 */
 header {
-    background-color: #f7e987; /* 네 번째 사진의 따뜻하고 예쁜 노란색 상단바 톤 고정 */
+    background-color: #f7e987; /* 따뜻하고 예쁜 노란색 상단바 톤 고정 */
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     padding: 18px 40px;
     display: flex;
@@ -155,21 +154,7 @@ header nav a:hover {
 }
 
 /* ==========================================
-   3. 캘린더 & 시약 페이지 전용 실험실 배경 매핑
-   ========================================== */
-body:has(.calendar-wrapper),
-body:has(.reagent-wrapper) {
-    background-image: url('/static/chemi_schedule.png') !important;
-    background-size: 400px !important;
-    background-repeat: no-repeat !important;
-    background-position: bottom 30px right 30px !important;
-    background-attachment: fixed !important;
-    background-color: #fdfcf7 !important;
-}
-
-
-/* ==========================================
-   4. 실험 사진 업로드 박스 (한 줄 정렬 및 미디어 최적화)
+   3. 📸 upload.html 전용 3D 폴라로이드 갤러리 패키지
    ========================================== */
 .gallery-wrapper {
     max-width: 1140px;
@@ -191,13 +176,12 @@ body:has(.reagent-wrapper) {
     margin-bottom: 45px;
 }
 
-/* 🌟 모든 요소를 가로 한 줄로 배치하는 마법의 레이아웃 */
 .upload-flex-form {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 15px;
-    flex-wrap: nowrap; /* 절대 아래로 떨어지지 않게 고정 */
+    flex-wrap: nowrap;
 }
 
 .upload-input-text {
@@ -245,13 +229,54 @@ body:has(.reagent-wrapper) {
     box-shadow: 0 4px 12px rgba(191,161,29,0.15);
 }
 
+/* 🌟 폴라로이드 3D 카드 덱 스타일 최적화 */
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 35px;
+    perspective: 1200px; /* 3D 입체감 깊이 고정 */
+    padding: 20px 10px;
 }
+
+.photo-card {
+    background: #ffffff !important;
+    padding: 14px 14px 25px 14px !important; /* 하단 폴라로이드 여백 형성 */
+    border-radius: 6px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid #eaeaea !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+/* 카드별 무작위 3D 기울임 각도 */
+.photo-card:nth-child(4n+1) { transform: rotate(-3deg) translateZ(0); }
+.photo-card:nth-child(4n+2) { transform: rotate(2.5deg) translateZ(0); }
+.photo-card:nth-child(4n+3) { transform: rotate(-2deg) translateZ(0); }
+.photo-card:nth-child(4n+0) { transform: rotate(3.5deg) translateZ(0); }
+
+/* 마우스 호버 시 3D로 앞으로 튀어나오면서 정면 정렬 */
+.photo-card:hover {
+    transform: scale(1.1) rotate(0deg) translateZ(40px) !important;
+    z-index: 100 !important;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.18), 0 8px 20px rgba(191, 161, 29, 0.25) !important;
+}
+
+.photo-card .card-image-wrapper {
+    border-radius: 4px !important;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.photo-card .card-body {
+    background: transparent !important;
+    border-top: none !important;
+    padding: 12px 4px 0 4px !important;
+}
+
 /* ==========================================
-   5. 팀 프로젝트 우주 오르빗 & 모달 팝업 (projects.html 전용)
+   4. 🌌 projects.html 우주/원소 Glassmorphism & 오르빗
    ========================================== */
 .space-universe-bg {
     background: radial-gradient(circle at center, #1b1931 0%, #07050d 100%) !important;
@@ -406,15 +431,16 @@ body:has(.reagent-wrapper) {
     100% { transform: rotate(-35deg) translateX(-1000px); opacity: 0; }
 }
 
-/* 팝업 모달 */
+/* 🌌 projects.html 전용 Glassmorphism 팝업 모달 */
 .project-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(7, 5, 13, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(7, 5, 13, 0.75);
+    backdrop-filter: blur(12px); /* 배경 블러 처리 */
+    -webkit-backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -430,59 +456,18 @@ body:has(.reagent-wrapper) {
 }
 
 .project-modal-content {
-    background: linear-gradient(145deg, #1e1b29, #110e1b);
-    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(30, 27, 41, 0.65) !important; /* 반투명 유리 배경 */
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     padding: 35px;
     border-radius: 24px;
     width: 90%;
     max-width: 500px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.1);
     position: relative;
 }
 
-
-
-/* ==========================================
-   7. 아이디어 플랫폼 전역 배경 전용 룰 (화면 꽉 차게 변경)
-   ========================================== */
-body:has(.ideas-page-container) {
-    background-image: url('/static/chemi_idea.png') !important;
-    background-size: cover !important; /* 👈 이미지를 화면 크기에 맞춰 꽉 채우는 마법의 속성입니다 */
-    background-repeat: no-repeat !important;
-    background-position: center !important; /* 이미지 중심이 화면 가운데 오도록 고정 */
-    background-attachment: fixed !important; /* 스크롤해도 배경은 가만히 고정되도록 설정 */
-    background-color: #fdfcf7 !important;
-}
-
-/* ==========================================
-   8. 케미 캘린더 전역 배경 전용 룰 (화면 꽉 차게)
-   ========================================== */
-body:has(.calendar-wrapper) {
-    background-image: url('/static/chemi_schedule.png') !important;
-    background-size: cover !important;        /* 화면 크기에 맞춰 꽉 채우기 */
-    background-repeat: no-repeat !important;
-    background-position: center !important;    /* 가운데 정렬 */
-    background-attachment: fixed !important;    /* 스크롤 시 배경 고정 */
-    background-color: #fdfcf7 !important;
-}
-
-/* ==========================================
-   9. 시약 정보 검색 전역 배경 전용 룰 (화면 꽉 차게)
-   ========================================== */
-body:has(.reagent-page-container) {
-    /* ⚠️ 만약 static 폴더 안에 실제 파일명이 chemi_list.jpg 라면 확장자를 .jpg로 꼭 바꿔주셔야 합니다! */
-    background-image: url('/static/chemi_list.png') !important; 
-    background-size: cover !important;        /* 화면 크기에 맞춰 꽉 채우기 */
-    background-repeat: no-repeat !important;
-    background-position: center !important;    /* 가운데 정렬 */
-    background-attachment: fixed !important;    /* 스크롤 시 배경 고정 */
-    background-color: #fdfcf7 !important;
-}
-
-/* ==========================================
-   9-2. 팀 프로젝트 상세 모달 글자 가독성 보정 (백금 & 화이트)
-   ========================================== */
-/* 상단 캡션 (RESEARCH INFORMATION) - 화사한 네온 옐로우 */
 .project-modal-content .modal-header-tag {
     color: #ffe600 !important;
     font-size: 11px;
@@ -493,7 +478,6 @@ body:has(.reagent-page-container) {
     text-shadow: 0 0 10px rgba(255, 230, 0, 0.3);
 }
 
-/* 메인 타이틀 (행성 제목) - 눈부신 백금색 (#f8f9fa) */
 .project-modal-content .modal-main-title {
     color: #f8f9fa !important;
     font-size: 24px;
@@ -503,7 +487,6 @@ body:has(.reagent-page-container) {
     padding-bottom: 12px;
 }
 
-/* 본문 요약 (상세 설명) - 깨끗한 화이트 (#ffffff) */
 .project-modal-content .modal-body-summary {
     color: #ffffff !important;
     font-size: 15px;
@@ -514,7 +497,6 @@ body:has(.reagent-page-container) {
     word-break: break-all;
 }
 
-/* 우측 상단 닫기 X 버튼 - 백금색 */
 .project-modal-content .modal-close-btn {
     position: absolute;
     top: 20px;
@@ -530,7 +512,6 @@ body:has(.reagent-page-container) {
     opacity: 1;
 }
 
-/* 관리자 삭제 버튼 - 네온 핑크 톤으로 변경하여 대비 상승 */
 .proj-delete-btn {
     color: #ff6b6b !important;
     background: rgba(255, 107, 107, 0.15) !important;
@@ -542,45 +523,37 @@ body:has(.reagent-page-container) {
     text-decoration: none;
     transition: background 0.2s;
 }
+
 .proj-delete-btn:hover {
     background: rgba(255, 107, 107, 0.3) !important;
 }
 
 /* ==========================================
-   📸 CHEMI 3D 폴라로이드 갤러리 스타일
+   5. 각 페이지별 풀스크린 배경 매핑
    ========================================== */
-.gallery-grid {
-    perspective: 1000px; /* 3D 입체감 깊이 부여 */
+body:has(.ideas-page-container) {
+    background-image: url('/static/chemi_idea.png') !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-color: #fdfcf7 !important;
 }
 
-.photo-card {
-    background: #ffffff !important;
-    padding: 12px 12px 20px 12px !important;
-    border-radius: 6px !important;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.05) !important;
-    border: 1px solid #eaeaea !important;
-    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
-    cursor: pointer;
+body:has(.calendar-wrapper) {
+    background-image: url('/static/chemi_schedule.png') !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-color: #fdfcf7 !important;
 }
 
-/* 무작위 기울임 효과 (짝수/홀수/3배수 카드별 각도 차등) */
-.photo-card:nth-child(odd) {
-    transform: rotate(-2.5deg) translateZ(0);
-}
-.photo-card:nth-child(even) {
-    transform: rotate(3deg) translateZ(0);
-}
-.photo-card:nth-child(3n) {
-    transform: rotate(-4deg) translateZ(0);
-}
-
-/* 마우스 호버 시 3D로 앞으로 튀어나오고 기울기 바로잡기 */
-.photo-card:hover {
-    transform: scale(1.08) rotate(0deg) translateZ(30px) !important;
-    z-index: 50 !important;
-    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.18), 0 8px 15px rgba(191, 161, 29, 0.2) !important;
-}
-
-.photo-card img {
-    border-radius: 4px !important;
+body:has(.reagent-page-container) {
+    background-image: url('/static/chemi_list.png') !important; 
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+    background-color: #fdfcf7 !important;
 }

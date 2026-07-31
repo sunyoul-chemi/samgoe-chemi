@@ -546,4 +546,41 @@ body:has(.reagent-page-container) {
     background: rgba(255, 107, 107, 0.3) !important;
 }
 
+/* ==========================================
+   📸 CHEMI 3D 폴라로이드 갤러리 스타일
+   ========================================== */
+.gallery-grid {
+    perspective: 1000px; /* 3D 입체감 깊이 부여 */
+}
 
+.photo-card {
+    background: #ffffff !important;
+    padding: 12px 12px 20px 12px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08), 0 3px 6px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid #eaeaea !important;
+    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    cursor: pointer;
+}
+
+/* 무작위 기울임 효과 (짝수/홀수/3배수 카드별 각도 차등) */
+.photo-card:nth-child(odd) {
+    transform: rotate(-2.5deg) translateZ(0);
+}
+.photo-card:nth-child(even) {
+    transform: rotate(3deg) translateZ(0);
+}
+.photo-card:nth-child(3n) {
+    transform: rotate(-4deg) translateZ(0);
+}
+
+/* 마우스 호버 시 3D로 앞으로 튀어나오고 기울기 바로잡기 */
+.photo-card:hover {
+    transform: scale(1.08) rotate(0deg) translateZ(30px) !important;
+    z-index: 50 !important;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.18), 0 8px 15px rgba(191, 161, 29, 0.2) !important;
+}
+
+.photo-card img {
+    border-radius: 4px !important;
+}

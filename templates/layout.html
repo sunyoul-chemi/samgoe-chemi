@@ -22,7 +22,7 @@
 ">
     <div style="font-size: 65px; animation: beakerFloat 1.2s infinite alternate ease-in-out;">🧪</div>
     <p style="font-weight: 800; color: #bfa11d; margin-top: 15px; font-size: 16px; letter-spacing: 1px;">
-        CHEMI LAB 반응 생성 중...
+        CHEMI LAB 로딩 중...
     </p>
 </div>
 
@@ -54,7 +54,6 @@ window.addEventListener('DOMContentLoaded', () => {
             <a href="/reagent">시약 찾기</a>
             <a href="/upload">실험 사진</a>
             <a href="/projects" style="color: #bfa11d; font-weight: 800; margin-left: 5px;">✨ 팀 보고서 공유</a>
-            <a href="/reactor" style="color: #e67e22; font-weight: 800; margin-left: 10px;">🧪 실험 시뮬레이션</a>
     
             {% if session.get('is_admin') %}
                 <a href="/logout" style="color: #dc3545; font-weight: 700; margin-left: 15px;">🔓 로그아웃</a>
@@ -90,6 +89,209 @@ window.addEventListener('DOMContentLoaded', () => {
             © 2026 삼괴고등학교 최고 실험 동아리 CHEMI_sunyoul. All rights reserved.
         </div>
     </footer>
+
+    <style>
+        .manager-fab {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: #bfa11d;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 6px 20px rgba(191, 161, 29, 0.4);
+            cursor: pointer;
+            z-index: 9999;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .manager-fab:hover {
+            transform: scale(1.08);
+            background: #a38914;
+        }
+
+        .manager-box {
+            position: fixed;
+            bottom: 95px;
+            right: 25px;
+            width: 360px;
+            height: 500px;
+            background: #ffffff;
+            border: 2px solid #e2d9b8;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+
+        .manager-header {
+            background: #fffcf7;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2d9b8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .manager-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #fffefb;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .manager-input-area {
+            padding: 12px;
+            background: #fffcf7;
+            border-top: 1px solid #e2d9b8;
+            display: flex;
+            gap: 8px;
+        }
+
+        .manager-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #dcd6c5;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .manager-send-btn {
+            background: #bfa11d;
+            color: #fff;
+            border: none;
+            padding: 0 16px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .m-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .m-bubble.bot {
+            align-self: flex-start;
+            background: #fff;
+            border: 1px solid #e2d9b8;
+            color: #333;
+        }
+        .m-bubble.user {
+            align-self: flex-end;
+            background: #bfa11d;
+            color: #fff;
+        }
+    </style>
+
+    <div class="manager-fab" onclick="toggleManagerChat()">
+        🧪
+    </div>
+
+    <div id="managerBox" class="manager-box">
+        <div class="manager-header">
+            <div style="font-weight: 800; font-size: 15px; color: #333;">🤖 삼괴고 CHEMI 만능 매니저</div>
+            <span onclick="toggleManagerChat()" style="cursor: pointer; font-weight: 900; color: #888; font-size: 16px;">&times;</span>
+        </div>
+        
+        <div id="managerChatBody" class="manager-body">
+            <div class="m-bubble bot">
+                안녕하세요! 동아리 매니저입니다. 🧪<br>
+                시약 위치("염화칼슘 어디 있어?"), 실험 주의사항, 화학 반응 등을 편하게 물어보세요!
+            </div>
+        </div>
+
+        <div class="manager-input-area">
+            <input type="text" id="managerInput" class="manager-input" placeholder="무엇이든 물어보세요..." onkeypress="handleManagerKey(event)">
+            <button onclick="sendManagerMessage()" class="manager-send-btn">전송</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleManagerChat() {
+            const box = document.getElementById('managerBox');
+            if (box.style.display === 'flex') {
+                box.style.display = 'none';
+            } else {
+                box.style.display = 'flex';
+                document.getElementById('managerInput').focus();
+            }
+        }
+
+        function handleManagerKey(e) {
+            if (e.key === 'Enter') sendManagerMessage();
+        }
+
+        function sendManagerMessage() {
+            const input = document.getElementById('managerInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chatBody = document.getElementById('managerChatBody');
+
+            const userDiv = document.createElement('div');
+            userDiv.className = 'm-bubble user';
+            userDiv.innerText = text;
+            chatBody.appendChild(userDiv);
+
+            input.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'm-bubble bot';
+                botDiv.innerHTML = getManagerResponse(text);
+                chatBody.appendChild(botDiv);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 400);
+        }
+
+        function getManagerResponse(query) {
+            const q = query.toLowerCase();
+
+            if (q.includes("어디") || q.includes("위치") || q.includes("장소")) {
+                if (q.includes("산화칼슘")) return "📦 <strong>산화칼슘</strong>은 시약장 내 보관 구역에 있습니다! (위험도: 경고 ⚠️)";
+                if (q.includes("수산화나트륨")) return "📦 <strong>수산화나트륨</strong>은 시약장 내 염기성 시약 구역에 있습니다. 보호장갑을 꼭 착용하세요.";
+                if (q.includes("에탄올")) return "📦 <strong>에탄올</strong>은 유기화합물 시약장에 보관되어 있습니다!";
+                if (q.includes("질산은")) return "📦 <strong>질산은수용액</strong>은 어두운 암소 보관 구역에 있습니다.";
+                return "🔍 물어보신 시약의 위치는 상단의 **'시약 찾기'** 메뉴에서 검색하시면 구체적인 구역을 확인하실 수 있습니다!";
+            }
+            else if (q.includes("섞으면") || q.includes("반응") || q.includes("넣으면")) {
+                if (q.includes("마그네슘") && (q.includes("염산") || q.includes("산"))) {
+                    return "⚡ <strong>마그네슘 + 묽은염산:</strong> 격렬한 반응과 함께 **수소 기체($H_2$)**가 발생합니다. 화기 주의!";
+                }
+                if (q.includes("염산") && q.includes("수산화나트륨")) {
+                    return "🔥 **중화 반응:** 산과 염기가 만나 물과 염이 생성되며 발열 반응이 일어납니다.";
+                }
+                if (q.includes("질산은") && q.includes("염화나트륨")) {
+                    return "✨ **앙금 생성:** 염화 은($AgCl$) **하얀색 앙금**이 즉시 가라앉습니다.";
+                }
+                return "🧪 해당 시약 조합의 반응 데이터가 접수되었습니다! 산-염기, 금속 반응, 앙금 생성 등 주요 조건에 맞는 반응을 분석해 드려요.";
+            }
+            else if (q.includes("주의") || q.includes("위험") || q.includes("안전")) {
+                return "⚠️ **실험 안전 수칙:**<br>1. 강산/강염기 취급 시 반드시 **보안경과 실험복, 장갑**을 착용하세요.<br>2. 시약 냄새를 맡을 때는 직접 코를 대지 말고 손부채질을 하세요.<br>3. 폐수처리는 반드시 지정된 폐수통에 버려야 합니다!";
+            }
+            else if (q.includes("방학") || q.includes("일정") || q.includes("동아리")) {
+                return "📅 동아리 일정이나 학교 학사일정 관련 문의는 담당 선생님(신경일T, 김민기T) 또는 부장 학생에게 확인해 주세요!";
+            }
+            else {
+                return `💬 질문 내용을 접수했습니다!<br>"염산 어디 있어?", "마그네슘이랑 염산 섞으면?", "주의사항 뭐야?"처럼 물어보시면 매니저가 척척 대답해 드릴게요!`;
+            }
+        }
+    </script>
 
 </body>
 </html>

@@ -35,7 +35,10 @@
             
             <div class="moving-orbit-bubble bubble-color-{{ color_index }}" 
                  style="top: {{ top_pos }}%; left: {{ left_pos }}%;"
-                 onclick="openProjectModal('{{ proj[1] }}', '{{ proj[2] }}', '{{ proj[0] }}')">
+                 data-title="{{ proj[1] }}"
+                 data-summary="{{ proj[2] }}"
+                 data-id="{{ proj[0] }}"
+                 onclick="openProjectModal(this)">
                 <div class="bubble-inner-content">
                     <span class="bubble-num">PROJ_{{ '%02d' % loop.index }}</span>
                     <strong class="bubble-title">{{ proj[1] }}</strong>
@@ -91,9 +94,13 @@
 </div>
 
 <script>
-function openProjectModal(title, summary, id) {
-    document.getElementById('modalTitle').innerText = title;
-    document.getElementById('modalSummary').innerText = summary;
+function openProjectModal(element) {
+    const title = element.getAttribute('data-title');
+    const summary = element.getAttribute('data-summary');
+    const id = element.getAttribute('data-id');
+
+    document.getElementById('modalTitle').innerText = title || '제목 없음';
+    document.getElementById('modalSummary').innerText = summary || '내용 없음';
     
     const deleteBtn = document.getElementById('modalDeleteBtn');
     if (deleteBtn) {

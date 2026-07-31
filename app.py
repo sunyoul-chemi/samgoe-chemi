@@ -13,19 +13,22 @@ import cloudinary.uploader
 # ☁️ 1. Cloudinary 공식 영구 저장소 보안 세팅
 # ==============================================================
 cloudinary.config(
-    cloud_name = "keflcpmi",
-    api_key = "833587119529933",
-    api_secret = "FSsEX_w_Mnf_Ri__wsZ6Wdi_sRw"
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "keflcpmi"),
+    api_key = os.environ.get("CLOUDINARY_API_KEY", "833587119529933"),
+    api_secret = os.environ.get("CLOUDINARY_API_SECRET", "FSsEX_w_Mnf_Ri__wsZ6Wdi_sRw")
 )
 
 app = Flask(__name__)
-app.secret_key = "chemi_secret_admin_key_1234"
-ADMIN_PASSWORD = "chemi3542s!"
+app.secret_key = os.environ.get("SECRET_KEY", "chemi_secret_admin_key_1234")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "chemi3542s!")
 
 # ==============================================================
 # 🗄️ 2. Supabase(PostgreSQL) 클라우드 연결 세팅
 # ==============================================================
-SUPABASE_DATABASE_URL = "postgresql+psycopg2://postgres.etdfporsnhyhqguuqkqd:ehqhr0843!!@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
+SUPABASE_DATABASE_URL = os.environ.get(
+    "DATABASE_URL", 
+    "postgresql+psycopg2://postgres.etdfporsnhyhqguuqkqd:ehqhr0843!!@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
+)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = SUPABASE_DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -392,6 +395,11 @@ def upload_reagent_excel():
         db.session.rollback()
         err_msg = str(e) if str(e) else "파일 데이터 처리 중 오류가 발생했습니다."
         return jsonify({"success": False, "message": err_msg})
+
+# 🟠 가상 화학 반응기 (실험 샌드박스) 라우트 추가
+@app.route("/reactor")
+def reactor():
+    return render_template("reactor.html")
 
 # ==============================================================
 # 📷 6. 사진 및 프로젝트 관리

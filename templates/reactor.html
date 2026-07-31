@@ -1,1 +1,195 @@
+{% extends "layout.html" %}
+{% block content %}
 
+<style>
+    .reactor-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 35px 25px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.92);
+        border: 2px solid #e2d9b8;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        backdrop-filter: blur(8px);
+        text-align: center;
+    }
+
+    .chem-shelf {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 25px 0;
+        flex-wrap: wrap;
+    }
+
+    .chem-card {
+        background: #fff;
+        border: 2px solid #e2d9b8;
+        border-radius: 14px;
+        padding: 12px 20px;
+        cursor: grab;
+        font-weight: 800;
+        color: #333;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        transition: transform 0.2s, box-shadow 0.2s;
+        user-select: none;
+    }
+    .chem-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 15px rgba(191, 161, 29, 0.2);
+    }
+    .chem-card:active {
+        cursor: grabbing;
+    }
+
+    /* 🧪 비커 스탠드 & 연출 영역 */
+    .beaker-container {
+        position: relative;
+        width: 220px;
+        height: 280px;
+        margin: 20px auto;
+        border: 4px solid #bfa11d;
+        border-top: none;
+        border-radius: 0 0 30px 30px;
+        background: rgba(255, 253, 246, 0.8);
+        box-shadow: inset 0 0 15px rgba(191, 161, 29, 0.1);
+        overflow: hidden;
+    }
+
+    /* 용액 영역 */
+    .beaker-liquid {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 35%;
+        background-color: rgba(220, 220, 220, 0.4); /* 기본 투명 수용액 */
+        transition: height 0.6s ease, background-color 0.8s ease;
+    }
+
+    /* 거품 애니메이션 */
+    .bubble-layer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
+
+    .bubble {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        animation: bubbleRise 1.2s infinite ease-in;
+    }
+
+    @keyframes bubbleRise {
+        0% { bottom: 0; opacity: 1; transform: scale(0.6); }
+        100% { bottom: 85%; opacity: 0; transform: scale(1.3); }
+    }
+</style>
+
+<div class="reactor-container">
+    <span style="font-size: 42px;">🧪</span>
+    <h2 style="font-size: 28px; color: #1a1a1a; margin: 8px 0 6px 0; font-weight: 800;">가상 화학 반응기 (실험 샌드박스)</h2>
+    <p style="color: #666; font-size: 14px; font-weight: 600;">시약 카드를 드래그해서 비커에 넣어 반응을 확인해보세요!</p>
+
+    <div class="chem-shelf">
+        <div class="chem-card" draggable="true" ondragstart="dragStart(event)" id="hcl" style="border-color: #fca5a5; color: #dc2626;">
+            🔴 염산 (HCl)
+        </div>
+        <div class="chem-card" draggable="true" ondragstart="dragStart(event)" id="naoh" style="border-color: #93c5fd; color: #2563eb;">
+            🔵 수산화나트륨 (NaOH)
+        </div>
+        <div class="chem-card" draggable="true" ondragstart="dragStart(event)" id="btb" style="border-color: #fcd34d; color: #d97706;">
+            🟡 BTB 지시약
+        </div>
+    </div>
+
+    <div class="beaker-container" ondrop="dropChem(event)" ondragover="allowDrop(event)">
+        <div id="liquid" class="beaker-liquid">
+            <div id="bubbles" class="bubble-layer">
+                <div class="bubble" style="left: 20%; width: 14px; height: 14px; animation-delay: 0s;"></div>
+                <div class="bubble" style="left: 45%; width: 10px; height: 10px; animation-delay: 0.3s;"></div>
+                <div class="bubble" style="left: 70%; width: 16px; height: 16px; animation-delay: 0.15s;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reactorStatus" style="margin-top: 20px; font-size: 16px; font-weight: 800; color: #444; min-height: 24px;">
+        비커에 시약을 드래그해 넣으세요.
+    </div>
+
+    <button onclick="resetReactor()" style="margin-top: 20px; background: #bfa11d; color: #fff; border: none; padding: 10px 22px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.2s;">
+        🔄 비커 세척하기
+    </button>
+</div>
+
+<script>
+    let beakerContents = new Set();
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function dragStart(ev) {
+        ev.dataTransfer.setData("chemId", ev.target.id);
+    }
+
+    function dropChem(ev) {
+        ev.preventDefault();
+        const chemId = ev.dataTransfer.getData("chemId");
+        if (!chemId) return;
+
+        beakerContents.add(chemId);
+        renderReaction();
+    }
+
+    function renderReaction() {
+        const liquid = document.getElementById('liquid');
+        const bubbles = document.getElementById('bubbles');
+        const status = document.getElementById('reactorStatus');
+
+        // 넣은 시약 개수에 따라 수위 증가
+        liquid.style.height = (35 + beakerContents.size * 18) + '%';
+
+        const hasHCl = beakerContents.has('hcl');
+        const hasNaOH = beakerContents.has('naoh');
+        const hasBTB = beakerContents.has('btb');
+
+        if (hasHCl && hasNaOH && hasBTB) {
+            liquid.style.backgroundColor = 'rgba(34, 197, 94, 0.85)'; // 초록색 (중성)
+            bubbles.style.display = 'block';
+            status.innerHTML = "✨ <span style='color:#16a34a;'>중화 반응 완료!</span> (BTB 지시약 반응: 초록색 중성)";
+        } else if (hasHCl && hasBTB) {
+            liquid.style.backgroundColor = 'rgba(239, 68, 68, 0.85)'; // 노란/빨간색 (산성)
+            bubbles.style.display = 'none';
+            status.innerHTML = "🔴 <span style='color:#dc2626;'>산성 상태</span> (BTB 지시약 반응: 노란/산호색)";
+        } else if (hasNaOH && hasBTB) {
+            liquid.style.backgroundColor = 'rgba(59, 130, 246, 0.85)'; // 파란색 (염기성)
+            bubbles.style.display = 'none';
+            status.innerHTML = "🔵 <span style='color:#2563eb;'>염기성 상태</span> (BTB 지시약 반응: 파란색)";
+        } else if (hasHCl && hasNaOH) {
+            liquid.style.backgroundColor = 'rgba(225, 225, 225, 0.6)';
+            bubbles.style.display = 'block';
+            status.innerHTML = "🔥 <span style='color:#d97706;'>중화 반응 중화열 발생!</span> (지시약을 추가해보세요)";
+        } else if (hasBTB) {
+            liquid.style.backgroundColor = 'rgba(234, 179, 8, 0.7)';
+            bubbles.style.display = 'none';
+            status.innerText = "🟡 BTB 지시약이 추가되었습니다.";
+        } else {
+            status.innerText = "🧪 시약이 혼합되는 중입니다. 다른 시약도 넣어보세요!";
+        }
+    }
+
+    function resetReactor() {
+        beakerContents.clear();
+        const liquid = document.getElementById('liquid');
+        liquid.style.height = '35%';
+        liquid.style.backgroundColor = 'rgba(220, 220, 220, 0.4)';
+        document.getElementById('bubbles').style.display = 'none';
+        document.getElementById('reactorStatus').innerText = "비커가 깨끗하게 세척되었습니다.";
+    }
+</script>
+
+{% endblock %}

@@ -2,67 +2,85 @@
 {% block content %}
 
 <style>
-    .reactor-container {
-        max-width: 900px;
+    .reactor-wrapper {
+        max-width: 950px;
         margin: 30px auto;
         padding: 35px 25px;
         border-radius: 24px;
-        background: rgba(255, 255, 255, 0.92);
+        background: rgba(255, 255, 255, 0.94);
         border: 2px solid #e2d9b8;
         box-shadow: 0 10px 30px rgba(0,0,0,0.06);
         backdrop-filter: blur(8px);
         text-align: center;
     }
 
-    .chem-shelf {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin: 25px 0;
-        flex-wrap: wrap;
+    /* 시약 검색 셀렉트 박스 영역 */
+    .search-box-container {
+        position: relative;
+        max-width: 500px;
+        margin: 20px auto;
     }
 
-    .chem-card {
-        background: #fff;
-        border: 2px solid #e2d9b8;
+    .reagent-input {
+        width: 100%;
+        padding: 14px 20px;
+        border: 2px solid #bfa11d;
         border-radius: 14px;
-        padding: 12px 20px;
-        cursor: grab;
-        font-weight: 800;
-        color: #333;
+        font-size: 15px;
+        outline: none;
+        background: #fff;
         box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        transition: transform 0.2s, box-shadow 0.2s;
-        user-select: none;
-    }
-    .chem-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 6px 15px rgba(191, 161, 29, 0.2);
-    }
-    .chem-card:active {
-        cursor: grabbing;
     }
 
-    /* 🧪 비커 스탠드 & 연출 영역 */
+    .autocomplete-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        max-height: 200px;
+        overflow-y: auto;
+        background: #fff;
+        border: 1px solid #dcd6c5;
+        border-radius: 0 0 14px 14px;
+        z-index: 99;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        text-align: left;
+        display: none;
+    }
+
+    .autocomplete-item {
+        padding: 10px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        border-bottom: 1px solid #f4f0e6;
+        color: #333;
+    }
+    .autocomplete-item:hover {
+        background: #fdfae7;
+        font-weight: 700;
+        color: #bfa11d;
+    }
+
+    /* 비커 영역 */
     .beaker-container {
         position: relative;
         width: 220px;
         height: 280px;
-        margin: 20px auto;
+        margin: 25px auto;
         border: 4px solid #bfa11d;
         border-top: none;
         border-radius: 0 0 30px 30px;
-        background: rgba(255, 253, 246, 0.8);
+        background: rgba(255, 253, 246, 0.9);
         box-shadow: inset 0 0 15px rgba(191, 161, 29, 0.1);
         overflow: hidden;
     }
 
-    /* 용액 영역 */
     .beaker-liquid {
         position: absolute;
         bottom: 0;
         width: 100%;
-        height: 35%;
-        background-color: rgba(220, 220, 220, 0.4); /* 기본 투명 수용액 */
+        height: 0%;
+        background-color: rgba(220, 220, 220, 0.4);
         transition: height 0.6s ease, background-color 0.8s ease;
     }
 
@@ -77,118 +95,290 @@
 
     .bubble {
         position: absolute;
-        background: rgba(255, 255, 255, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.95);
         border-radius: 50%;
-        animation: bubbleRise 1.2s infinite ease-in;
+        animation: bubbleRise 1s infinite ease-in;
     }
 
     @keyframes bubbleRise {
         0% { bottom: 0; opacity: 1; transform: scale(0.6); }
-        100% { bottom: 85%; opacity: 0; transform: scale(1.3); }
+        100% { bottom: 85%; opacity: 0; transform: scale(1.4); }
+    }
+
+    /* 선택된 시약 태그 칩 */
+    .selected-chips {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 15px 0;
+        min-height: 35px;
+    }
+
+    .chem-chip {
+        background: #fef9c3;
+        border: 1px solid #fde047;
+        color: #854d0e;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .chem-chip span {
+        cursor: pointer;
+        color: #ca8a04;
+        font-weight: 900;
+    }
+
+    /* 🛠️ 커스텀 반응 추가 아코디언 박스 스타일 */
+    .custom-reactor-box {
+        margin-top: 30px;
+        background: #fffdf7;
+        border: 1px solid #e2d9b8;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: left;
+    }
+    
+    .custom-input {
+        width: 100%;
+        padding: 10px 14px;
+        margin: 6px 0 12px 0;
+        border: 1px solid #dcd6c5;
+        border-radius: 10px;
+        font-size: 14px;
+        outline: none;
     }
 </style>
 
-<div class="reactor-container">
+<div class="reactor-wrapper">
     <span style="font-size: 42px;">🧪</span>
-    <h2 style="font-size: 28px; color: #1a1a1a; margin: 8px 0 6px 0; font-weight: 800;">가상 화학 반응기 (실험 샌드박스)</h2>
-    <p style="color: #666; font-size: 14px; font-weight: 600;">시약 카드를 드래그해서 비커에 넣어 반응을 확인해보세요!</p>
+    <h2 style="font-size: 28px; color: #1a1a1a; margin: 8px 0 6px 0; font-weight: 800;">스마트 가상 화학 반응기</h2>
+    <p style="color: #666; font-size: 14px; font-weight: 600;">실제 동아리 보유 시약(172종)을 검색하여 비커에 투입하고 반응을 관찰하세요!</p>
 
-    <div class="chem-shelf">
-        <div class="chem-card" draggable="true" ondragstart="dragStart(event)" id="hcl" style="border-color: #fca5a5; color: #dc2626;">
-            🔴 염산 (HCl)
-        </div>
-        <div class="chem-card" draggable="true" ondragstart="dragStart(event)" id="naoh" style="border-color: #93c5fd; color: #2563eb;">
-            🔵 수산화나트륨 (NaOH)
-        </div>
-        <div class="chem-card" draggable="true" ondragstart="dragStart(event)" id="btb" style="border-color: #fcd34d; color: #d97706;">
-            🟡 BTB 지시약
-        </div>
+    <div class="search-box-container">
+        <input type="text" id="reagentSearchInput" class="reagent-input" placeholder="🔍 시약 이름 검색 (예: 묽은염산, 수산화나트륨, 마그네슘조각...)" oninput="filterReagentsList()">
+        <div id="autocompleteList" class="autocomplete-list"></div>
     </div>
 
-    <div class="beaker-container" ondrop="dropChem(event)" ondragover="allowDrop(event)">
+    <div style="font-size: 13px; color: #888; font-weight: 700;">비커 속 시약 조합:</div>
+    <div id="selectedChipsContainer" class="selected-chips">
+        <span style="color: #aaa; font-size: 13px;">(비어 있음)</span>
+    </div>
+
+    <div class="beaker-container">
         <div id="liquid" class="beaker-liquid">
             <div id="bubbles" class="bubble-layer">
-                <div class="bubble" style="left: 20%; width: 14px; height: 14px; animation-delay: 0s;"></div>
-                <div class="bubble" style="left: 45%; width: 10px; height: 10px; animation-delay: 0.3s;"></div>
-                <div class="bubble" style="left: 70%; width: 16px; height: 16px; animation-delay: 0.15s;"></div>
+                <div class="bubble" style="left: 25%; width: 12px; height: 12px; animation-delay: 0s;"></div>
+                <div class="bubble" style="left: 50%; width: 16px; height: 16px; animation-delay: 0.2s;"></div>
+                <div class="bubble" style="left: 75%; width: 10px; height: 10px; animation-delay: 0.4s;"></div>
             </div>
         </div>
     </div>
 
-    <div id="reactorStatus" style="margin-top: 20px; font-size: 16px; font-weight: 800; color: #444; min-height: 24px;">
-        비커에 시약을 드래그해 넣으세요.
+    <div id="reactorStatus" style="margin-top: 15px; font-size: 15px; font-weight: 800; color: #333; min-height: 30px; background: #fffcf0; padding: 12px; border-radius: 12px; border: 1px dashed #dcd6c5;">
+        비커에 시약을 추가하여 반응을 시작하세요.
     </div>
 
-    <button onclick="resetReactor()" style="margin-top: 20px; background: #bfa11d; color: #fff; border: none; padding: 10px 22px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.2s;">
+    <button onclick="resetReactor()" style="margin-top: 15px; background: #bfa11d; color: #fff; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.2s;">
         🔄 비커 세척하기
     </button>
+
+    <div class="custom-reactor-box">
+        <h3 style="font-size: 16px; color: #854d0e; margin: 0 0 8px 0; font-weight: 800;">✨ 나만의 실험 반응 추가하기 (커스텀 엔진)</h3>
+        <p style="font-size: 12px; color: #666; margin-bottom: 12px;">원하는 시약 조합과 그에 따른 반응 결과(발열, 기체 발생 등)를 직접 등록해보세요!</p>
+        
+        <label style="font-size: 12px; font-weight: 700; color: #444;">1. 반응할 시약 키워드 (예: "구리, 질산")</label>
+        <input type="text" id="customKeywords" class="custom-input" placeholder="쉼표(,)로 구분하여 입력 (예: 구리, 질산용액)">
+
+        <label style="font-size: 12px; font-weight: 700; color: #444;">2. 실험 결과 및 설명 (예: 짙은 갈색 기체 발생 및 발열)</label>
+        <input type="text" id="customDescription" class="custom-input" placeholder="예: 🟤 이산화질소 기체($NO_2$)가 발생하며 용액이 초록빛으로 변합니다.">
+
+        <button onclick="addCustomReaction()" style="background: #ca8a04; color: #fff; border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 800; cursor: pointer;">
+            ➕ 커스텀 반응 규칙 등록하기
+        </button>
+    </div>
 </div>
 
 <script>
-    let beakerContents = new Set();
+    // 💡 172가지 실제 동아리 보유 시약 전체 데이터베이스
+    const allReagents = [
+        "5%질산은수용액", "99.5% 요오드화칼륨", "그람아이오딘", "대리석", "무수탄산나트륨", "무수황산마그네슘", "베네딕트용액", "벤토나이트", "붕사", "아이오딘-아이오딘화칼륨수용액", "아이오딘용액", "아이오딘화칼륨", "알루미늄분말", "알루미늄칼륨황산염", "알루미늄판", "염화구리", "염화나트륨", "염화나트륨용액", "염화제이철용액", "염화칼슘", "요오드산칼륨", "요오드산칼륨용액", "유황분말", "이산화망간", "젖산칼슘", "주석", "질산구리", "질산은용액", "질산칼륨", "철분", "철조각", "탄산동", "탄산칼슘", "함석", "활성탄", "황산구리", "황산구리5수화물", "황산구리용액", "황산구리용액1%", "황산망간1수화물", "황산수소나트륨", "황산아연7수화물", "황화나트륨",
+        "1%메틸렌블루용액", "1%페놀프탈레인용액", "4-아미노페놀", "BTB용액", "BTB용액 청색", "DPPH용액(0.2mM)", "EDTA이나트륨2수화물", "글리세린", "닌히드린수용액", "루미놀", "말론산", "메틸렌블루", "메틸오렌지", "부틸렌글리콜", "살리실산", "살리실산99%", "샤프라닌O", "수단3용액", "식물성글리세린", "식용색소 노란", "식용색소 보라", "식용색소 빨강", "식용색소 파랑", "아세트올세인", "아세틸콜린", "요소", "인디고카민용액", "크리스탈바이올렛", "탈색제용액", "페놀레드용액", "페놀프탈레인0.1%", "페놀프탈레인용액 ×5", "프래그런스오일",
+        "EM활성액", "LES", "가용성녹말", "가용성전분", "건조이스트", "고초균(Bacillus subtilis)", "김자액", "녹말", "녹말용액1%", "당밀", "대두레시틴", "대장균(E. coli) 플라스미드", "생효모", "아가(한천)", "알긴산나트륨", "알부민용액", "암피실린용액", "염산퀴닌용액", "올리브리퀴드", "완충용액 pH6", "완충용액 pH7", "우리밀누룩", "쪽(청대)", "카나마이신모노설페이트용액", "카탈라아제", "클로브버드오일", "클로브오일", "탈섬유소양혈", "포도당", "포도당98%", "포도당용액1%", "표준완충용액 pH 8.00", "핵산분리용완충용액(0.5X TAE)", "헤모글로빈용액",
+        "무수제이인산나트륨", "탄산수소나트륨(l)", "탄산수소나트륨(s)",
+        "10%인산", "5%아세트산수용액", "과산화수소 34.5%", "규산나트륨용액", "마그네슘조각", "묽은암모니아수", "묽은염산", "빙초산99.5%", "산화칼슘파우더", "설파믹산99%", "수산화나트륨(s)", "수산화바륨8수화물", "수산화칼륨95%", "아세톤", "아세트산무수물", "암모니아수용액", "에틸알코올95%", "인산85%", "중크롬산칼륨", "질산납용액", "질산암모늄98.5%", "크롬산칼륨",
+        "35% 염산", "99.5% 벤젠", "99.5% 클로로포름", "99% 페놀", "Carbon tetrachloride", "Dichloromethane", "n-헥세인", "개미산99%", "나트륨조각", "마그네슘분말", "무수초산97%", "무수초산99%", "브롬수", "색소추출용용매제", "수산화나트륨", "아연분말", "에틸에테르99%", "염화메칠렌99.5%", "염화코발트", "인산", "자일렌(Xylene)", "전개액", "질산납", "질산니켈6수화물 98%", "질산용액60%", "초산에틸99.5%", "톨루엔(Toluene)", "황산95%", "황산용액95%"
+    ];
 
-    function allowDrop(ev) {
-        ev.preventDefault();
+    let selectedReagents = [];
+    
+    // 💡 사용자가 추가한 커스텀 반응 규칙들을 저장할 배열 (브라우저 메모리 기반)
+    let customReactions = [];
+
+    // 검색어 입력 시 자동완성 리스트 필터링
+    function filterReagentsList() {
+        const input = document.getElementById('reagentSearchInput');
+        const listDiv = document.getElementById('autocompleteList');
+        const keyword = input.value.trim().toLowerCase();
+
+        listDiv.innerHTML = '';
+        if (!keyword) {
+            listDiv.style.display = 'none';
+            return;
+        }
+
+        const filtered = allReagents.filter(r => r.toLowerCase().includes(keyword));
+        if (filtered.length === 0) {
+            listDiv.style.display = 'none';
+            return;
+        }
+
+        filtered.forEach(chem => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.innerText = chem;
+            item.onclick = () => addReagentToBevker(chem);
+            listDiv.appendChild(item);
+        });
+
+        listDiv.style.display = 'block';
     }
 
-    function dragStart(ev) {
-        ev.dataTransfer.setData("chemId", ev.target.id);
+    // 비커에 시약 추가하기
+    function addReagentToBevker(chemName) {
+        if (!selectedReagents.includes(chemName)) {
+            selectedReagents.push(chemName);
+        }
+        document.getElementById('reagentSearchInput').value = '';
+        document.getElementById('autocompleteList').style.display = 'none';
+        updateReactorState();
     }
 
-    function dropChem(ev) {
-        ev.preventDefault();
-        const chemId = ev.dataTransfer.getData("chemId");
-        if (!chemId) return;
-
-        beakerContents.add(chemId);
-        renderReaction();
+    // 시약 제거하기
+    function removeReagent(chemName) {
+        selectedReagents = selectedReagents.filter(r => r !== chemName);
+        updateReactorState();
     }
 
-    function renderReaction() {
+    // 💡 학생들이 직접 커스텀 반응을 추가하는 함수
+    function addCustomReaction() {
+        const rawKeywords = document.getElementById('customKeywords').value.trim();
+        const description = document.getElementById('customDescription').value.trim();
+
+        if (!rawKeywords || !description) {
+            alert("키워드와 반응 결과를 모두 입력해주세요!");
+            return;
+        }
+
+        // 쉼표 기준으로 키워드들을 분리하여 배열로 저장
+        const keywords = rawKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0);
+        
+        customReactions.push({
+            keywords: keywords,
+            description: description
+        });
+
+        alert("✨ 나만의 반응 규칙이 성공적으로 등록되었습니다! 비커에 해당 시약들을 조합해보세요.");
+        document.getElementById('customKeywords').value = '';
+        document.getElementById('customDescription').value = '';
+        
+        // 현재 비커 상태 즉시 반영
+        updateReactorState();
+    }
+
+    // 화학 반응 심층 시뮬레이션 엔진
+    function updateReactorState() {
+        const chipsContainer = document.getElementById('selectedChipsContainer');
         const liquid = document.getElementById('liquid');
         const bubbles = document.getElementById('bubbles');
         const status = document.getElementById('reactorStatus');
 
-        // 넣은 시약 개수에 따라 수위 증가
-        liquid.style.height = (35 + beakerContents.size * 18) + '%';
+        if (selectedReagents.length === 0) {
+            chipsContainer.innerHTML = '<span style="color: #aaa; font-size: 13px;">(비어 있음)</span>';
+            liquid.style.height = '0%';
+            liquid.style.backgroundColor = 'rgba(220, 220, 220, 0.4)';
+            bubbles.style.display = 'none';
+            status.innerHTML = "비커에 시약을 추가하여 반응을 시작하세요.";
+            return;
+        }
 
-        const hasHCl = beakerContents.has('hcl');
-        const hasNaOH = beakerContents.has('naoh');
-        const hasBTB = beakerContents.has('btb');
+        chipsContainer.innerHTML = '';
+        selectedReagents.forEach(chem => {
+            const chip = document.createElement('div');
+            chip.className = 'chem-chip';
+            chip.innerHTML = `${chem} <span onclick="removeReagent('${chem}')">&times;</span>`;
+            chipsContainer.appendChild(chip);
+        });
 
-        if (hasHCl && hasNaOH && hasBTB) {
-            liquid.style.backgroundColor = 'rgba(34, 197, 94, 0.85)'; // 초록색 (중성)
+        liquid.style.height = Math.min(30 + selectedReagents.length * 20, 95) + '%';
+        bubbles.style.display = 'none';
+
+        const joinedNames = selectedReagents.join(" ");
+
+        // 🔍 1순위: 학생들이 직접 등록한 커스텀 반응 규칙 검사
+        let matchedCustom = null;
+        for (let rule of customReactions) {
+            // 등록한 모든 키워드가 현재 선택된 시약들에 포함되어 있는지 확인
+            const allMatched = rule.keywords.every(kw => selectedReagents.some(sr => sr.includes(kw)));
+            if (allMatched) {
+                matchedCustom = rule;
+                break;
+            }
+        }
+
+        if (matchedCustom) {
+            liquid.style.backgroundColor = 'rgba(217, 119, 6, 0.85)';
             bubbles.style.display = 'block';
-            status.innerHTML = "✨ <span style='color:#16a34a;'>중화 반응 완료!</span> (BTB 지시약 반응: 초록색 중성)";
-        } else if (hasHCl && hasBTB) {
-            liquid.style.backgroundColor = 'rgba(239, 68, 68, 0.85)'; // 노란/빨간색 (산성)
-            bubbles.style.display = 'none';
-            status.innerHTML = "🔴 <span style='color:#dc2626;'>산성 상태</span> (BTB 지시약 반응: 노란/산호색)";
-        } else if (hasNaOH && hasBTB) {
-            liquid.style.backgroundColor = 'rgba(59, 130, 246, 0.85)'; // 파란색 (염기성)
-            bubbles.style.display = 'none';
-            status.innerHTML = "🔵 <span style='color:#2563eb;'>염기성 상태</span> (BTB 지시약 반응: 파란색)";
-        } else if (hasHCl && hasNaOH) {
-            liquid.style.backgroundColor = 'rgba(225, 225, 225, 0.6)';
+            status.innerHTML = `🌟 <span style='color:#b45309;'>[학생 커스텀 반응]</span> ${matchedCustom.description}`;
+        }
+        // 2순위: 기본 빌트인 반응 검사 (산+염기, 금속+산, 앙금, 발광 등)
+        else if ((joinedNames.includes("염산") || joinedNames.includes("인산") || joinedNames.includes("황산")) && 
+            (joinedNames.includes("수산화나트륨") || joinedNames.includes("수산화칼륨"))) {
+            liquid.style.backgroundColor = 'rgba(52, 211, 153, 0.85)';
+            status.innerHTML = "🔥 <span style='color:#059669;'>중화 반응 발생!</span> 산과 염기가 만나 물과 염이 생성되며 발열 반응이 일어납니다.";
+        }
+        else if ((joinedNames.includes("마그네슘") || joinedNames.includes("아연") || joinedNames.includes("철분")) && 
+                 (joinedNames.includes("염산") || joinedNames.includes("황산") || joinedNames.includes("아세트산"))) {
+            liquid.style.backgroundColor = 'rgba(147, 197, 255, 0.85)';
             bubbles.style.display = 'block';
-            status.innerHTML = "🔥 <span style='color:#d97706;'>중화 반응 중화열 발생!</span> (지시약을 추가해보세요)";
-        } else if (hasBTB) {
-            liquid.style.backgroundColor = 'rgba(234, 179, 8, 0.7)';
-            bubbles.style.display = 'none';
-            status.innerText = "🟡 BTB 지시약이 추가되었습니다.";
-        } else {
-            status.innerText = "🧪 시약이 혼합되는 중입니다. 다른 시약도 넣어보세요!";
+            status.innerHTML = "⚡ <span style='color:#2563eb;'>금속과 산의 반응!</span> 뽀글뽀글 **수소 기체($H_2$)**가 발생합니다.";
+        }
+        else if (joinedNames.includes("질산은") && (joinedNames.includes("염화나트륨") || joinedNames.includes("염화"))) {
+            liquid.style.backgroundColor = 'rgba(243, 244, 246, 0.95)';
+            status.innerHTML = "✨ <span style='color:#d97706;'>앙금 생성 반응!</span> 염화 은($AgCl$) **흰색 앙금**이 가라앉습니다.";
+        }
+        else if (joinedNames.includes("루미놀") && joinedNames.includes("과산화수소")) {
+            liquid.style.backgroundColor = 'rgba(37, 99, 235, 0.9)';
+            status.innerHTML = "🌟 <span style='color:#1d4ed8;'>화학 발광 반응!</span> 푸른빛을 내는 아름다운 루미놀 발광 반응이 일어납니다.";
+        }
+        else if (joinedNames.includes("BTB용액")) {
+            if (joinedNames.includes("염산") || joinedNames.includes("황산") || joinedNames.includes("아세트산")) {
+                liquid.style.backgroundColor = 'rgba(234, 179, 8, 0.85)';
+                status.innerHTML = "🟡 <span style='color:#ca8a04;'>산성 지시약 반응:</span> BTB 용액이 **노란색**으로 변했습니다.";
+            } else if (joinedNames.includes("수산화나트륨") || joinedNames.includes("암모니아")) {
+                liquid.style.backgroundColor = 'rgba(37, 99, 235, 0.85)';
+                status.innerHTML = "🔵 <span style='color:#2563eb;'>염기성 지시약 반응:</span> BTB 용액이 **파란색**으로 변했습니다.";
+            } else {
+                liquid.style.backgroundColor = 'rgba(52, 211, 153, 0.8)';
+                status.innerHTML = "🟢 BTB 지시약이 중성 혹은 용액에 혼합되었습니다.";
+            }
+        }
+        else {
+            liquid.style.backgroundColor = 'rgba(191, 161, 29, 0.4)';
+            status.innerHTML = `🧪 ${selectedReagents.length}개의 시약이 혼합되었습니다. 추가 반응 시약을 조합해 보세요!`;
         }
     }
 
+    // 비커 세척
     function resetReactor() {
-        beakerContents.clear();
-        const liquid = document.getElementById('liquid');
-        liquid.style.height = '35%';
-        liquid.style.backgroundColor = 'rgba(220, 220, 220, 0.4)';
-        document.getElementById('bubbles').style.display = 'none';
-        document.getElementById('reactorStatus').innerText = "비커가 깨끗하게 세척되었습니다.";
+        selectedReagents = [];
+        updateReactorState();
     }
 </script>
 

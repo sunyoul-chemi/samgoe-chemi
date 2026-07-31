@@ -1,96 +1,117 @@
 {% extends "layout.html" %}
 {% block content %}
+
 <div class="space-universe-bg">
 
     <div class="shooting-stars-background">
-        <span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
     </div>
 
-    <div style="text-align: center; padding-top: 50px; position: relative; z-index: 5;">
-        <h2 class="center-gradient-title">CHEMI ORBIT</h2>
-        <span class="center-sub">TEAM PROJECTS</span>
-    </div>
+    <div style="max-width: 1000px; margin: 0 auto; padding-top: 50px; position: relative; z-index: 10;">
 
-    <div class="orbit-system-container">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 20; text-align: center;">
-            <button onclick="openAddModal()" style="width: 100px; height: 100px; border-radius: 50%; background: radial-gradient(circle, #ffd700, #ff8c00); border: none; color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 0 35px #ff8c00; transition: transform 0.2s;">
-                PROJECT<br>+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h1 class="center-gradient-title">CHEMI ORBIT</h1>
+            <span class="center-sub">TEAM PROJECTS</span>
+        </div>
+
+        {% if session.get('is_admin') %}
+        <div style="text-align: center; margin-bottom: 25px;">
+            <button onclick="document.getElementById('addProjectModal').classList.add('active')" 
+                    style="background: linear-gradient(135deg, #ffd700, #bfa11d); color: #000; border: none; padding: 10px 22px; border-radius: 20px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); transition: transform 0.2s;"
+                    onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                + 새 프로젝트 등록 🚀
             </button>
         </div>
+        {% endif %}
 
-        {% for proj in projects %}
-        <div class="moving-orbit-bubble bubble-color-{{ loop.cycle('1', '2', '3', '4', '5') }}" 
-             style="top: {{ [15, 20, 65, 70, 45]|random }}%; left: {{ [10, 30, 55, 75, 22]|random }}%;"
-             onclick="openDetailModal('{{ proj.title|e }}', '{{ proj.summary|e }}', '{{ proj.id }}')">
-            <div class="bubble-inner-content">
-                <span class="bubble-num">PROJ_0{{ loop.index }}</span>
-                <span class="bubble-title">{{ proj.title }}</span>
-                <span class="click-hint">CLICK 🔍</span>
+        <div class="orbit-system-container">
+            {% for proj in projects %}
+            {% set color_index = (loop.index0 % 5) + 1 %}
+            {% set top_pos = [15, 60, 25, 70, 45][loop.index0 % 5] %}
+            {% set left_pos = [15, 25, 55, 75, 42][loop.index0 % 5] %}
+            
+            <div class="moving-orbit-bubble bubble-color-{{ color_index }}" 
+                 style="top: {{ top_pos }}%; left: {{ left_pos }}%;"
+                 onclick="openProjectModal('{{ proj[1] }}', '{{ proj[2] }}', '{{ proj[0] }}')">
+                <div class="bubble-inner-content">
+                    <span class="bubble-num">PROJ_{{ '%02d' % loop.index }}</span>
+                    <strong class="bubble-title">{{ proj[1] }}</strong>
+                    <span class="click-hint">CLICK ✨</span>
+                </div>
             </div>
+            {% else %}
+            <div style="text-align: center; color: #6a6a8e; font-size: 15px; padding-top: 150px; font-weight: 600;">
+                아직 등록된 CHEMI 프로젝트가 없습니다.<br>새로운 우주 탐사를 시작해보세요! 🪐
+            </div>
+            {% endfor %}
         </div>
-        {% else %}
-        <div style="position: absolute; width: 100%; text-align: center; top: 75%; color: #6a6a8e; font-size: 14px; font-style: italic;">
-            팀 프로젝트가 없습니다. 중앙의 태양을 눌러 행성을 생성하세요.
-        </div>
-        {% endfor %}
+
     </div>
 
 </div>
 
-<div id="detailModal" class="project-modal-overlay" onclick="closeDetailModal(event)">
-    <div class="project-modal-content">
-        <span class="modal-close-btn" onclick="document.getElementById('detailModal').classList.remove('active')">&times;</span>
-        <span class="modal-header-tag">RESEARCH INFOMATION</span>
-        <h3 id="modalTitle" class="modal-main-title">연구 프로젝트 제목</h3>
-        <p id="modalSummary" class="modal-body-summary"현재 작성 중인 보고서의 링크를 공유해주세요. 구글Docs, 구글 Drive 등</p>
-        <div style="margin-top: 25px; display: flex; justify-content: flex-end;" id="modalDeleteArea">
-            </div>
-    </div>
-</div>
-
-<div id="addModal" class="project-modal-overlay" onclick="closeAddModal(event)">
-    <div class="project-modal-content" style="max-width: 450px;">
-        <span class="modal-close-btn" onclick="document.getElementById('addModal').classList.remove('active')">&times;</span>
-        <span class="modal-header-tag" style="color: #ff8c00;">LAUNCH NEW PLANET</span>
-        <h3 class="modal-main-title" style="margin-bottom: 20px;">진행 중인 프로젝트</h3>
+<div id="projectModal" class="project-modal-overlay" onclick="closeProjectModal(event)">
+    <div class="project-modal-content" onclick="event.stopPropagation()">
+        <span class="modal-close-btn" onclick="closeProjectModal(event, true)">&times;</span>
+        <span class="modal-header-tag">✦ CHEMI TEAM PROJECT</span>
+        <h2 id="modalTitle" class="modal-main-title">프로젝트 제목</h2>
+        <p id="modalSummary" class="modal-body-summary">프로젝트 내용이 여기에 나옵니다.</p>
         
-        <form action="/addProject" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
-            <input type="text" name="title" placeholder="프로젝트 제목 / 팀원" required 
-                   style="width: 100%; background: #221f30; border: 1px solid #444; padding: 12px; border-radius: 10px; color: white; font-size: 14px; outline: none;">
-            <textarea name="summary" rows="4" placeholder="현재 작성 중인 보고서의 링크를 공유해주세요. (구글Docs, 구글 Drive 등)" required 
-                      style="width: 100%; background: #221f30; border: 1px solid #444; padding: 12px; border-radius: 10px; color: white; font-size: 14px; outline: none; resize: none;"></textarea>
-            <button type="submit" style="background: linear-gradient(90deg, #ff8c00, #ffd700); border: none; padding: 12px; border-radius: 10px; color: white; font-weight: 700; cursor: pointer; margin-top: 5px;">🪐 나만의 행성 만들기</button>
+        {% if session.get('is_admin') %}
+        <div style="margin-top: 25px; text-align: right; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+            <a id="modalDeleteBtn" href="#" onclick="return confirm('이 프로젝트를 삭제하시겠습니까?');" class="proj-delete-btn">
+                삭제 🗑️
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if session.get('is_admin') %}
+<div id="addProjectModal" class="project-modal-overlay">
+    <div class="project-modal-content" style="max-width: 450px;">
+        <span class="modal-close-btn" onclick="document.getElementById('addProjectModal').classList.remove('active')">&times;</span>
+        <span class="modal-header-tag">✦ NEW PROJECT</span>
+        <h2 class="modal-main-title" style="font-size: 20px;">새 프로젝트 추가</h2>
+        
+        <form action="/addProject" method="POST" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+            <input type="text" name="title" placeholder="프로젝트 이름 (예: 화학반응 인공지능 분석)" required
+                   style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.4); color: #fff; font-size: 14px; outline: none;">
+            
+            <textarea name="summary" rows="4" placeholder="프로젝트 상세 내용 및 요약..." required
+                      style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.4); color: #fff; font-size: 14px; outline: none; resize: none;"></textarea>
+            
+            <button type="submit" style="background: linear-gradient(135deg, #ffd700, #bfa11d); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px;">
+                등록하기 🚀
+            </button>
         </form>
     </div>
 </div>
+{% endif %}
 
 <script>
-function openDetailModal(title, summary, id) {
+function openProjectModal(title, summary, id) {
     document.getElementById('modalTitle').innerText = title;
     document.getElementById('modalSummary').innerText = summary;
     
-    const deleteArea = document.getElementById('modalDeleteArea');
-    // 어드민 세션 판단 처리 (간이 구현)
-    {% if session.get('is_admin') %}
-    deleteArea.innerHTML = `<a href="/deleteProject/${id}" class="proj-delete-btn" onclick="return confirm('이 행성을 파괴하시겠습니까?');">행성 삭제</a>`;
-    {% else %}
-    deleteArea.innerHTML = '';
-    {% endif %}
-    
-    document.getElementById('detailModal').classList.add('active');
-}
-function closeDetailModal(e) {
-    if(e.target.classList.contains('project-modal-overlay')) {
-        document.getElementById('detailModal').classList.remove('active');
+    const deleteBtn = document.getElementById('modalDeleteBtn');
+    if (deleteBtn) {
+        deleteBtn.href = '/deleteProject/' + id;
     }
+    
+    document.getElementById('projectModal').classList.add('active');
 }
-function openAddModal() {
-    document.getElementById('addModal').classList.add('active');
-}
-function closeAddModal(e) {
-    if(e.target.classList.contains('project-modal-overlay')) {
-        document.getElementById('addModal').classList.remove('active');
+
+function closeProjectModal(event, forceClose) {
+    if (forceClose || event.target.classList.contains('project-modal-overlay')) {
+        document.getElementById('projectModal').classList.remove('active');
     }
 }
 </script>
+
 {% endblock %}

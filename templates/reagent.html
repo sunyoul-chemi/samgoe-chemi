@@ -157,10 +157,15 @@
                         {{ r.note if r.note else '-' }}
                     </td>
                     {% if session.get('is_admin') %}
-                    <td style="padding: 16px 20px; text-align: center;">
+                    <td style="padding: 16px 20px; text-align: center; white-space: nowrap;">
+                        <!-- 🌟 수정 버튼 추가 -->
+                        <button type="button" onclick="openEditModal('{{ r.id }}', '{{ r.name }}', '{{ r.formula }}', '{{ r.location }}', '{{ r.amount }}', '{{ r.risk }}', '{{ r.status }}', '{{ r.note }}')" 
+                            style="color: #2563eb; text-decoration: none; font-size: 12px; font-weight: 700; background: #eff6ff; padding: 6px 10px; border-radius: 8px; border: 1px solid #93c5fd; cursor: pointer; margin-right: 4px;">
+                            수정
+                        </button>
                         <a href="/deleteReagent/{{ r.id }}" onclick="return confirm('이 시약 항목을 삭제하시겠습니까?');" 
-                           style="color: #dc3545; text-decoration: none; font-size: 12px; font-weight: 700; background: #ffe8e8; padding: 6px 12px; border-radius: 8px; border: 1px solid #f8b4b4; display: inline-block;">
-                           삭제
+                           style="color: #dc3545; text-decoration: none; font-size: 12px; font-weight: 700; background: #ffe8e8; padding: 6px 10px; border-radius: 8px; border: 1px solid #f8b4b4; display: inline-block;">
+                            삭제
                         </a>
                     </td>
                     {% endif %}
@@ -178,8 +183,80 @@
 
 </div>
 
+<!-- 🌟 시약 수정 모달 팝업 -->
+<div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px);">
+    <div style="background: #fff; padding: 30px; border-radius: 20px; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <h3 style="color: #bfa11d; margin-top: 0; margin-bottom: 20px; font-weight: 800; font-size: 18px;">✏️ 시약 정보 수정 (관리자전용)</h3>
+        
+        <form action="/editReagent" method="POST">
+            <input type="hidden" id="edit_id" name="id">
+            
+            <div style="margin-bottom: 12px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">시약명</label>
+                <input type="text" id="edit_name" name="name" required style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none;">
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">영어명/화학식</label>
+                <input type="text" id="edit_formula" name="formula" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none;">
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">보관 장소</label>
+                <input type="text" id="edit_location" name="location" required style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none;">
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">용량 / 수량</label>
+                <input type="text" id="edit_amount" name="amount" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none;">
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">위험도</label>
+                <select id="edit_risk" name="risk" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff; font-weight:600; cursor:pointer;">
+                    <option value="낮음">🟢 낮음</option>
+                    <option value="경고">⚡ 경고</option>
+                    <option value="위험">⚠️ 위험</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">보관 상태</label>
+                <select id="edit_status" name="status" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff; font-weight:600; cursor:pointer;">
+                    <option value="보관중">보관중</option>
+                    <option value="사용중">사용중</option>
+                    <option value="대여중">대여중</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">비고</label>
+                <input type="text" id="edit_note" name="note" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none;">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" style="flex: 1; background:#bfa11d; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:800; cursor:pointer;">수정 완료</button>
+                <button type="button" onclick="closeEditModal()" style="flex: 1; background:#e5e7eb; color:#374151; border:none; padding:12px; border-radius:10px; font-weight:800; cursor:pointer;">취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-    // 💡 1. 2D 지도 버튼 클릭 시 검색창 입력 + 강제 검색 이벤트 발생
+    // 💡 1. 수정 모달 열기 및 기존 데이터 세팅
+    function openEditModal(id, name, formula, location, amount, risk, status, note) {
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_name').value = name !== 'None' ? name : '';
+        document.getElementById('edit_formula').value = formula !== 'None' ? formula : '';
+        document.getElementById('edit_location').value = location !== 'None' ? location : '';
+        document.getElementById('edit_amount').value = amount !== 'None' ? amount : '';
+        document.getElementById('edit_risk').value = risk !== 'None' ? risk : '낮음';
+        document.getElementById('edit_status').value = status !== 'None' ? status : '보관중';
+        document.getElementById('edit_note').value = note !== 'None' ? note : '';
+        
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    // 💡 2. 수정 모달 닫기
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    // 💡 3. 2D 지도 버튼 클릭 시 검색창 입력 + 강제 검색 이벤트 발생
     function selectCabinet(keyword) {
         const input = document.getElementById('reagentSearch');
         if (input) {
@@ -188,7 +265,7 @@
         }
     }
 
-    // 💡 2. 검색창 필터 함수 (공백 처리 및 대소문자 무시)
+    // 💡 4. 검색창 필터 함수 (공백 처리 및 대소문자 무시)
     function filterReagents() {
         const input = document.getElementById('reagentSearch');
         const filter = input.value.toLowerCase().trim();
@@ -204,7 +281,7 @@
         });
     }
 
-    // 💡 3. CSV 업로드 기능
+    // 💡 5. CSV 업로드 기능
     const dropZone = document.getElementById('excelDropZone');
     const fileInput = document.getElementById('excelFileInput');
 

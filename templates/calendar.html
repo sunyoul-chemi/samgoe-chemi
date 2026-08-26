@@ -1,26 +1,44 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="calendar-wrapper" style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
+<div class="calendar-wrapper" style="max-width: 950px; margin: 40px auto; padding: 0 20px;">
     
     <div style="text-align: center; margin-bottom: 30px;">
         <span style="font-size: 35px;">📅</span>
-        <h2 style="font-size: 28px; color: #333; margin: 10px 0 5px 0; font-weight: 800;">케미 캘린더</h2>
-        <p style="color: #666; font-size: 15px;">동아리 주요 실험 및 활동 일정을 확인하세요.</p>
+        <h2 style="font-size: 28px; color: #333; margin: 10px 0 5px 0; font-weight: 800;">케미 캘린더 & 실험실 예약</h2>
+        <p style="color: #666; font-size: 15px;">동아리 주요 실험 및 활동 일정을 확인하고, 실험실 사용을 예약하세요.</p>
     </div>
 
-    {% if session.get('is_admin') %}
-    <div style="background: #fff; border-radius: 20px; padding: 20px; border: 1px solid #e8e6dc; margin-bottom: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.02);">
-        <form action="/addSchedule" method="POST" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <input type="date" name="date" required style="padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
-            <input type="text" name="title" placeholder="새로운 일정을 입력하세요" required style="flex: 1; min-width: 200px; padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
-            <button type="submit" style="padding: 10px 24px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px;">일정 등록</button>
+    <!-- 🌟 실험실 예약 신청 폼 (모든 사용자 이용 가능) -->
+    <div style="background: #fff; border-radius: 20px; padding: 25px; border: 1px solid #e8e6dc; margin-bottom: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.02);">
+        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 17px; font-weight: 800; color: #bfa11d;">🧪 실험실 사용 / 일정 예약 신청</h3>
+        
+        <form action="/addSchedule" method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: end;">
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:5px;">예약 날짜</label>
+                <input type="date" name="date" required style="width: 100%; padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:5px;">신청자 이름</label>
+                <input type="text" name="applicant" placeholder="예: 김동아" required style="width: 100%; padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
+            </div>
+            <div>
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:5px;">일정명 / 실험 제목</label>
+                <input type="text" name="title" placeholder="예: 에스터화 반응 실험" required style="width: 100%; padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:5px;">실험 목적 및 사용 사유</label>
+                <input type="text" name="purpose" placeholder="예: 아세트산과 에탄올을 이용한 향기 물질 합성 실험 진행" style="width: 100%; padding: 10px 15px; border: 1px solid #e1ded3; border-radius: 12px; background: #faf9f5; outline: none; font-size: 14px;">
+            </div>
+            <div style="grid-column: 1 / -1; text-align: right;">
+                <button type="submit" style="padding: 12px 30px; background: #bfa11d; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.2s;">예약/일정 신청하기</button>
+            </div>
         </form>
     </div>
-    {% endif %}
 
     <div style="display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start;">
         
+        <!-- 달력 시각화 영역 -->
         <div style="flex: 1; min-width: 320px; background: #fff; border-radius: 24px; border: 1px solid #eeece1; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.01);">
             
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
@@ -35,7 +53,7 @@
 
             <div style="display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 12px; column-gap: 8px;">
                 {% for d in days %}
-                <div style="min-height: 75px; padding: 6px; border-radius: 14px; 
+                <div style="min-height: 85px; padding: 6px; border-radius: 14px; 
                             background: {% if d.day and d.day != 'None' %}#faf9f5{% else %}transparent{% endif %}; 
                             border: 1px solid {% if d.day and d.day != 'None' %}#eeece1{% else %}transparent{% endif %}; 
                             display: flex; flex-direction: column; justify-content: space-between;">
@@ -44,8 +62,8 @@
                         <span style="font-size: 13px; font-weight: 700; color: #4a4538;">{{ d.day }}</span>
                         <div style="display: flex; flex-direction: column; gap: 3px; margin-top: 4px;">
                             {% for sch in d.schedules %}
-                            <span style="background: #bfa11d; color: white; font-size: 10px; padding: 2px 4px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" title="{{ sch }}">
-                                {{ sch }}
+                            <span style="background: #bfa11d; color: white; font-size: 10px; padding: 3px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" title="{{ sch.title }} (신청자: {{ sch.applicant }})">
+                                {{ sch.title }}
                             </span>
                             {% endfor %}
                         </div>
@@ -57,21 +75,28 @@
             </div>
         </div>
 
-        <div style="width: 100%; max-width: 280px; background: #faf9f5; border-radius: 24px; border: 1px solid #eeece1; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.01); box-sizing: border-box;">
-            <h3 style="margin: 0 0 20px 0; font-size: 17px; font-weight: 800; color: #4a4538; border-bottom: 2px solid #eeece1; padding-bottom: 10px;">📋 이번 달 전체 일정</h3>
-            <div style="overflow-y: auto; max-height: 420px; padding-right: 3px;">
+        <!-- 이번 달 전체 일정 리스트 사이드바 -->
+        <div style="width: 100%; max-width: 320px; background: #faf9f5; border-radius: 24px; border: 1px solid #eeece1; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.01); box-sizing: border-box;">
+            <h3 style="margin: 0 0 20px 0; font-size: 17px; font-weight: 800; color: #4a4538; border-bottom: 2px solid #eeece1; padding-bottom: 10px;">📋 이번 달 예약 및 일정</h3>
+            <div style="overflow-y: auto; max-height: 480px; padding-right: 3px;">
                 {% for s in schedules %}
-                <div style="background: #fff; padding: 12px; border-radius: 14px; border: 1px solid #eeece1; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                <div style="background: #fff; padding: 14px; border-radius: 14px; border: 1px solid #eeece1; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
                     <div style="flex: 1; min-width: 0;">
                         <span style="font-size: 11px; font-weight: 700; color: #bfa11d; display: block; margin-bottom: 2px;">📅 {{ s.date }}</span>
-                        <span style="font-size: 13px; font-weight: 600; color: #333; display: block; word-break: break-all;">{{ s.title }}</span>
+                        <span style="font-size: 14px; font-weight: 800; color: #333; display: block; word-break: break-all; margin-bottom: 4px;">{{ s.title }}</span>
+                        {% if s.applicant %}
+                        <span style="font-size: 12px; font-weight: 600; color: #555; display: block;">👤 신청자: {{ s.applicant }}</span>
+                        {% endif %}
+                        {% if s.purpose %}
+                        <span style="font-size: 11px; color: #777; display: block; margin-top: 2px; word-break: break-all;">📝 사유: {{ s.purpose }}</span>
+                        {% endif %}
                     </div>
                     {% if session.get('is_admin') %}
-                        <a href="/deleteSchedule/{{ s.id }}" onclick="return confirm('해당 일정을 삭제하시겠습니까?');" style="color: #dc3545; font-size: 11px; text-decoration: none; font-weight: 700; background: #ffe3e3; padding: 3px 6px; border-radius: 5px; flex-shrink: 0;">삭제</a>
+                        <a href="/deleteSchedule/{{ s.id }}" onclick="return confirm('해당 일정을 삭제하시겠습니까?');" style="color: #dc3545; font-size: 11px; text-decoration: none; font-weight: 700; background: #ffe3e3; padding: 4px 8px; border-radius: 6px; flex-shrink: 0;">삭제</a>
                     {% endif %}
                 </div>
                 {% else %}
-                <div style="text-align: center; color: #a09c92; font-size: 13px; font-style: italic; padding: 4px 0;">등록된 일정이 없습니다. ✨</div>
+                <div style="text-align: center; color: #a09c92; font-size: 13px; font-style: italic; padding: 20px 0;">등록된 예약이나 일정이 없습니다. ✨</div>
                 {% endfor %}
             </div>
         </div>

@@ -60,6 +60,8 @@ class Calendar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(50))
     title = db.Column(db.String(200))
+    applicant = db.Column(db.String(100), default="")  # 🌟 추가: 실험실 신청자 이름
+    purpose = db.Column(db.Text, default="")            # 🌟 추가: 실험 목적/사유
 
 class Reagent(db.Model):
     __tablename__ = 'reagents'
@@ -133,8 +135,9 @@ def init_supabase_db():
 @app.route('/')
 def home():
     main_photo = "KakaoTalk_20260709_143736435.jpg"
-    notice = Notice.query.order_by(Notice.id.desc()).first()
-    return render_template("index.html", main_photo=main_photo, notice=notice)
+    # 🌟 수정: 공지사항 여러 개를 최신순으로 가져오도록 변경
+    notices = Notice.query.order_by(Notice.id.desc()).all()
+    return render_template("index.html", main_photo=main_photo, notices=notices)
 
 @app.route("/addNotice", methods=["POST"])
 def add_notice():
@@ -245,7 +248,14 @@ def calendar():
     empty_cells = (start_weekday + 1) % 7
     
     raw_schedules = Calendar.query.order_by(Calendar.date.asc()).all()
-    schedules = [{'id': s.id, 'date': s.date, 'title': s.title} for s in raw_schedules]
+    # 🌟 수정: 캘린더 일정에 신청자 및 목적 정보 포함
+    schedules = [{
+        'id': s.id, 
+        'date': s.date, 
+        'title': s.title, 
+        'applicant': s.applicant, 
+        'purpose': s.purpose
+    } for s in raw_schedules]
     
     days = []
     for _ in range(empty_cells):
@@ -253,17 +263,21 @@ def calendar():
         
     for day in range(1, total_days + 1):
         date_str = f"{year}-{month:02d}-{day:02d}"
-        day_schedules = [s['title'] for s in schedules if s['date'] == date_str]
+        day_schedules = [s for s in schedules if s['date'] == date_str]
         days.append({"day": str(day), "schedules": day_schedules, "date": date_str})
         
     return render_template("calendar.html", year=year, month=month, days=days, schedules=schedules)
 
 @app.route("/addSchedule", methods=["POST"])
 def add_schedule():
-    if session.get("is_admin"):
-        date = request.form.get("date")
-        title = request.form.get("title")
-        new_schedule = Calendar(date=date, title=title)
+    # 🌟 수정: 실험실 예약 신청 정보(신청자, 목적 등)를 받아오도록 처리
+    date = request.form.get("date")
+    title = request.form.get("title")
+    applicant = request.form.get("applicant", "익명")
+    purpose = request.form.get("purpose", "")
+    
+    if date and title:
+        new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose)
         db.session.add(new_schedule)
         db.session.commit()
     return redirect(url_for("calendar"))
@@ -345,7 +359,7 @@ def upload_reagent_excel():
 
     if 'file' not in request.files:
         return jsonify({"success": False, "message": "파일이 전송되지 않았습니다."})
-    
+        
     file = request.files['file']
     if file.filename == '':
         return jsonify({"success": False, "message": "선택된 파일이 없습니다."})

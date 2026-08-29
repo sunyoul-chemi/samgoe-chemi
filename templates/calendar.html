@@ -110,7 +110,7 @@
                 </div>
             </div>
 
-            <!-- 실험실 예약 신청 폼 (일정 리스트 아래 배치) -->
+            <!-- 실험실 예약 신청 폼 -->
             <div style="background: #fff; border-radius: 20px; padding: 22px; border: 1px solid #e8e6dc; box-shadow: 0 8px 20px rgba(0,0,0,0.02);">
                 <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px; font-weight: 800; color: #bfa11d;">🧪 실험실 사용 / 일정 예약 신청</h3>
                 
@@ -122,20 +122,18 @@
                     <div style="display: flex; gap: 10px;">
                         <div style="flex: 1;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">신청자 이름</label>
-                            <input type="text" name="applicant" placeholder="예: 김동아" required style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
+                            <input type="text" name="applicant" placeholder="예: 박선율, 홍예원" required style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
                         </div>
                         <div style="flex: 1;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">일정명 / 실험 제목</label>
-                            <input type="text" name="title" placeholder="예: 에스터화 반응" required style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
+                            <input type="text" name="title" placeholder="예: 균사체 반응" required style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
                         </div>
                     </div>
                     <div>
-                        <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">실험 목적 및 사용 사유</label>
-                        <input type="text" name="purpose" placeholder="예: 향기 물질 합성 실험 진행" style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
+                        <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">사용 목적 및 사유</label>
+                        <input type="text" name="purpose" placeholder="예: 생물 실험 실습 진행" style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
                     </div>
-                    <div style="text-align: right; margin-top: 5px;">
-                        <button type="submit" style="width: 100%; padding: 10px; background: #bfa11d; color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px; transition: background 0.2s;" onmouseover="this.style.background='#a68c16'" onmouseout="this.style.background='#bfa11d'">예약/일정 신청하기</button>
-                    </div>
+                    <button type="submit" style="background: #bfa11d; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 5px;">예약 신청하기</button>
                 </form>
             </div>
 
@@ -143,4 +141,6 @@
 
     </div>
 </div>
+
 {% endblock %}
+

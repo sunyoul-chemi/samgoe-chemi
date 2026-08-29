@@ -98,10 +98,8 @@ class Notice(db.Model):
 def init_supabase_db():
     with app.app_context():
         try:
-            # 1. 필수 테이블 생성 확인
             db.create_all()
             
-            # 2. 캘린더 테이블 컬럼 누락 방지 및 데이터 타입 강제 보정
             db.session.execute(text("""
                 CREATE TABLE IF NOT EXISTS notices (
                     id SERIAL PRIMARY KEY,
@@ -119,7 +117,6 @@ def init_supabase_db():
                     status VARCHAR(50) DEFAULT '승인 대기 중'
                 );
             """))
-            # 기존 테이블에 누락되었을 수 있는 컬럼들 안전 추가
             db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT '승인 대기 중';"))
             db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS applicant VARCHAR(100) DEFAULT '익명';"))
             db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS purpose TEXT DEFAULT '';"))
@@ -298,7 +295,20 @@ def calendar():
         day_schedules = [s for s in schedules if s['date'] == date_str]
         days.append({"day": str(day), "schedules": day_schedules, "date": date_str})
         
-    return render_template("calendar.html", year=year, month=month, days=days, schedules=schedules)
+    # 동아리 공식 일정은 해당 월에만 뜨고, 실험실 예약 등은 월과 상관없이 전체 다 뜨도록 설정
+    display_schedules = []
+    for s in schedules:
+        if s['status'] == "동아리 공식 일정":
+            try:
+                s_year, s_month, _ = map(int, s['date'].split('-'))
+                if s_year == year and s_month == month:
+                    display_schedules.append(s)
+            except:
+                pass
+        else:
+            display_schedules.append(s)
+        
+    return render_template("calendar.html", year=year, month=month, days=days, schedules=display_schedules)
 
 @app.route("/addSchedule", methods=["POST"])
 def add_schedule():
@@ -307,11 +317,15 @@ def add_schedule():
     applicant = request.form.get("applicant", "익명")
     purpose = request.form.get("purpose", "")
     
+    is_admin_action = session.get("is_admin", False)
+    
     if date and title:
         try:
-            # 관리자가 등록한 경우 기본 상태를 바로 '승인 완료'로 할지 대기 중으로 할지 설정 가능 (기본: 승인 대기 중 또는 관리자인 경우 자동 승인)
-            initial_status = "승인 완료" if session.get("is_admin") else "승인 대기 중"
-            new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status=initial_status)
+            status_val = "동아리 공식 일정" if is_admin_action else "승인 대기 중"
+            if is_admin_action and (not applicant or applicant == "익명"):
+                applicant = "동아리 관리자"
+                
+            new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status=status_val)
             db.session.add(new_schedule)
             db.session.commit()
         except Exception as e:
@@ -345,7 +359,9 @@ def delete_schedule(sid):
             print("일정 삭제 오류:", e)
     return redirect(url_for("calendar"))
 
+# ==============================================================
 # 🧪 5. 시약 관리
+# ==============================================================
 @app.route('/reagent')
 def reagent_list():
     keyword = request.args.get('keyword', '')

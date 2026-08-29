@@ -28,18 +28,18 @@
 
             <div style="display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 8px; column-gap: 6px;">
                 {% for d in days %}
-                <div style="min-height: 90px; padding: 6px; border-radius: 12px; 
+                <div style="min-height: 95px; padding: 6px; border-radius: 12px; 
                         background: {% if d.day and d.day != 'None' %}#faf9f5{% else %}transparent{% endif %}; 
                         border: 1px solid {% if d.day and d.day != 'None' %}#eeece1{% else %}transparent{% endif %}; 
                         display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; overflow: hidden;">
                     
                     {% if d.day and d.day != 'None' %}
                         <span style="font-size: 12px; font-weight: 700; color: #4a4538;">{{ d.day }}</span>
-                        <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 3px; overflow-y: auto; max-height: 55px;">
+                        <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 3px; overflow-y: auto; max-height: 60px;">
                             {% for sch in d.schedules %}
-                            <!-- 승인 완료된 일정은 초록색, 대기 중인 일정은 기본 골드 색상으로 표시 -->
-                            <span style="background: {% if sch.status == '승인 완료' %}#059669{% else %}#bfa11d{% endif %}; color: white; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block;" title="{{ sch.title }} (상태: {{ sch.status }})">
-                                {{ sch.title }}
+                            <!-- 공식 일정은 보라색/진한남색, 승인 완료는 초록색, 대기 중은 골드로 표시 -->
+                            <span style="background: {% if sch.status == '동아리 공식 일정' %}#4f46e5{% elif sch.status == '승인 완료' %}#059669{% else %}#bfa11d{% endif %}; color: white; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block;" title="{{ sch.title }} (시간: {{ sch.time_slot }})">
+                                {{ sch.time_slot }} {{ sch.title }}
                             </span>
                             {% endfor %}
                         </div>
@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        <!-- 🌟 우측: 이번 달 일정 리스트 & 밑에 예약 신청 폼 -->
+        <!-- 🌟 우측: 이번 달 일정 리스트 & 밑에 예약/일정 등록 폼 -->
         <div style="flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 20px; box-sizing: border-box;">
             
             <!-- 이번 달 일정 리스트 (현재 월만 필터링) -->
@@ -70,10 +70,12 @@
                                     <div style="background: #fff; padding: 12px; border-radius: 12px; border: 1px solid #eeece1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
                                         <div style="flex: 1; min-width: 0;">
                                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
-                                                <span style="font-size: 11px; font-weight: 700; color: #bfa11d;">📅 {{ s.date }}</span>
+                                                <span style="font-size: 11px; font-weight: 700; color: #bfa11d;">📅 {{ s.date }} ({{ s.time_slot }})</span>
                                                 
-                                                <!-- 예약 승인 상태 뱃지 -->
-                                                {% if s.status == "승인 완료" %}
+                                                <!-- 상태 뱃지 -->
+                                                {% if s.status == "동아리 공식 일정" %}
+                                                    <span style="background: #e0e7ff; color: #4f46e5; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">공식 일정</span>
+                                                {% elif s.status == "승인 완료" %}
                                                     <span style="background: #d1fae5; color: #059669; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">승인 완료</span>
                                                 {% else %}
                                                     <span style="background: #fef3c7; color: #d97706; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">승인 대기 중</span>
@@ -110,30 +112,51 @@
                 </div>
             </div>
 
-            <!-- 실험실 예약 신청 폼 -->
+            <!-- 예약 / 일정 신청 폼 -->
             <div style="background: #fff; border-radius: 20px; padding: 22px; border: 1px solid #e8e6dc; box-shadow: 0 8px 20px rgba(0,0,0,0.02);">
-                <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px; font-weight: 800; color: #bfa11d;">🧪 실험실 사용 / 일정 예약 신청</h3>
+                <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px; font-weight: 800; color: #bfa11d;">
+                    {% if session.get('is_admin') %}🛠️ 일정 및 실험실 예약 등록 (관리자용){% else %}🧪 실험실 사용 / 일정 예약 신청{% endif %}
+                </h3>
                 
                 <form action="/addSchedule" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
-                    <div>
-                        <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">예약 날짜</label>
-                        <input type="date" name="date" required style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
+                    
+                    <!-- 관리자일 때만 동아리 공식 일정 선택 옵션 노출 -->
+                    {% if session.get('is_admin') %}
+                    <div style="background: #fdfbf7; padding: 8px 12px; border-radius: 10px; border: 1px solid #e1ded3; display: flex; align-items: center; justify-content: space-between;">
+                        <label style="font-size: 11px; font-weight: 700; color: #4f46e5;">등록 구분</label>
+                        <select name="schedule_type" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; font-weight: bold; outline: none;">
+                            <option value="official">동아리 공식 일정 (즉시 확정)</option>
+                            <option value="reservation">일반 실험실 예약 신청</option>
+                        </select>
                     </div>
+                    {% endif %}
+
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1.2;">
+                            <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">예약 날짜</label>
+                            <input type="date" name="date" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <div style="flex: 0.8;">
+                            <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">시간 (또는 타임)</label>
+                            <input type="text" name="time_slot" placeholder="예: 14:00~16:00" value="종일" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                    </div>
+
                     <div style="display: flex; gap: 10px;">
                         <div style="flex: 1;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">신청자 이름</label>
-                            <input type="text" name="applicant" placeholder="예: 박선율, 홍예원" required style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
+                            <input type="text" name="applicant" value="{% if session.get('is_admin') %}동아리 관리자{% endif %}" placeholder="예: 박선율" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
                         </div>
-                        <div style="flex: 1;">
+                        <div style="flex: 1.2;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">일정명 / 실험 제목</label>
-                            <input type="text" name="title" placeholder="예: 균사체 반응" required style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
+                            <input type="text" name="title" placeholder="예: 정기 모임 및 균사체 실험" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
                         </div>
                     </div>
                     <div>
                         <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">사용 목적 및 사유</label>
-                        <input type="text" name="purpose" placeholder="예: 생물 실험 실습 진행" style="width: 100%; padding: 8px 12px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 13px; box-sizing: border-box;">
+                        <input type="text" name="purpose" placeholder="예: 신규 프로젝트 준비 세션" style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
                     </div>
-                    <button type="submit" style="background: #bfa11d; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 5px;">예약 신청하기</button>
+                    <button type="submit" style="background: #bfa11d; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 5px;">등록하기</button>
                 </form>
             </div>
 
@@ -143,4 +166,3 @@
 </div>
 
 {% endblock %}
-

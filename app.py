@@ -60,8 +60,9 @@ class Calendar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(50))
     title = db.Column(db.String(200))
-    applicant = db.Column(db.String(100), default="")  # 🌟 추가: 실험실 신청자 이름
-    purpose = db.Column(db.Text, default="")            # 🌟 추가: 실험 목적/사유
+    applicant = db.Column(db.String(100), default="")  
+    purpose = db.Column(db.Text, default="")            
+    status = db.Column(db.String(50), default="승인 대기 중")  # 🌟 추가: 실험실 예약 승인 상태 (승인 대기 중 / 승인 완료)
 
 class Reagent(db.Model):
     __tablename__ = 'reagents'
@@ -97,18 +98,10 @@ class Notice(db.Model):
 def init_supabase_db():
     try:
         db.create_all()
-        db.session.execute(text("SELECT note FROM reagents LIMIT 1;"))
     except Exception as e:
-        print("테이블 구조 불일치 감지! 자동 동기화를 진행합니다:", e)
+        print("테이블 생성 오류 발생:", e)
         db.session.rollback()
-        try:
-            db.session.execute(text("DROP TABLE IF EXISTS reagents CASCADE;"))
-            db.session.commit()
-            db.create_all()  
-        except Exception as ex:
-            db.session.rollback()
-            print("강제 테이블 리셋 실패:", ex)
-        
+      
     try:
         if Reagent.query.count() == 0:
             reagents_list = [
@@ -135,7 +128,6 @@ def init_supabase_db():
 @app.route('/')
 def home():
     main_photo = "KakaoTalk_20260709_143736435.jpg"
-    # 🌟 수정: 공지사항 여러 개를 최신순으로 가져오도록 변경
     notices = Notice.query.order_by(Notice.id.desc()).all()
     return render_template("index.html", main_photo=main_photo, notices=notices)
 
@@ -248,13 +240,13 @@ def calendar():
     empty_cells = (start_weekday + 1) % 7
     
     raw_schedules = Calendar.query.order_by(Calendar.date.asc()).all()
-    # 🌟 수정: 캘린더 일정에 신청자 및 목적 정보 포함
     schedules = [{
         'id': s.id, 
         'date': s.date, 
         'title': s.title, 
         'applicant': s.applicant, 
-        'purpose': s.purpose
+        'purpose': s.purpose,
+        'status': s.status if s.status else "승인 대기 중"
     } for s in raw_schedules]
     
     days = []
@@ -270,16 +262,25 @@ def calendar():
 
 @app.route("/addSchedule", methods=["POST"])
 def add_schedule():
-    # 🌟 수정: 실험실 예약 신청 정보(신청자, 목적 등)를 받아오도록 처리
     date = request.form.get("date")
     title = request.form.get("title")
     applicant = request.form.get("applicant", "익명")
     purpose = request.form.get("purpose", "")
     
     if date and title:
-        new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose)
+        # 학생이 신청 시 초기 상태는 "승인 대기 중"으로 고정
+        new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status="승인 대기 중")
         db.session.add(new_schedule)
         db.session.commit()
+    return redirect(url_for("calendar"))
+
+@app.route("/approveSchedule/<int:sid>")
+def approve_schedule(sid):
+    if session.get("is_admin"):
+        sch = Calendar.query.get(sid)
+        if sch:
+            sch.status = "승인 완료"
+            db.session.commit()
     return redirect(url_for("calendar"))
 
 @app.route("/deleteSchedule/<int:sid>")
@@ -349,6 +350,16 @@ def delete_reagent(reagent_id):
         if reagent:
             db.session.delete(reagent)
             db.session.commit()
+    return redirect(url_for("reagent_list"))
+
+@app.route("/deleteAllReagents")
+def delete_all_reagents():
+    if session.get("is_admin"):
+        try:
+            db.session.query(Reagent).delete()
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
     return redirect(url_for("reagent_list"))
 
 # 📁 CSV 파일 업로드
@@ -483,3 +494,4 @@ if __name__ == "__main__":
         init_supabase_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+    

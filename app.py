@@ -62,7 +62,7 @@ class Calendar(db.Model):
     title = db.Column(db.String(200))
     applicant = db.Column(db.String(100), default="")  
     purpose = db.Column(db.Text, default="")            
-    status = db.Column(db.String(50), default="승인 대기 중")  # 🌟 추가: 실험실 예약 승인 상태 (승인 대기 중 / 승인 완료)
+    status = db.Column(db.String(50), default="승인 대기 중")  # 실험실 예약 승인 상태
 
 class Reagent(db.Model):
     __tablename__ = 'reagents'
@@ -101,7 +101,7 @@ def init_supabase_db():
     except Exception as e:
         print("테이블 생성 오류 발생:", e)
         db.session.rollback()
-      
+        
     try:
         if Reagent.query.count() == 0:
             reagents_list = [
@@ -268,7 +268,6 @@ def add_schedule():
     purpose = request.form.get("purpose", "")
     
     if date and title:
-        # 학생이 신청 시 초기 상태는 "승인 대기 중"으로 고정
         new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status="승인 대기 중")
         db.session.add(new_schedule)
         db.session.commit()

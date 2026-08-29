@@ -37,7 +37,8 @@
                         <span style="font-size: 12px; font-weight: 700; color: #4a4538;">{{ d.day }}</span>
                         <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 3px; overflow: hidden;">
                             {% for sch in d.schedules %}
-                            <span style="background: #bfa11d; color: white; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block;" title="{{ sch.title }} (신청자: {{ sch.applicant }})">
+                            <!-- 승인 완료된 일정은 초록색, 대기 중인 일정은 기본 골드 색상으로 표시 -->
+                            <span style="background: {% if sch.status == '승인 완료' %}#059669{% else %}#bfa11d{% endif %}; color: white; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block;" title="{{ sch.title }} (상태: {{ sch.status }})">
                                 {{ sch.title }}
                             </span>
                             {% endfor %}
@@ -65,7 +66,17 @@
                             {% set current_month_count.value = current_month_count.value + 1 %}
                             <div style="background: #fff; padding: 12px; border-radius: 12px; border: 1px solid #eeece1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
                                 <div style="flex: 1; min-width: 0;">
-                                    <span style="font-size: 11px; font-weight: 700; color: #bfa11d; display: block; margin-bottom: 2px;">📅 {{ s.date }}</span>
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
+                                        <span style="font-size: 11px; font-weight: 700; color: #bfa11d;">📅 {{ s.date }}</span>
+                                        
+                                        <!-- 예약 승인 상태 뱃지 -->
+                                        {% if s.status == "승인 완료" %}
+                                            <span style="background: #d1fae5; color: #059669; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">승인 완료</span>
+                                        {% else %}
+                                            <span style="background: #fef3c7; color: #d97706; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">승인 대기 중</span>
+                                        {% endif %}
+                                    </div>
+
                                     <span style="font-size: 13px; font-weight: 800; color: #333; display: block; word-break: break-all; margin-bottom: 3px;">{{ s.title }}</span>
                                     {% if s.applicant %}
                                     <span style="font-size: 11px; font-weight: 600; color: #555; display: block;">👤 신청자: {{ s.applicant }}</span>
@@ -74,8 +85,15 @@
                                     <span style="font-size: 11px; color: #777; display: block; margin-top: 2px; word-break: break-all;">📝 사유: {{ s.purpose }}</span>
                                     {% endif %}
                                 </div>
+
+                                <!-- 관리자 전용 [승인] 및 [삭제] 버튼 -->
                                 {% if session.get('is_admin') %}
-                                    <a href="/deleteSchedule/{{ s.id }}" onclick="return confirm('해당 일정을 삭제하시겠습니까?');" style="color: #dc3545; font-size: 11px; text-decoration: none; font-weight: 700; background: #ffe3e3; padding: 4px 8px; border-radius: 6px; flex-shrink: 0;">삭제</a>
+                                    <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;">
+                                        {% if s.status == "승인 대기 중" %}
+                                            <a href="/approveSchedule/{{ s.id }}" style="color: #059669; font-size: 11px; text-decoration: none; font-weight: 700; background: #d1fae5; padding: 4px 8px; border-radius: 6px; text-align: center; border: 1px solid #a7f3d0;">승인</a>
+                                        {% endif %}
+                                        <a href="/deleteSchedule/{{ s.id }}" onclick="return confirm('해당 일정을 삭제하시겠습니까?');" style="color: #dc3545; font-size: 11px; text-decoration: none; font-weight: 700; background: #ffe3e3; padding: 4px 8px; border-radius: 6px; text-align: center; border: 1px solid #f8b4b4;">삭제</a>
+                                    </div>
                                 {% endif %}
                             </div>
                         {% endif %}

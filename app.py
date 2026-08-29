@@ -59,7 +59,7 @@ class Calendar(db.Model):
     __tablename__ = 'calendar'
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(50), nullable=False)
-    time_slot = db.Column(db.String(50), default="종일") 
+    time_slot = db.Column(db.String(50), default="") 
     title = db.Column(db.String(200), nullable=False)
     applicant = db.Column(db.String(100), default="익명")  
     purpose = db.Column(db.Text, default="")            
@@ -110,7 +110,7 @@ def init_supabase_db():
                 CREATE TABLE IF NOT EXISTS calendar (
                     id SERIAL PRIMARY KEY,
                     date VARCHAR(50),
-                    time_slot VARCHAR(50) DEFAULT '종일',
+                    time_slot VARCHAR(50) DEFAULT '',
                     title VARCHAR(200),
                     applicant VARCHAR(100),
                     purpose TEXT,
@@ -120,7 +120,7 @@ def init_supabase_db():
             db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT '승인 대기 중';"))
             db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS applicant VARCHAR(100) DEFAULT '익명';"))
             db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS purpose TEXT DEFAULT '';"))
-            db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS time_slot VARCHAR(50) DEFAULT '종일';"))
+            db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS time_slot VARCHAR(50) DEFAULT '';"))
             db.session.commit()
         except Exception as e:
             print("DB 자동 보정 중 예외 발생:", e)
@@ -153,7 +153,6 @@ def init_supabase_db():
 def home():
     main_photo = "KakaoTalk_20260709_143736435.jpg"
     try:
-        # index.html의 {% if notice %} 구조에 맞게 가장 최신 공지사항 1개만 조회
         notice = Notice.query.order_by(Notice.id.desc()).first()
     except Exception:
         db.session.rollback()
@@ -282,7 +281,7 @@ def calendar():
     schedules = [{
         'id': s.id, 
         'date': s.date, 
-        'time_slot': s.time_slot if s.time_slot else "종일",
+        'time_slot': s.time_slot if s.time_slot else "",
         'title': s.title, 
         'applicant': s.applicant if s.applicant else "익명", 
         'purpose': s.purpose if s.purpose else "",
@@ -303,7 +302,7 @@ def calendar():
 @app.route("/addSchedule", methods=["POST"])
 def add_schedule():
     date = request.form.get("date")
-    time_slot = request.form.get("time_slot", "종일")
+    time_slot = request.form.get("time_slot", "").strip()
     title = request.form.get("title")
     applicant = request.form.get("applicant", "익명")
     purpose = request.form.get("purpose", "")

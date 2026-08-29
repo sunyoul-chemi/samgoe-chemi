@@ -145,16 +145,16 @@
                     <div style="display: flex; gap: 10px;">
                         <div style="flex: 1;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">신청자 이름</label>
-                            <input type="text" name="applicant" value="{% if session.get('is_admin') %}동아리 관리자{% endif %}" placeholder="예: 박선율" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                            <input type="text" name="applicant" value="{% if session.get('is_admin') %}동아리 관리자{% endif %}" placeholder="예: 박선율, 홍예원" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
                         </div>
                         <div style="flex: 1.2;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">일정명 / 실험 제목</label>
-                            <input type="text" name="title" placeholder="예: 정기 모임 및 균사체 실험" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                            <input type="text" name="title" placeholder="예: 케미 레코딩" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
                         </div>
                     </div>
                     <div>
                         <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">사용 목적 및 사유</label>
-                        <input type="text" name="purpose" placeholder="예: 신규 프로젝트 준비 세션" style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                        <input type="text" name="purpose" placeholder="예: 프로젝트 준비" style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
                     </div>
                     <button type="submit" style="background: #bfa11d; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 5px;">등록하기</button>
                 </form>

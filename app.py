@@ -59,6 +59,7 @@ class Calendar(db.Model):
     __tablename__ = 'calendar'
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(50), nullable=False)
+    time_slot = db.Column(db.String(50), default="종일") # 💡 시간 필드 추가
     title = db.Column(db.String(200), nullable=False)
     applicant = db.Column(db.String(100), default="익명")  
     purpose = db.Column(db.Text, default="")            
@@ -111,6 +112,7 @@ def init_supabase_db():
                 CREATE TABLE IF NOT EXISTS calendar (
                     id SERIAL PRIMARY KEY,
                     date VARCHAR(50),
+                    time_slot VARCHAR(50) DEFAULT '종일',
                     title VARCHAR(200),
                     applicant VARCHAR(100),
                     purpose TEXT,
@@ -120,6 +122,7 @@ def init_supabase_db():
             db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT '승인 대기 중';"))
             db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS applicant VARCHAR(100) DEFAULT '익명';"))
             db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS purpose TEXT DEFAULT '';"))
+            db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS time_slot VARCHAR(50) DEFAULT '종일';"))
             db.session.commit()
         except Exception as e:
             print("DB 자동 보정 중 예외 발생:", e)
@@ -280,6 +283,7 @@ def calendar():
     schedules = [{
         'id': s.id, 
         'date': s.date, 
+        'time_slot': s.time_slot if s.time_slot else "종일",
         'title': s.title, 
         'applicant': s.applicant if s.applicant else "익명", 
         'purpose': s.purpose if s.purpose else "",
@@ -295,40 +299,42 @@ def calendar():
         day_schedules = [s for s in schedules if s['date'] == date_str]
         days.append({"day": str(day), "schedules": day_schedules, "date": date_str})
         
-    display_schedules = []
-    for s in schedules:
-        if s['status'] == "동아리 공식 일정":
-            try:
-                s_year, s_month, _ = map(int, s['date'].split('-'))
-                if s_year == year and s_month == month:
-                    display_schedules.append(s)
-            except:
-                pass
-        else:
-            display_schedules.append(s)
-        
-    return render_template("calendar.html", year=year, month=month, days=days, schedules=display_schedules)
+    return render_template("calendar.html", year=year, month=month, days=days, schedules=schedules)
 
 @app.route("/addSchedule", methods=["POST"])
 def add_schedule():
     date = request.form.get("date")
+    time_slot = request.form.get("time_slot", "종일")
     title = request.form.get("title")
     applicant = request.form.get("applicant", "익명")
     purpose = request.form.get("purpose", "")
     
     is_admin_action = session.get("is_admin", False)
+    # 관리자가 폼에서 명시적으로 동아리 공식 일정 종류를 선택했는지 확인
+    schedule_type = request.form.get("schedule_type", "reservation") 
     
     if date and title:
         try:
-            status_val = "동아리 공식 일정" if is_admin_action else "승인 대기 중"
-            if is_admin_action and (not applicant or applicant == "익명"):
-                applicant = "동아리 관리자"
+            if is_admin_action and schedule_type == "official":
+                status_val = "동아리 공식 일정"
+                if not applicant or applicant == "익명":
+                    applicant = "동아리 관리자"
+            else:
+                status_val = "동아리 공식 일정" if is_admin_action else "승인 대기 중"
+                if is_admin_action and (not applicant or applicant == "익명"):
+                    applicant = "동아리 관리자"
                 
-            new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status=status_val)
+            new_schedule = Calendar(
+                date=date, 
+                time_slot=time_slot, 
+                title=title, 
+                applicant=applicant, 
+                purpose=purpose, 
+                status=status_val
+            )
             db.session.add(new_schedule)
             db.session.commit()
             
-            # 💡 등록한 날짜의 연도/월 정보를 추출하여 해당 페이지로 리다이렉트
             s_year, s_month, _ = map(int, date.split('-'))
             return redirect(url_for("calendar", year=s_year, month=s_month))
         except Exception as e:
@@ -565,4 +571,3 @@ if __name__ == "__main__":
     init_supabase_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
-    

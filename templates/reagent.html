@@ -18,7 +18,7 @@
         <p style="color: #4a4a4a; font-size: 15px; font-weight: 600;">동아리실 시약 위치와 보관 상태를 빠르게 검색하세요.</p>
     </div>
 
-    <!-- 🗺️ 2D 시약장 위치 맵 (요청하신 6가지 카테고리로 변경) -->
+    <!-- 🗺️ 2D 시약장 위치 맵 -->
     <div style="background: rgba(255, 255, 255, 0.92); border: 2px solid #e2d9b8; border-radius: 20px; padding: 20px; margin-bottom: 25px; backdrop-filter: blur(8px); box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
         <div style="text-align: center; margin-bottom: 12px;">
             <span style="font-size: 14px; font-weight: 800; color: #bfa11d; letter-spacing: 1px;">🗺️ 2D 시약장 위치 맵</span>
@@ -73,7 +73,13 @@
 
     {% if session.get('is_admin') %}
     <div style="background: rgba(255, 255, 255, 0.92); border: 2px solid #e2d9b8; border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 30px; backdrop-filter: blur(8px);">
-        <h3 style="color: #bfa11d; margin-top: 0; margin-bottom: 20px; font-weight: 800; font-size: 18px;">➕ 신규 재고 시약 등록 (관리자전용)</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="color: #bfa11d; margin: 0; font-weight: 800; font-size: 18px;">➕ 신규 재고 시약 등록 (관리자전용)</h3>
+            <!-- 🌟 전체 시약 삭제 버튼 추가 -->
+            <a href="{{ url_for('delete_all_reagents') }}" onclick="return confirm('경고: 모든 시약 데이터가 영구적으로 삭제됩니다. 정말 진행하시겠습니까?');" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; text-decoration: none;">
+                🗑️ 시약 전체 삭제
+            </a>
+        </div>
         
         <form action="/addReagent" method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; align-items: end;">
             <div>
@@ -92,7 +98,6 @@
                 <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">용량 / 수량</label>
                 <input type="text" name="amount" placeholder="예: 500ml 1병" style="width:100%; padding:10px; border:1px solid #dcd6c5; border-radius:10px; outline:none; background:#fff;">
             </div>
-            <!-- 관리자 등록 폼에서도 위험도 입력 칸을 제거하거나 숨길 수 있으나, 백엔드 DB 구조상 필드가 필요할 수 있어 기본값(낮음)을 숨겨서 처리하거나 아래와 같이 처리합니다 -->
             <input type="hidden" name="risk" value="낮음">
             <div>
                 <label style="display:block; font-size:12px; font-weight:700; color:#555; margin-bottom:6px;">보관 상태</label>
@@ -122,7 +127,7 @@
                style="width: 100%; padding: 16px 22px; border: 2px solid #e2d9b8; border-radius: 16px; font-size: 15px; outline: none; background: rgba(255, 255, 255, 0.95); box-shadow: 0 4px 15px rgba(0,0,0,0.03); backdrop-filter: blur(5px);">
     </div>
 
-    <!-- 📋 시약 목록 테이블 (위험도 열 완전히 제거) -->
+    <!-- 📋 시약 목록 테이블 -->
     <div style="background: rgba(255, 255, 255, 0.93); border-radius: 18px; border: 1px solid #e2d9b8; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.04); backdrop-filter: blur(5px);">
         <table id="reagentTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
             <thead>
@@ -131,7 +136,6 @@
                     <th style="padding: 16px 20px; font-weight: 800;">화학식/영어명</th>
                     <th style="padding: 16px 20px; font-weight: 800;">보관 위치</th>
                     <th style="padding: 16px 20px; font-weight: 800;">용량/수량</th>
-                    <!-- 위험도 열 제거됨 -->
                     <th style="padding: 16px 20px; font-weight: 800;">상태</th>
                     <th style="padding: 16px 20px; font-weight: 800;">비고</th>
                     {% if session.get('is_admin') %}
@@ -150,7 +154,6 @@
                         </span>
                     </td>
                     <td style="padding: 16px 20px; color: #444; font-weight: 600;">{{ r.amount if r.amount else '-' }}</td>
-                    <!-- 위험도 데이터 칸 제거됨 -->
                     <td style="padding: 16px 20px; color: #555; font-size: 13px; font-weight: 600;">
                         {{ r.status if r.status else '보관중' }}
                     </td>
@@ -230,7 +233,6 @@
 </div>
 
 <script>
-    // 💡 1. 수정 모달 열기 및 데이터 세팅 (위험도 파라미터 제외됨)
     function openEditModal(id, name, formula, location, amount, status, note) {
         document.getElementById('edit_id').value = id;
         document.getElementById('edit_name').value = name !== 'None' ? name : '';
@@ -243,12 +245,10 @@
         document.getElementById('editModal').style.display = 'flex';
     }
 
-    // 💡 2. 수정 모달 닫기
     function closeEditModal() {
         document.getElementById('editModal').style.display = 'none';
     }
 
-    // 💡 3. 2D 지도 버튼 클릭 시 검색창 입력 + 강제 검색 이벤트 발생
     function selectCabinet(keyword) {
         const input = document.getElementById('reagentSearch');
         if (input) {
@@ -257,7 +257,6 @@
         }
     }
 
-    // 💡 4. 검색창 필터 함수
     function filterReagents() {
         const input = document.getElementById('reagentSearch');
         const filter = input.value.toLowerCase().trim();
@@ -273,7 +272,6 @@
         });
     }
 
-    // 💡 5. CSV 업로드 기능
     const dropZone = document.getElementById('excelDropZone');
     const fileInput = document.getElementById('excelFileInput');
 

@@ -112,24 +112,13 @@
                 </div>
             </div>
 
-            <!-- 예약 / 일정 신청 폼 -->
+            <!-- 1. 실험실 사용 / 일정 예약 신청 폼 (모든 사용자에게 항상 노출) -->
             <div style="background: #fff; border-radius: 20px; padding: 22px; border: 1px solid #e8e6dc; box-shadow: 0 8px 20px rgba(0,0,0,0.02);">
-                <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px; font-weight: 800; color: #bfa11d;">
-                    {% if session.get('is_admin') %}🛠️ 일정 및 실험실 예약 등록 (관리자용){% else %}🧪 실험실 사용 / 일정 예약 신청{% endif %}
-                </h3>
+                <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px; font-weight: 800; color: #bfa11d;">🧪 실험실 사용 / 일정 예약 신청</h3>
                 
                 <form action="/addSchedule" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
-                    
-                    <!-- 관리자일 때만 동아리 공식 일정 선택 옵션 노출 -->
-                    {% if session.get('is_admin') %}
-                    <div style="background: #fdfbf7; padding: 8px 12px; border-radius: 10px; border: 1px solid #e1ded3; display: flex; align-items: center; justify-content: space-between;">
-                        <label style="font-size: 11px; font-weight: 700; color: #4f46e5;">등록 구분</label>
-                        <select name="schedule_type" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; font-weight: bold; outline: none;">
-                            <option value="official">동아리 공식 일정 (즉시 확정)</option>
-                            <option value="reservation">일반 실험실 예약 신청</option>
-                        </select>
-                    </div>
-                    {% endif %}
+                    <!-- 일반 예약 구분용 hidden 필드 -->
+                    <input type="hidden" name="schedule_type" value="reservation">
 
                     <div style="display: flex; gap: 10px;">
                         <div style="flex: 1.2;">
@@ -138,14 +127,14 @@
                         </div>
                         <div style="flex: 0.8;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">시간 (또는 타임)</label>
-                            <input type="text" name="time_slot" placeholder="예: 14:00~16:00 (비워두기 가능)" value="" style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                            <input type="text" name="time_slot" placeholder="종일" style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
                         </div>
                     </div>
 
                     <div style="display: flex; gap: 10px;">
                         <div style="flex: 1;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">신청자 이름</label>
-                            <input type="text" name="applicant" value="{% if session.get('is_admin') %}동아리 관리자{% endif %}" placeholder="예: 박선율, 홍예원" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                            <input type="text" name="applicant" placeholder="예: 박선율, 홍예원" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
                         </div>
                         <div style="flex: 1.2;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">일정명 / 실험 제목</label>
@@ -159,6 +148,35 @@
                     <button type="submit" style="background: #bfa11d; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 5px;">등록하기</button>
                 </form>
             </div>
+
+            <!-- 2. 관리자 전용 '동아리 일정 등록' 폼 (관리자 로그인 시에만 아래에 추가로 노출) -->
+            {% if session.get('is_admin') %}
+            <div style="background: #fff; border-radius: 20px; padding: 22px; border: 1px solid #e8e6dc; box-shadow: 0 8px 20px rgba(0,0,0,0.02);">
+                <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px; font-weight: 800; color: #bfa11d;">📅 동아리 일정 등록</h3>
+                
+                <form action="/addSchedule" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- 공식 일정 구분용 hidden 필드 -->
+                    <input type="hidden" name="schedule_type" value="official">
+                    <input type="hidden" name="applicant" value="동아리 관리자">
+
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1.2;">
+                            <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">날짜</label>
+                            <input type="date" name="date" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                        <div style="flex: 1.2;">
+                            <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">일정명</label>
+                            <input type="text" name="title" placeholder="예: 정기 회의" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">비고</label>
+                        <input type="text" name="purpose" placeholder="예: 장소, 준비물 등" style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                    </div>
+                    <button type="submit" style="background: #bfa11d; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 5px;">등록하기</button>
+                </form>
+            </div>
+            {% endif %}
 
         </div>
 

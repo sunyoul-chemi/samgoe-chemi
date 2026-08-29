@@ -62,7 +62,7 @@ class Calendar(db.Model):
     title = db.Column(db.String(200))
     applicant = db.Column(db.String(100), default="")  
     purpose = db.Column(db.Text, default="")            
-    status = db.Column(db.String(50), default="승인 대기 중")  # 실험실 예약 승인 상태
+    status = db.Column(db.String(50), default="승인 대기 중")
 
 class Reagent(db.Model):
     __tablename__ = 'reagents'
@@ -94,32 +94,56 @@ class Notice(db.Model):
     content = db.Column(db.Text, nullable=False)
     reg_date = db.Column(db.String(50))
 
-# 데이터베이스 초기화
+# 데이터베이스 및 테이블/컬럼 자동 보정 초기화 함수
 def init_supabase_db():
-    try:
-        db.create_all()
-    except Exception as e:
-        print("테이블 생성 오류 발생:", e)
-        db.session.rollback()
-        
-    try:
-        if Reagent.query.count() == 0:
-            reagents_list = [
-                Reagent(name="염산 (Hydrochloric acid)", formula="HCl", location="산성장 A-01", amount="1개", risk="위험", status="보관중", note=""),
-                Reagent(name="황산 (Sulfuric acid)", formula="H2SO4", location="산성장 A-02", amount="1개", risk="위험", status="보관중", note=""),
-                Reagent(name="질산 (Nitric acid)", formula="HNO3", location="산성장 A-03", amount="1개", risk="위험", status="보관중", note=""),
-                Reagent(name="수산화나트륨 (Sodium hydroxide)", formula="NaOH", location="염기장 B-01", amount="1개", risk="경고", status="보관중", note=""),
-                Reagent(name="탄산나트륨 (Sodium carbonate)", formula="Na2CO3", location="무기장 C-02", amount="1개", risk="낮음", status="보관중", note=""),
-                Reagent(name="염화나트륨 (Sodium chloride)", formula="NaCl", location="무기장 C-03", amount="1개", risk="낮음", status="보관중", note=""),
-                Reagent(name="황산구리 (Copper(II) sulfate)", formula="CuSO4", location="무기장 C-04", amount="1개", risk="경고", status="보관중", note=""),
-                Reagent(name="산화칼슘 (Calcium oxide)", formula="CaO", location="무기장 C-05", amount="1개", risk="경고", status="보관중", note=""),
-                Reagent(name="에탄올 (Ethanol)", formula="C2H5OH", location="유기장 D-01", amount="1개", risk="경고", status="보관중", note=""),
-                Reagent(name="과산화수소 (Hydrogen peroxide)", formula="H2O2", location="유기장 D-02", amount="1개", risk="위험", status="보관중", note="")
-            ]
-            db.session.bulk_save_objects(reagents_list)
+    with app.app_context():
+        try:
+            db.create_all()
+        except Exception as e:
+            print("기본 테이블 생성 오류:", e)
+            db.session.rollback()
+            
+        try:
+            # 누락된 테이블 및 컬럼 안전 생성 (500 에러 방지)
+            db.session.execute(text("""
+                CREATE TABLE IF NOT EXISTS notices (
+                    id SERIAL PRIMARY KEY,
+                    content TEXT NOT NULL,
+                    reg_date VARCHAR(50)
+                );
+            """))
+            db.session.execute(text("""
+                ALTER TABLE calendar ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT '승인 대기 중';
+            """))
+            db.session.execute(text("""
+                ALTER TABLE calendar ADD COLUMN IF NOT EXISTS applicant VARCHAR(100) DEFAULT '';
+            """))
+            db.session.execute(text("""
+                ALTER TABLE calendar ADD COLUMN IF NOT EXISTS purpose TEXT DEFAULT '';
+            """))
             db.session.commit()
-    except Exception:
-        db.session.rollback()
+        except Exception as e:
+            print("DB 자동 보정 중 예외 발생:", e)
+            db.session.rollback()
+
+        try:
+            if Reagent.query.count() == 0:
+                reagents_list = [
+                    Reagent(name="염산 (Hydrochloric acid)", formula="HCl", location="산성장 A-01", amount="1개", risk="위험", status="보관중", note=""),
+                    Reagent(name="황산 (Sulfuric acid)", formula="H2SO4", location="산성장 A-02", amount="1개", risk="위험", status="보관중", note=""),
+                    Reagent(name="질산 (Nitric acid)", formula="HNO3", location="산성장 A-03", amount="1개", risk="위험", status="보관중", note=""),
+                    Reagent(name="수산화나트륨 (Sodium hydroxide)", formula="NaOH", location="염기장 B-01", amount="1개", risk="경고", status="보관중", note=""),
+                    Reagent(name="탄산나트륨 (Sodium carbonate)", formula="Na2CO3", location="무기장 C-02", amount="1개", risk="낮음", status="보관중", note=""),
+                    Reagent(name="염화나트륨 (Sodium chloride)", formula="NaCl", location="무기장 C-03", amount="1개", risk="낮음", status="보관중", note=""),
+                    Reagent(name="황산구리 (Copper(II) sulfate)", formula="CuSO4", location="무기장 C-04", amount="1개", risk="경고", status="보관중", note=""),
+                    Reagent(name="산화칼슘 (Calcium oxide)", formula="CaO", location="무기장 C-05", amount="1개", risk="경고", status="보관중", note=""),
+                    Reagent(name="에탄올 (Ethanol)", formula="C2H5OH", location="유기장 D-01", amount="1개", risk="경고", status="보관중", note=""),
+                    Reagent(name="과산화수소 (Hydrogen peroxide)", formula="H2O2", location="유기장 D-02", amount="1개", risk="위험", status="보관중", note="")
+                ]
+                db.session.bulk_save_objects(reagents_list)
+                db.session.commit()
+        except Exception:
+            db.session.rollback()
 
 # ==============================================================
 # 🛣️ 4. 라우터 및 비즈니스 로직
@@ -128,7 +152,11 @@ def init_supabase_db():
 @app.route('/')
 def home():
     main_photo = "KakaoTalk_20260709_143736435.jpg"
-    notices = Notice.query.order_by(Notice.id.desc()).all()
+    try:
+        notices = Notice.query.order_by(Notice.id.desc()).all()
+    except Exception:
+        db.session.rollback()
+        notices = []
     return render_template("index.html", main_photo=main_photo, notices=notices)
 
 @app.route("/addNotice", methods=["POST"])
@@ -136,9 +164,13 @@ def add_notice():
     if session.get("is_admin"):
         content = request.form.get("content", "").strip()
         if content:
-            new_notice = Notice(content=content, reg_date=datetime.now().strftime("%Y-%m-%d %H:%M"))
-            db.session.add(new_notice)
-            db.session.commit()
+            try:
+                new_notice = Notice(content=content, reg_date=datetime.now().strftime("%Y-%m-%d %H:%M"))
+                db.session.add(new_notice)
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                print("공지사항 추가 오류:", e)
     return redirect(url_for("home"))
 
 @app.route("/deleteNotice/<int:nid>")
@@ -239,7 +271,12 @@ def calendar():
     start_weekday, total_days = pycalendar.monthrange(year, month)
     empty_cells = (start_weekday + 1) % 7
     
-    raw_schedules = Calendar.query.order_by(Calendar.date.asc()).all()
+    try:
+        raw_schedules = Calendar.query.order_by(Calendar.date.asc()).all()
+    except Exception:
+        db.session.rollback()
+        raw_schedules = []
+
     schedules = [{
         'id': s.id, 
         'date': s.date, 
@@ -268,9 +305,13 @@ def add_schedule():
     purpose = request.form.get("purpose", "")
     
     if date and title:
-        new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status="승인 대기 중")
-        db.session.add(new_schedule)
-        db.session.commit()
+        try:
+            new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status="승인 대기 중")
+            db.session.add(new_schedule)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print("일정 추가 오류:", e)
     return redirect(url_for("calendar"))
 
 @app.route("/approveSchedule/<int:sid>")
@@ -361,7 +402,6 @@ def delete_all_reagents():
             db.session.rollback()
     return redirect(url_for("reagent_list"))
 
-# 📁 CSV 파일 업로드
 @app.route('/uploadReagentExcel', methods=['POST'])
 def upload_reagent_excel():
     if not session.get("is_admin"):
@@ -376,7 +416,6 @@ def upload_reagent_excel():
         
     try:
         raw_bytes = file.stream.read()
-        
         try:
             decoded_text = raw_bytes.decode("utf-8-sig")
         except UnicodeDecodeError:
@@ -402,13 +441,8 @@ def upload_reagent_excel():
             note = row[6].strip() if len(row) > 6 else ""
             
             new_reagent = Reagent(
-                name=name, 
-                formula=formula, 
-                location=location, 
-                amount=amount, 
-                risk=risk, 
-                status=status, 
-                note=note
+                name=name, formula=formula, location=location, 
+                amount=amount, risk=risk, status=status, note=note
             )
             db.session.add(new_reagent)
             count += 1
@@ -425,7 +459,11 @@ def upload_reagent_excel():
 # ==============================================================
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
-    photos_list = Photo.query.order_by(Photo.id.desc()).all()
+    try:
+        photos_list = Photo.query.order_by(Photo.id.desc()).all()
+    except Exception:
+        db.session.rollback()
+        photos_list = []
     photos = [(p.id, p.filename, p.title, p.tag) for p in photos_list]
     return render_template("upload.html", photos=photos)
 
@@ -447,7 +485,6 @@ def upload_photo():
         db.session.add(new_photo)
         db.session.commit()
         flash("성공적으로 클라우드에 사진이 저장되었습니다! 🚀")
-        
     except Exception as e:
         print("Cloudinary 전송 에러:", e)
         flash("사진 업로드 중 오류가 발생했습니다.")
@@ -465,7 +502,11 @@ def delete_photo(photo_id):
 
 @app.route("/projects")
 def projects_page():
-    raw_projects = Project.query.order_by(Project.id.desc()).all()
+    try:
+        raw_projects = Project.query.order_by(Project.id.desc()).all()
+    except Exception:
+        db.session.rollback()
+        raw_projects = []
     projects = [{'id': p.id, 'title': p.title, 'summary': p.summary} for p in raw_projects]
     return render_template("projects.html", projects=projects)
 
@@ -489,8 +530,7 @@ def delete_project(project_id):
     return redirect(url_for("projects_page"))
 
 if __name__ == "__main__":
-    with app.app_context():
-        init_supabase_db()
+    init_supabase_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
     

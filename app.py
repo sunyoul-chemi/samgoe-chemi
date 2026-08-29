@@ -295,7 +295,6 @@ def calendar():
         day_schedules = [s for s in schedules if s['date'] == date_str]
         days.append({"day": str(day), "schedules": day_schedules, "date": date_str})
         
-    # 동아리 공식 일정은 해당 월에만 뜨고, 실험실 예약 등은 월과 상관없이 전체 다 뜨도록 설정
     display_schedules = []
     for s in schedules:
         if s['status'] == "동아리 공식 일정":
@@ -328,6 +327,10 @@ def add_schedule():
             new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status=status_val)
             db.session.add(new_schedule)
             db.session.commit()
+            
+            # 💡 등록한 날짜의 연도/월 정보를 추출하여 해당 페이지로 리다이렉트
+            s_year, s_month, _ = map(int, date.split('-'))
+            return redirect(url_for("calendar", year=s_year, month=s_month))
         except Exception as e:
             db.session.rollback()
             print("일정 추가 중 데이터베이스 오류 발생:", e)

@@ -58,9 +58,9 @@ class Comment(db.Model):
 class Calendar(db.Model):
     __tablename__ = 'calendar'
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String(50))
-    title = db.Column(db.String(200))
-    applicant = db.Column(db.String(100), default="")  
+    date = db.Column(db.String(50), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    applicant = db.Column(db.String(100), default="익명")  
     purpose = db.Column(db.Text, default="")            
     status = db.Column(db.String(50), default="승인 대기 중")
 
@@ -94,17 +94,14 @@ class Notice(db.Model):
     content = db.Column(db.Text, nullable=False)
     reg_date = db.Column(db.String(50))
 
-# 데이터베이스 및 테이블/컬럼 자동 보정 초기화 함수
+# 데이터베이스 및 테이블 자동 보정 함수 (안전 모드)
 def init_supabase_db():
     with app.app_context():
         try:
+            # 1. 필수 테이블 생성 확인
             db.create_all()
-        except Exception as e:
-            print("기본 테이블 생성 오류:", e)
-            db.session.rollback()
             
-        try:
-            # 누락된 테이블 및 컬럼 안전 생성 (500 에러 방지)
+            # 2. 캘린더 테이블 컬럼 누락 방지 및 데이터 타입 강제 보정
             db.session.execute(text("""
                 CREATE TABLE IF NOT EXISTS notices (
                     id SERIAL PRIMARY KEY,
@@ -113,14 +110,19 @@ def init_supabase_db():
                 );
             """))
             db.session.execute(text("""
-                ALTER TABLE calendar ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT '승인 대기 중';
+                CREATE TABLE IF NOT EXISTS calendar (
+                    id SERIAL PRIMARY KEY,
+                    date VARCHAR(50),
+                    title VARCHAR(200),
+                    applicant VARCHAR(100),
+                    purpose TEXT,
+                    status VARCHAR(50) DEFAULT '승인 대기 중'
+                );
             """))
-            db.session.execute(text("""
-                ALTER TABLE calendar ADD COLUMN IF NOT EXISTS applicant VARCHAR(100) DEFAULT '';
-            """))
-            db.session.execute(text("""
-                ALTER TABLE calendar ADD COLUMN IF NOT EXISTS purpose TEXT DEFAULT '';
-            """))
+            # 기존 테이블에 누락되었을 수 있는 컬럼들 안전 추가
+            db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT '승인 대기 중';"))
+            db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS applicant VARCHAR(100) DEFAULT '익명';"))
+            db.session.execute(text("ALTER TABLE calendar ADD COLUMN IF NOT EXISTS purpose TEXT DEFAULT '';"))
             db.session.commit()
         except Exception as e:
             print("DB 자동 보정 중 예외 발생:", e)
@@ -273,7 +275,8 @@ def calendar():
     
     try:
         raw_schedules = Calendar.query.order_by(Calendar.date.asc()).all()
-    except Exception:
+    except Exception as e:
+        print("캘린더 조회 오류:", e)
         db.session.rollback()
         raw_schedules = []
 
@@ -281,8 +284,8 @@ def calendar():
         'id': s.id, 
         'date': s.date, 
         'title': s.title, 
-        'applicant': s.applicant, 
-        'purpose': s.purpose,
+        'applicant': s.applicant if s.applicant else "익명", 
+        'purpose': s.purpose if s.purpose else "",
         'status': s.status if s.status else "승인 대기 중"
     } for s in raw_schedules]
     
@@ -306,30 +309,40 @@ def add_schedule():
     
     if date and title:
         try:
-            new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status="승인 대기 중")
+            # 관리자가 등록한 경우 기본 상태를 바로 '승인 완료'로 할지 대기 중으로 할지 설정 가능 (기본: 승인 대기 중 또는 관리자인 경우 자동 승인)
+            initial_status = "승인 완료" if session.get("is_admin") else "승인 대기 중"
+            new_schedule = Calendar(date=date, title=title, applicant=applicant, purpose=purpose, status=initial_status)
             db.session.add(new_schedule)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print("일정 추가 오류:", e)
+            print("일정 추가 중 데이터베이스 오류 발생:", e)
     return redirect(url_for("calendar"))
 
 @app.route("/approveSchedule/<int:sid>")
 def approve_schedule(sid):
     if session.get("is_admin"):
-        sch = Calendar.query.get(sid)
-        if sch:
-            sch.status = "승인 완료"
-            db.session.commit()
+        try:
+            sch = Calendar.query.get(sid)
+            if sch:
+                sch.status = "승인 완료"
+                db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print("일정 승인 오류:", e)
     return redirect(url_for("calendar"))
 
 @app.route("/deleteSchedule/<int:sid>")
 def delete_schedule(sid):
     if session.get("is_admin"):
-        sch = Calendar.query.get(sid)
-        if sch:
-            db.session.delete(sch)
-            db.session.commit()
+        try:
+            sch = Calendar.query.get(sid)
+            if sch:
+                db.session.delete(sch)
+                db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print("일정 삭제 오류:", e)
     return redirect(url_for("calendar"))
 
 # 🧪 5. 시약 관리

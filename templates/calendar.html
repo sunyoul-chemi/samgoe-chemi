@@ -37,9 +37,9 @@
                         <span style="font-size: 12px; font-weight: 700; color: #4a4538;">{{ d.day }}</span>
                         <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 3px; overflow-y: auto; max-height: 60px;">
                             {% for sch in d.schedules %}
-                            <!-- 공식 일정은 보라색/진한남색, 승인 완료는 초록색, 대기 중은 골드로 표시 -->
+                            <!-- 공식 일정은 보라색/진한남색, 승인 완료는 초록색, 대기 중은 골드로 표시 (일정명이 먼저 오도록 수정) -->
                             <span style="background: {% if sch.status == '동아리 공식 일정' %}#4f46e5{% elif sch.status == '승인 완료' %}#059669{% else %}#bfa11d{% endif %}; color: white; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block;" title="{{ sch.title }} (시간: {{ sch.time_slot }})">
-                                {{ sch.time_slot }} {{ sch.title }}
+                                {{ sch.title }} ({{ sch.time_slot }})
                             </span>
                             {% endfor %}
                         </div>

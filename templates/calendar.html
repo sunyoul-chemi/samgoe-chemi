@@ -37,9 +37,9 @@
                         <span style="font-size: 12px; font-weight: 700; color: #4a4538;">{{ d.day }}</span>
                         <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 3px; overflow-y: auto; max-height: 60px;">
                             {% for sch in d.schedules %}
-                            <!-- 공식 일정은 보라색/진한남색, 승인 완료는 초록색, 대기 중은 골드로 표시 (일정명이 먼저 오도록 수정) -->
-                            <span style="background: {% if sch.status == '동아리 공식 일정' %}#4f46e5{% elif sch.status == '승인 완료' %}#059669{% else %}#bfa11d{% endif %}; color: white; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block;" title="{{ sch.title }} (시간: {{ sch.time_slot }})">
-                                {{ sch.title }} ({{ sch.time_slot }})
+                            <!-- 공식 일정은 보라색/진한남색, 승인 완료는 초록색, 대기 중은 골드로 표시 -->
+                            <span style="background: {% if sch.status == '동아리 공식 일정' %}#4f46e5{% elif sch.status == '승인 완료' %}#059669{% else %}#bfa11d{% endif %}; color: white; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; display: block;" title="{{ sch.title }} {% if sch.time_slot %}(시간: {{ sch.time_slot }}){% endif %}">
+                                {{ sch.title }}{% if sch.time_slot %} ({{ sch.time_slot }}){% endif %}
                             </span>
                             {% endfor %}
                         </div>
@@ -70,7 +70,7 @@
                                     <div style="background: #fff; padding: 12px; border-radius: 12px; border: 1px solid #eeece1; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
                                         <div style="flex: 1; min-width: 0;">
                                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
-                                                <span style="font-size: 11px; font-weight: 700; color: #bfa11d;">📅 {{ s.date }} ({{ s.time_slot }})</span>
+                                                <span style="font-size: 11px; font-weight: 700; color: #bfa11d;">📅 {{ s.date }}{% if s.time_slot %} ({{ s.time_slot }}){% endif %}</span>
                                                 
                                                 <!-- 상태 뱃지 -->
                                                 {% if s.status == "동아리 공식 일정" %}
@@ -138,7 +138,7 @@
                         </div>
                         <div style="flex: 0.8;">
                             <label style="display:block; font-size:11px; font-weight:700; color:#555; margin-bottom:3px;">시간 (또는 타임)</label>
-                            <input type="text" name="time_slot" placeholder="예: 14:00~16:00" value="종일" required style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
+                            <input type="text" name="time_slot" placeholder="예: 14:00~16:00 (비워두기 가능)" value="" style="width: 100%; padding: 8px 10px; border: 1px solid #e1ded3; border-radius: 10px; background: #faf9f5; outline: none; font-size: 12px; box-sizing: border-box;">
                         </div>
                     </div>
 

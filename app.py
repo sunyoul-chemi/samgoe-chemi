@@ -59,7 +59,7 @@ class Calendar(db.Model):
     __tablename__ = 'calendar'
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(50), nullable=False)
-    time_slot = db.Column(db.String(50), default="종일") # 💡 시간 필드 추가
+    time_slot = db.Column(db.String(50), default="종일") 
     title = db.Column(db.String(200), nullable=False)
     applicant = db.Column(db.String(100), default="익명")  
     purpose = db.Column(db.Text, default="")            
@@ -95,12 +95,10 @@ class Notice(db.Model):
     content = db.Column(db.Text, nullable=False)
     reg_date = db.Column(db.String(50))
 
-# 데이터베이스 및 테이블 자동 보정 함수 (안전 모드)
 def init_supabase_db():
     with app.app_context():
         try:
             db.create_all()
-            
             db.session.execute(text("""
                 CREATE TABLE IF NOT EXISTS notices (
                     id SERIAL PRIMARY KEY,
@@ -155,11 +153,12 @@ def init_supabase_db():
 def home():
     main_photo = "KakaoTalk_20260709_143736435.jpg"
     try:
-        notices = Notice.query.order_by(Notice.id.desc()).all()
+        # index.html의 {% if notice %} 구조에 맞게 가장 최신 공지사항 1개만 조회
+        notice = Notice.query.order_by(Notice.id.desc()).first()
     except Exception:
         db.session.rollback()
-        notices = []
-    return render_template("index.html", main_photo=main_photo, notices=notices)
+        notice = None
+    return render_template("index.html", main_photo=main_photo, notice=notice)
 
 @app.route("/addNotice", methods=["POST"])
 def add_notice():
@@ -310,7 +309,6 @@ def add_schedule():
     purpose = request.form.get("purpose", "")
     
     is_admin_action = session.get("is_admin", False)
-    # 관리자가 폼에서 명시적으로 동아리 공식 일정 종류를 선택했는지 확인
     schedule_type = request.form.get("schedule_type", "reservation") 
     
     if date and title:
@@ -323,7 +321,7 @@ def add_schedule():
                 status_val = "동아리 공식 일정" if is_admin_action else "승인 대기 중"
                 if is_admin_action and (not applicant or applicant == "익명"):
                     applicant = "동아리 관리자"
-                
+            
             new_schedule = Calendar(
                 date=date, 
                 time_slot=time_slot, 
